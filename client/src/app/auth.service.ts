@@ -16,10 +16,10 @@ export class AuthService {
     private http: HttpClient
   ) { }
 
-  requestToken(): Observable<string> {
-    return this.http.get<string>('auth/requestToken', this.httpOptions)
+  requestToken(): Observable<any> {
+    return this.http.get<any>('auth/requestToken', this.httpOptions)
     .pipe(
-      catchError(this.handleError<string>(''))
+      catchError(this.handleError<any>())
     );
   }
 

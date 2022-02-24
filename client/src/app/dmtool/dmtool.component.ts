@@ -25,10 +25,8 @@ export class DmtoolComponent implements OnInit {
   onDM(id: string): void {
     this.authService.requestToken()
     .subscribe(result => {
-      console.log(result);
-      const json = JSON.parse(result);
-      if(json.oauth_callback_confirmed){
-        window.location.href = `https://api.twitter.com/oauth/authorize?oauth_token=${json.oauth_token}`;
+      if(result.oauth_callback_confirmed){
+        window.location.href = `https://api.twitter.com/oauth/authorize?oauth_token=${result.oauth_token}`;
       }
       //this.router.navigate(['/dmtool/auth'], {queryParams: {id: id}});
     })
