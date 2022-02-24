@@ -1,0 +1,10 @@
+<div *ngFor="let id of ids">
+    <mat-card>
+        <mat-card-title>@{{id}}</mat-card-title>
+        <mat-divider inset></mat-divider>
+        <mat-card-actions fxlayout="row" fxLayoutAlign="space-between">
+            <button mat-button>編集</button>
+            <button mat-raised-button color="accent" (click)="onDM(id)">DM</button>
+        </mat-card-actions>
+    </mat-card>
+</div>
