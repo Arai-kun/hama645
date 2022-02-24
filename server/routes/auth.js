@@ -1,6 +1,6 @@
 let express = require('express');
 let router = express.Router();
-let TwitterClient = require('twitter-api-client');
+let TwitterClient = require('twitter-api-client').TwitterClient;
 
 const twitterClient = new TwitterClient({
   apiKey: process.env.API_KEY,
