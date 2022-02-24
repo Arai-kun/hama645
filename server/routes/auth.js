@@ -12,7 +12,7 @@ const twitterClient = new TwitterClient({
 /* GET auth/requestToken */
 router.get('/requestToken', async (req, res, next) => {
   try{
-    let response = await twitterClient.basics.oauthRequestToken(encodeURI('https://enginestarter.nl/dmtool/auth'));
+    let response = await twitterClient.basics.oauthRequestToken('https://enginestarter.nl/dmtool/auth');
     console.log(response);
     res.json('success');
   }
