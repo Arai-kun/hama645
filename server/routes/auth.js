@@ -13,8 +13,7 @@ const twitterClient = new TwitterClient({
 router.get('/requestToken', async (req, res, next) => {
   try{
     let response = await twitterClient.basics.oauthRequestToken({oauth_callback: 'https://enginestarter.nl/dmtool/auth'});
-    console.log(response);
-    res.json('success');
+    res.json(response);
   }
   catch(error){
     console.log(error);
