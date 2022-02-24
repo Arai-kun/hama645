@@ -6,7 +6,7 @@ const twitterClient = new TwitterClient({
   apiKey: process.env.API_KEY,
   apiSecret: process.env.API_SECRET,
   accessToken: process.env.ACCESS_TOKEN,
-  accessTokenSecret: ACCESS_TOKEN_SECRET
+  accessTokenSecret: process.env.ACCESS_TOKEN_SECRET
 });
 
 /* GET auth/requestToken */
