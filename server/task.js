@@ -1,7 +1,21 @@
 let mongoose = require('mongoose');
 let Twitter = require('./models/twitter');
 const { TwitterClient } = require('twitter-api-client');
-require('dotenv').config();
+
+require('dotenv').config();mongoose.connect(
+    'mongodb://localhost:27017/hama645?authSource=admin',
+    {
+        useNewUrlParser: true,
+        user: 'admin',
+        pass: process.env.DB_PW
+    }
+);
+let db = mongoose.connection;
+db.once('open', () => {
+  console.log('Successed connecting to DB');
+});
+
+
 
 main();
 
