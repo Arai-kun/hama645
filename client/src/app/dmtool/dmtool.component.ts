@@ -23,13 +23,10 @@ export class DmtoolComponent implements OnInit {
   }
 
   onDM(id: string): void {
-    this.authService.requestToken()
-    .subscribe(result => {
-      if(result.oauth_callback_confirmed){
-        window.location.href = `https://api.twitter.com/oauth/authorize?oauth_token=${result.oauth_token}`;
-      }
-      //this.router.navigate(['/dmtool/auth'], {queryParams: {id: id}});
-    })
+  }
+
+  onOAuth(id: string): void {
+    this.router.navigate(['/oauth'], {queryParams: {id: id}});
   }
 
 }

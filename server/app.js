@@ -18,7 +18,7 @@ db.once('open', () => {
   console.log('Successed connecting to DB');
 });
 
-let authRouter = require('./routes/auth');
+let oauthRouter = require('./routes/oauth');
 //var usersRouter = require('./routes/users');
 
 var app = express();
@@ -29,7 +29,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use('/auth', authRouter);
+app.use('/oauth', oauthRouter);
 //app.use('/users', usersRouter);
 
 app.use(express.static(path.join(__dirname, '../client/dist/client')));

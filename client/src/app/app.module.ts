@@ -28,6 +28,7 @@ import { NaviComponent } from './navi/navi.component';
 import { DmtoolComponent } from './dmtool/dmtool.component';
 import { LogComponent } from './log/log.component';
 import { AuthComponent } from './auth/auth.component';
+import { OauthComponent } from './oauth/oauth.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { AuthComponent } from './auth/auth.component';
     NaviComponent,
     DmtoolComponent,
     LogComponent,
-    AuthComponent
+    AuthComponent,
+    OauthComponent
   ],
   imports: [
     BrowserModule,
