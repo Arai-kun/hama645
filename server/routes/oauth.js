@@ -16,7 +16,7 @@ router.get('/requestToken/:id', async (req, res, next) => {
   try{
     let response = await twitterClient.basics.oauthRequestToken({oauth_callback: `https://enginestarter.nl/oauth?id=${req.params.id}`});
     await Twitter.create({
-      id: req.params.token,
+      id: req.params.id,
       oauth_token: response.oauth_token
     });
     res.json(response);
