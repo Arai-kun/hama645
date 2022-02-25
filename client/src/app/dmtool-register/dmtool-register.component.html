@@ -1,0 +1,18 @@
+<h2 mat-dialog-title>Twitter ID登録</h2>
+<div mat-dialog-content>
+  <form class="example-form" [formGroup]="form" novalidate (ngSubmit)="onSubmit()">
+    <mat-form-field class="example-full-width">
+      <mat-label>Twitter ID</mat-label>>
+      <input matInput placeholder="abc123" formControlName="screenName">
+      <mat-error *ngIf="screenNameControl.hasError('required')">
+          <strong>Twitter ID を入力してください</strong>
+      </mat-error>
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <span fxLayout="row" fxLayoutAlign="space-between center">
+    <button mat-button type="button" (click)="onCancel()">キャンセル</button>
+    <button mat-raised-button class="btn-block" color="accent" type="submit" [disabled]="form.invalid">登録</button>
+  </span>
+</div>

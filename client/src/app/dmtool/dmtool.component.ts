@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DmtoolRegisterComponent } from '../dmtool-register/dmtool-register.component';
+import { DbService } from '../db.service';
+import { twitter } from '../models/twitter';
 
 @Component({
   selector: 'app-dmtool',
@@ -8,22 +12,19 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./dmtool.component.scss']
 })
 export class DmtoolComponent implements OnInit {
-  screen_names: string[] = [
-    'ka01_7',
-    'abc123',
-    'xxxxxx'
-  ];
+  twitters: twitter[] = [];
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    public dialog: MatDialog,
+    private dbService: DbService
   ) { }
 
   ngOnInit(): void {
+    this.getTwitters();
   }
 
-  onDM(screen_name: string): void {
-  }
+  onDM(): void { }
 
   onOAuth(screen_name: string): void {
     this.router.navigate(['/oauth'], {queryParams: {screen_name: screen_name}});
@@ -33,4 +34,17 @@ export class DmtoolComponent implements OnInit {
     
   }
 
+  onRegister(): void {
+    let dialogRef = this.dialog.open(DmtoolRegisterComponent, {
+      width: '400px'
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.ngOnInit();
+    });
+  }
+
+  getTwitters(): void {
+    this.dbService.getAll<twitter>('twitters')
+    .subscribe(twitters => this.twitters = twitters);
+  }
 }

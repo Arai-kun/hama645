@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { MatDrawer } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-navi',
@@ -20,17 +22,27 @@ export class NaviComponent implements OnInit {
 
   constructor(
     private breakpointObserver: BreakpointObserver,
-    private router: Router
+    private router: Router,
+    private authService: AuthService,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
   }
 
   onLogout(): void {
-
+    this.authService.logout()
+    .subscribe(result => {
+      if(result){
+        this.router.navigate(['/login']);
+      }
+      else{
+        this.snackBar.open('ログアウトできませんでした', '閉じる', { duration: 5000 });
+      }
+    });
   }
 
-  onResetPW(): void {
+  onDelete(): void {
 
   }
 

@@ -14,11 +14,10 @@ router.get('/requestToken/:screen_name', async (req, res, next) => {
 
   try{
     let response = await twitterClient.basics.oauthRequestToken({oauth_callback: `https://enginestarter.nl/oauth?screen_name=${req.params.screen_name}`});
-    await Twitter.create({
-      screen_name: req.params.screen_name,
-      oauth_token: response.oauth_token,
-      oauth_token_secret: response.oauth_token_secret
-    });
+    let twitter = await Twitter.findOne({screen_name: req.params.screen_name}).exec();
+    twitter.oauth_token = response.oauth_token;
+    twitter.oauth_token_secret = response.oauth_token_secret;
+    await twitter.save();
     res.json(response);
   }
   catch(error){

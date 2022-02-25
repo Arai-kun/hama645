@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -21,15 +21,18 @@ import { MatTableModule } from '@angular/material/table';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 /* Component */
 import { AppComponent } from './app.component';
 import { NaviComponent } from './navi/navi.component';
 import { DmtoolComponent } from './dmtool/dmtool.component';
 import { LogComponent } from './log/log.component';
-import { AuthComponent } from './auth/auth.component';
 import { OauthComponent } from './oauth/oauth.component';
 import { HomeComponent } from './home/home.component';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
+import { DmtoolRegisterComponent } from './dmtool-register/dmtool-register.component';
 
 @NgModule({
   declarations: [
@@ -37,9 +40,11 @@ import { HomeComponent } from './home/home.component';
     NaviComponent,
     DmtoolComponent,
     LogComponent,
-    AuthComponent,
     OauthComponent,
-    HomeComponent
+    HomeComponent,
+    LoginComponent,
+    RegisterComponent,
+    DmtoolRegisterComponent
   ],
   imports: [
     BrowserModule,
@@ -62,9 +67,11 @@ import { HomeComponent } from './home/home.component';
     FormsModule,
     ReactiveFormsModule,
     MatCardModule,
-    MatDividerModule
+    MatDividerModule,
+    MatAutocompleteModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule { }

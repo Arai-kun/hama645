@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AuthComponent } from './auth.component';
+import { DmtoolRegisterComponent } from './dmtool-register.component';
 
-describe('AuthComponent', () => {
-  let component: AuthComponent;
-  let fixture: ComponentFixture<AuthComponent>;
+describe('DmtoolRegisterComponent', () => {
+  let component: DmtoolRegisterComponent;
+  let fixture: ComponentFixture<DmtoolRegisterComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AuthComponent ]
+      declarations: [ DmtoolRegisterComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AuthComponent);
+    fixture = TestBed.createComponent(DmtoolRegisterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
