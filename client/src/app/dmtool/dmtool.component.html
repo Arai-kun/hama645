@@ -1,12 +1,12 @@
-<div *ngFor="let id of ids">
+<div *ngFor="let screen_name of screen_names">
     <mat-card>
-        <mat-card-title>@{{id}}</mat-card-title>
+        <mat-card-title>@{{screen_name}}</mat-card-title>
         <mat-divider inset></mat-divider>
         <mat-card-actions>
-            <button mat-button>編集</button>
-            <span fxlayout="row" fxFlexOffset="auto" fxLayoutGap="16px">
-                <button mat-raised-button color="accent" (click)="onOAuth(id)">認証</button>
-                <button mat-raised-button color="primary" (click)="onDM(id)">DM</button>
+            <button mat-button (click)="onDelete(screen_name)">削除</button>
+            <span fxlayout="row" fxFlexOffset="auto" fxLayoutGap="8px">
+                <button mat-raised-button color="accent" (click)="onOAuth(screen_name)">認証</button>
+                <button mat-raised-button color="primary" (click)="onDM(screen_name)">DM</button>
             </span>
         </mat-card-actions>
     </mat-card>

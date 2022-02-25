@@ -17,8 +17,8 @@ export class AuthService {
     private http: HttpClient
   ) { }
 
-  requestToken(id: string): Observable<any> {
-    return this.http.get<any>(`oauth/requestToken/${id}`, this.httpOptions)
+  requestToken(screen_name: string): Observable<any> {
+    return this.http.get<any>(`oauth/requestToken/${screen_name}`, this.httpOptions)
     .pipe(
       catchError(this.handleError<any>())
     );
@@ -31,11 +31,13 @@ export class AuthService {
     )
   }
 
-  exchangeToken(id: string, oauth_verifier: string): Observable<boolean> {
-    return this.http.post<boolean>(`oauth/exchangeToken/${id}`, JSON.stringify({oauth_verifier: oauth_verifier}),this.httpOptions)
+  exchangeToken(screen_name: string, oauth_verifier: string): Observable<boolean> {
+    return this.http.post<boolean>('oauth/exchangeToken', JSON.stringify({
+      screen_name: screen_name, oauth_verifier: oauth_verifier
+    }), this.httpOptions)
     .pipe(
       catchError(this.handleError<boolean>(false))
-    )
+    );
   }
 
   handleError<T>(result?: T) {

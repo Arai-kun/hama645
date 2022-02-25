@@ -8,7 +8,7 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./dmtool.component.scss']
 })
 export class DmtoolComponent implements OnInit {
-  ids: string[] = [
+  screen_names: string[] = [
     'ka01_7',
     'abc123',
     'xxxxxx'
@@ -22,11 +22,15 @@ export class DmtoolComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onDM(id: string): void {
+  onDM(screen_name: string): void {
   }
 
-  onOAuth(id: string): void {
-    this.router.navigate(['/oauth'], {queryParams: {id: id}});
+  onOAuth(screen_name: string): void {
+    this.router.navigate(['/oauth'], {queryParams: {screen_name: screen_name}});
+  }
+
+  onDelete(screen_name: string){
+    
   }
 
 }

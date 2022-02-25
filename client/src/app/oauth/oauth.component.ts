@@ -19,11 +19,10 @@ export class OauthComponent implements OnInit {
 
   ngOnInit(): void {
     this.params = this.route.snapshot.queryParams;
-    if(this.params['id'] && !this.params['oauth_token'] && !this.params['oauth_verifier']){
+    if(this.params['screen_name'] && !this.params['oauth_token'] && !this.params['oauth_verifier']){
       /* Step1: Request Token */
-      this.authService.requestToken(this.params['id'])
+      this.authService.requestToken(this.params['screen_name'])
       .subscribe(result => {
-        console.log(result.oauth_callback_confirmed);
         if(result.oauth_callback_confirmed){
           window.location.href = `https://api.twitter.com/oauth/authorize?oauth_token=${result.oauth_token}`;
         }
@@ -32,20 +31,21 @@ export class OauthComponent implements OnInit {
         }
       });
     }
-    else if(this.params['id'] && this.params['oauth_token'] && this.params['oauth_verifier']){
+    else if(this.params['screen_name'] && this.params['oauth_token'] && this.params['oauth_verifier']){
       /* Step2: Authorize token */
       let twitter: twitter = {
-        id: this.params['id'],
+        id: this.params['screen_name'],
         oauth_token: this.params['oauth_token']
       }
       this.authService.checkToken(twitter)
       .subscribe(result => {
         if(result){
           /* Step3: Exchange token */
-          this.authService.exchangeToken(this.params['id'], this.params['oauth_verifier'])
+          this.authService.exchangeToken(this.params['screen_name'], this.params['oauth_verifier'])
           .subscribe(result => {
             if(result){
               console.log('3 legs oauth success!');
+              
             }
             else{
               console.log('Exchange token failed');
