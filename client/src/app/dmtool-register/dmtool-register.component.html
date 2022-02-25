@@ -3,7 +3,7 @@
   <div mat-dialog-content>
       <mat-form-field class="example-full-width">
         <mat-label>Twitter ID</mat-label>
-        <input matInput placeholder="abc123" formControlName="screenName">
+        <input matInput placeholder="abc123" formControlName="screenName" autocomplete="off">
         <mat-error *ngIf="screenNameControl.hasError('required')">
             <strong>Twitter ID を入力してください</strong>
         </mat-error>
