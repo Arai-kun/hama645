@@ -1,26 +1,30 @@
-<div class="register-btn" fxLayout="row" fxFlexOffset="auto">
-    <button mat-raised-button color="accent" (click)="onRegister()">登録</button>
-</div>
-<div *ngFor="let twitter of twitters">
-    <mat-card>
-        <mat-card-title>@{{twitter.screen_name}}</mat-card-title>
-        <mat-card-content>
-            <div *ngIf="!twitter.authorized; else elseBlock">
-                <span>未連携</span>
-            </div>
-            <ng-template #elseBlock>
-                <span color="warn">連携済み</span>
-            </ng-template>
-        </mat-card-content>
-        <mat-divider inset></mat-divider>
-        <mat-card-actions>
-            <button mat-button (click)="onDelete(twitter.screen_name)">削除</button>
-            <span fxlayout="row" fxFlexOffset="auto" fxLayoutGap="8px">
+<div fxLayout="column">
+    <div>
+        <span class="register-btn" fxLayout="row" fxFlexOffset="auto">
+            <button mat-raised-button color="accent" (click)="onRegister()">登録</button>
+        </span>
+    </div>
+    <div *ngFor="let twitter of twitters">
+        <mat-card>
+            <mat-card-title>@{{twitter.screen_name}}</mat-card-title>
+            <mat-card-content>
+                <div *ngIf="!twitter.authorized; else elseBlock">
+                    <span>未連携</span>
+                </div>
                 <ng-template #elseBlock>
-                    <button mat-raised-button color="accent" (click)="onOAuth(twitter.screen_name)">連携</button>
+                    <span color="warn">連携済み</span>
                 </ng-template>
-                <button mat-raised-button color="primary" (click)="onDM()">DM</button>
-            </span>
-        </mat-card-actions>
-    </mat-card>
+            </mat-card-content>
+            <mat-divider inset></mat-divider>
+            <mat-card-actions>
+                <button mat-button (click)="onDelete(twitter.screen_name)">削除</button>
+                <span fxlayout="row" fxFlexOffset="auto" fxLayoutGap="8px">
+                    <ng-template #elseBlock>
+                        <button mat-raised-button color="accent" (click)="onOAuth(twitter.screen_name)">連携</button>
+                    </ng-template>
+                    <button mat-raised-button color="primary" (click)="onDM()">DM</button>
+                </span>
+            </mat-card-actions>
+        </mat-card>
+    </div>
 </div>
