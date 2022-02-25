@@ -49,7 +49,7 @@ router.post('/exchangeToken/:id', async (req, res, next) => {
       accessToken: twitter.oauth_token,
       accessTokenSecret: twitter.oauth_token_secret
     });
-    let response = await twitterClient.basics.oauthAccessToken({oauth_verifier: req.params.oauth_verifier});
+    let response = await twitterClient.basics.oauthAccessToken({oauth_verifier: req.body});
     console.log(response);
     Twitter.updateOne({oauth_token: response.oauth_token}, {$set: {oauth_token_secret: response.oauth_token_secret}}, error => {
       if(error) next(error);
