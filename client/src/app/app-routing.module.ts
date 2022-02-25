@@ -7,10 +7,14 @@ import { HomeComponent } from './home/home.component';
 
 const routes: Routes = [
   { path: 'oauth', component: OauthComponent },
-  { path: 'dmtool', component: DmtoolComponent },
-  { path: 'log', component: LogComponent },
-  { path: 'home', component: HomeComponent },
-  { path: '/', redirectTo: 'home', pathMatch: 'full' }
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: 'home',
+    component: HomeComponent,
+    children: [
+      { path: 'dmtool', component: DmtoolComponent },
+      { path: 'log', component: LogComponent }
+    ]
+  }
 ];
 
 @NgModule({
