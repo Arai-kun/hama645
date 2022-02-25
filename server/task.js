@@ -29,7 +29,7 @@ async function main(){
             accessTokenSecret: twitter.oauth_token_secret
         });
         let response = await twitterClient.directMessages.eventsNew({
-            event: {
+            'event': {
                 type: 'message_create',
                 message_create: {
                     target: {
@@ -41,6 +41,7 @@ async function main(){
                 }
             }
         });
+
         console.log(response)
     }
     catch(error){
