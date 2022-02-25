@@ -14,7 +14,20 @@ async function main(){
             accessToken: twitter.oauth_token,
             accessTokenSecret: twitter.oauth_token_secret
         });
-        
+        let response = await twitterClient.directMessages.eventsNew({
+            event: {
+                type: 'message_create',
+                message_create: {
+                    target: {
+                        recipient_id: 'misMoov'
+                    },
+                    message_data: {
+                        text: 'No weekend!'
+                    }
+                }
+            }
+        });
+        console.log(response)
     }
     catch(error){
         console.log(error);
