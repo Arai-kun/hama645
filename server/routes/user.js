@@ -6,7 +6,7 @@ let User = require('../models/user');
 const saltRounds = 10;
 
 /* POST user/create */
-router.post('/user', (req, res, next) => {
+router.post('/create', (req, res, next) => {
   bcrypt.hash(req.body['password'], saltRounds, (error, hash) => {
       if(error) next(error);
       req.body['password'] = hash;
