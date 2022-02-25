@@ -8,11 +8,11 @@
         <mat-card>
             <mat-card-title>@{{twitter.screen_name}}</mat-card-title>
             <mat-card-content>
-                <div *ngIf="!twitter.authorized; else elseBlock">
-                    <span>未連携</span>
+                <div *ngIf="twitter.authorized; else elseBlock">
+                    <span>連携済み</span>
                 </div>
                 <ng-template #elseBlock>
-                    <span color="warn">連携済み</span>
+                    <span color="warn">未連携</span>
                 </ng-template>
             </mat-card-content>
             <mat-divider inset></mat-divider>

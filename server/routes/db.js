@@ -20,6 +20,7 @@ router.get('/twitters', (req, res, next) => {
 
 /* POST db/twitter */
 router.post('/twitter', (req, res, next) => {
+    console.log(req.body)
     Twitter.create({
         email: req.user['email'],
         screen_name: req.body['screen_name'],
