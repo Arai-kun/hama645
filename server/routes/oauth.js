@@ -28,7 +28,7 @@ router.get('/requestToken/:screen_name', async (req, res, next) => {
 
 /* POST oauth/checkToken */
 router.post('/checkToken', (req, res, next) => {
-  Twitter.findOne({id: req.body['screen_name']}, (error, twitter) => {
+  Twitter.findOne({screen_name: req.body['screen_name']}, (error, twitter) => {
     if(error) next(error);
     if(req.body['oauth_token'] === twitter.oauth_token){
       res.json(true);
@@ -42,7 +42,7 @@ router.post('/checkToken', (req, res, next) => {
 /* POST oauth/exchangeToken */
 router.post('/exchangeToken', async (req, res, next) => {
   try {
-    let twitter = await Twitter.findOne({id: req.body['screen_name']}).exec();
+    let twitter = await Twitter.findOne({screen_name: req.body['screen_name']}).exec();
     const twitterClient = new TwitterClient({
       apiKey: process.env.API_KEY,
       apiSecret: process.env.API_SECRET,
