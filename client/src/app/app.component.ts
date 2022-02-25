@@ -15,6 +15,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     /* Initial display */
-    this.router.navigate(['/dmtool']);
+    //this.router.navigate(['/dmtool']);
   }
 }

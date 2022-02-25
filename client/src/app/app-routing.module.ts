@@ -6,10 +6,10 @@ import { AuthComponent } from './auth/auth.component';
 import { OauthComponent } from './oauth/oauth.component';
 
 const routes: Routes = [
-  { path: 'dmtool', component: DmtoolComponent },
-  { path: 'dmtool/auth', component: AuthComponent },
-  { path: 'log', component: LogComponent },
   { path: 'oauth', component: OauthComponent },
+  { path: 'dmtool', component: DmtoolComponent },
+  { path: 'log', component: LogComponent },
+  { path: '/', redirectTo: 'dmtool', pathMatch: 'full' }
   
 ];
 
