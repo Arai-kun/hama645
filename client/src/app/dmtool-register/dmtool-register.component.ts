@@ -38,7 +38,7 @@ export class DmtoolRegisterComponent implements OnInit {
     }
     this.dbService.get<twitter>('twitter', twitter.screen_name)
     .subscribe(twitter => {
-      if(!twitter){
+      if(twitter){
         this.snackBar.open('このTwitter IDは既に登録済みです', '閉じる', { duration: 7000 });
       }
       else{
