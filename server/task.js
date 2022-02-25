@@ -1,5 +1,5 @@
 let mongoose = require('mongoose');
-let Twitter = require('../models/twitter');
+let Twitter = require('./models/twitter');
 const { TwitterClient } = require('twitter-api-client');
 require('dotenv').config();
 
