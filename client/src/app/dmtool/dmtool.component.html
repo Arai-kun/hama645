@@ -12,16 +12,16 @@
                     <span>連携済み</span>
                 </div>
                 <ng-template #elseBlock>
-                    <span color="warn">未連携</span>
+                    <span class="warn">未連携</span>
                 </ng-template>
             </mat-card-content>
             <mat-divider inset></mat-divider>
             <mat-card-actions>
                 <button mat-button (click)="onDelete(twitter.screen_name)">削除</button>
                 <span fxlayout="row" fxFlexOffset="auto" fxLayoutGap="8px">
-                    <ng-template #elseBlock>
+                    <span *ngIf="!twitter.authorized">
                         <button mat-raised-button color="accent" (click)="onOAuth(twitter.screen_name)">連携</button>
-                    </ng-template>
+                    </span>
                     <button mat-raised-button color="primary" (click)="onDM()">DM</button>
                 </span>
             </mat-card-actions>
