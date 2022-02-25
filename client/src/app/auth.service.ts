@@ -19,7 +19,7 @@ export class AuthService {
   ) { }
 
   login(user: user): Observable<boolean>{
-    return this.http.post<boolean>('auth/login', user, this.httpOptions)
+    return this.http.post<boolean>('user/login', user, this.httpOptions)
     .pipe(
       catchError(this.handleError<boolean>(false)),
       shareReplay(1)
