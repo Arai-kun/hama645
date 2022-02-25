@@ -52,6 +52,7 @@ router.post('/exchangeToken', async (req, res, next) => {
     });
     let response = await twitterClient.basics.oauthAccessToken({oauth_verifier: req.body['oauth_verifier']});
     console.log(response);
+    /*
     Twitter.updateOne({oauth_token: response.oauth_token}, {$set: {
       oauth_token_secret: response.oauth_token_secret,
       user_id: response.user_id,
@@ -59,7 +60,12 @@ router.post('/exchangeToken', async (req, res, next) => {
     }}, error => {
       if(error) next(error);
       res.json(true);
-    });
+    });*/
+    twitter.oauth_token_secret = response.oauth_token_secret;
+    twitter.user_id = response.user_id;
+    twitter.authorized = true;
+    await twitter.save();
+    res.json(true);
   }
   catch(error){
     console.log(error);
