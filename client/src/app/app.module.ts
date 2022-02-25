@@ -29,6 +29,7 @@ import { DmtoolComponent } from './dmtool/dmtool.component';
 import { LogComponent } from './log/log.component';
 import { AuthComponent } from './auth/auth.component';
 import { OauthComponent } from './oauth/oauth.component';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { OauthComponent } from './oauth/oauth.component';
     DmtoolComponent,
     LogComponent,
     AuthComponent,
-    OauthComponent
+    OauthComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,

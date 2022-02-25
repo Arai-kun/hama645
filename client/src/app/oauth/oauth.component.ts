@@ -42,7 +42,7 @@ export class OauthComponent implements OnInit {
       .subscribe(result => {
         if(result){
           /* Step3: Exchange token */
-          this.authService.exchangeToken(this.params['oauth_verifier'])
+          this.authService.exchangeToken(this.params['id'], this.params['oauth_verifier'])
           .subscribe(result => {
             if(result){
               console.log('3 legs oauth success!');

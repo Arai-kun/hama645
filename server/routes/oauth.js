@@ -2,7 +2,6 @@ let express = require('express');
 let router = express.Router();
 let Twitter = require('../models/twitter');
 const { TwitterClient } = require('twitter-api-client');
-const e = require('express');
 
 const twitterClient = new TwitterClient({
   apiKey: process.env.API_KEY,
@@ -40,9 +39,14 @@ router.post('/checkToken', (req, res, next) => {
   });
 });
 
-router.get('/exchangeToken/:oauth_verifier', async (req, res, next) => {
+router.post('/exchangeToken/:id', async (req, res, next) => {
   try {
-    let response = await twitterClient.basics.oauthAccessToken({oauth_verifier: req.params.oauth_verifier});
+    let twitter = await Twitter.findOne({id: req.params.id}).exec();
+    let response = await twitterClient.basics.oauthAccessToken(
+      {
+        oauth_verifier: req.params.oauth_verifier,
+        oauth_token: twitter.oauth_token
+      });
     console.log(response);
     Twitter.updateOne({oauth_token: response.oauth_token}, {$set: {oauth_token_secret: response.oauth_token_secret}}, error => {
       if(error) next(error);

@@ -31,8 +31,8 @@ export class AuthService {
     )
   }
 
-  exchangeToken(oauth_verifier: string): Observable<boolean> {
-    return this.http.get<boolean>(`oauth/exchangeToken/${oauth_verifier}`, this.httpOptions)
+  exchangeToken(id: string, oauth_verifier: string): Observable<boolean> {
+    return this.http.post<boolean>(`oauth/exchangeToken/${id}`, oauth_verifier,this.httpOptions)
     .pipe(
       catchError(this.handleError<boolean>(false))
     )
