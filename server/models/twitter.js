@@ -3,7 +3,7 @@ let mongoose = require("mongoose"),
     email: String,
     id: String,
     oauth_token: String,
-    oauth_token_secret: String
+    oauth_token_secret: String,
 });
 
 module.exports = mongoose.model("Twitter", twitterSchema, 'twitter');
