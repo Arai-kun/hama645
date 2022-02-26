@@ -5,4 +5,4 @@ let mongoose = require("mongoose"),
     created_timestamp: String
 });
 
-module.exports = mongoose.model("DM", dmSchema, 'dm');
+module.exports = mongoose.model("Dm", dmSchema, 'dm');

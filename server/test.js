@@ -1,7 +1,7 @@
 let mongoose = require('mongoose');
 let Twitter = require('./models/twitter');
 let User = require('./models/user');
-let DM = require('./models/dm');
+let Dm = require('./models/dm');
 const { TwitterClient } = require('twitter-api-client');
 
 require('dotenv').config();mongoose.connect(
@@ -126,7 +126,7 @@ async function detectDMRequest(){
                     }
                 }
 
-                let dm = await DM.findOne({screen_name: twitter.screen_name}).exec();
+                let dm = await Dm.findOne({screen_name: twitter.screen_name}).exec();
                 if(!dm){
                     /* Initial */
                     dm.id = data['id'];
