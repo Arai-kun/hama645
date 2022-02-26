@@ -1,6 +1,8 @@
 let mongoose = require('mongoose');
 let Twitter = require('./models/twitter');
 const { TwitterClient } = require('twitter-api-client');
+let User = require('./models/user');
+let Twitter = require('./models/twitter');
 
 require('dotenv').config();mongoose.connect(
     'mongodb://localhost:27017/hama645?authSource=admin',
@@ -17,9 +19,9 @@ db.once('open', () => {
 
 
 
-//receiveDM();
+receiveDM();
 //sendDM();
-getFriends();
+//getFriends();
 
 async function sendDM(){
     try{
@@ -80,6 +82,38 @@ async function getFriends(){
         });
         let response = await twitterClient.accountsAndUsers.friendsIds();
         console.log(response);
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+
+async function detectDMRequest(){
+    try {
+       let users = await User.find({}).exec();
+       for(let user of users){
+           let twitters = await Twitter.find({email: user.email, authorized: true}).exec();
+           for(let twitter of twitters){
+            const twitterClient = new TwitterClient({
+                apiKey: process.env.API_KEY,
+                apiSecret: process.env.API_SECRET,
+                accessToken: twitter.oauth_token,
+                accessTokenSecret: twitter.oauth_token_secret
+            });
+            let ids = [];
+            let cursor = -1;
+            do {
+                let response = await twitterClient.accountsAndUsers.friendsIds({cursor: cursor});
+                response['ids'].forEach(id => {
+                    ids.push(id);
+                });
+                cursor = response['next_cursor'];
+            }
+            while(cursor !== 0);
+            console.log(ids);
+            //let
+           }
+       }
     }
     catch(error){
         console.log(error);
