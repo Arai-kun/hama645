@@ -18,7 +18,7 @@ db.once('open', () => {
 });
 
 
-detectDMRequest();
+main();
 
 
 //receiveDM();
@@ -145,7 +145,7 @@ async function detectDMRequest(){
                     dm.created_timestamp = data['created_timestamp'];
                     await dm.save();
                 }
-                
+
                 console.log('Wait...');
                 const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
                 await _sleep(1000 * 60);
@@ -154,6 +154,13 @@ async function detectDMRequest(){
     }
     catch(error){
         console.log(error);
+    }
+}
+
+function main(){
+    console.log('Active');
+    while(1){
+        detectDMRequest();
     }
 }
 
