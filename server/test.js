@@ -61,7 +61,7 @@ async function receiveDM(){
         });
         let response = await twitterClient.directMessages.eventsList();
         console.log(response);
-        console.log(response.event[0].message_create)
+        console.log(response.events[0].message_create)
     }
     catch(error){
         console.log(error);
