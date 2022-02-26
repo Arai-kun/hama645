@@ -60,7 +60,8 @@ async function receiveDM(){
             accessTokenSecret: twitter.oauth_token_secret
         });
         let response = await twitterClient.directMessages.eventsList();
-        console.log(JSON.parse(response));
+        console.log(response);
+        console.log(response.event[0].message_create)
     }
     catch(error){
         console.log(error);
