@@ -19,11 +19,7 @@ db.once('open', () => {
 
 
 while(true){
-    
     detectDMRequest();
-
-    const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-    await _sleep(1000 * 5);
 }
 
 //receiveDM();
