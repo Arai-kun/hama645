@@ -145,8 +145,10 @@ async function detectDMRequest(){
                     });
                 }
                 else{
-                    if(dm.id !== data['id'] && new Date(dm.created_timestamp) < new Date(data['created_timestamp'])){
+                    console.log(data);
+                    if(dm.id !== data['id'] && new Date(Number(dm.created_timestamp)) < new Date(Number(data['created_timestamp']))){
                         /* New DM */
+                        console.log('New DM')
                         if(ids.filter(el => el === data['message_create']['sender_id'])){
                             /* Request DM */
                             console.log('***** Detect Request DM! *****');
