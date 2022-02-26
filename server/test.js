@@ -128,8 +128,10 @@ async function detectDMRequest(){
                 let dm = await Dm.findOne({screen_name: twitter.screen_name}).exec();
                 if(!dm){
                     /* Initial */
-                    dm.id = data['id'];
-                    dm.created_timestamp = data['created_timestamp'];
+                    await Dm.create({
+                        id: data['id'],
+                        created_timestamp: data['created_timestamp'],
+                    });
                 }
                 else{
                     if(dm.id !== data['id'] && new Date(dm.created_timestamp) < new Date(data['created_timestamp'])){
@@ -141,9 +143,9 @@ async function detectDMRequest(){
                     }
                     dm.id = data['id'];
                     dm.created_timestamp = data['created_timestamp'];
+                    await dm.save();
                 }
-                await dm.save();
-
+                
                 console.log('Wait...');
                 const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
                 await _sleep(1000 * 60);
