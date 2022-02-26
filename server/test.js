@@ -157,9 +157,11 @@ async function detectDMRequest(){
     }
 }
 
-function main(){
+async function main(){
     console.log('Active');
     while(1){
+        const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+        await _sleep(1000 * 5);
         detectDMRequest();
     }
 }
