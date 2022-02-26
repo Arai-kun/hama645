@@ -1,6 +1,7 @@
 let mongoose = require('mongoose');
 let Twitter = require('./models/twitter');
 let User = require('./models/user');
+let DM = require('./models/dm');
 const { TwitterClient } = require('twitter-api-client');
 
 require('dotenv').config();mongoose.connect(
@@ -17,8 +18,15 @@ db.once('open', () => {
 });
 
 
+while(true){
+    
+    detectDMRequest();
 
-receiveDM();
+    const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    await _sleep(1000 * 5);
+}
+
+//receiveDM();
 //sendDM();
 //getFriends();
 
@@ -93,25 +101,58 @@ async function detectDMRequest(){
        for(let user of users){
            let twitters = await Twitter.find({email: user.email, authorized: true}).exec();
            for(let twitter of twitters){
-            const twitterClient = new TwitterClient({
-                apiKey: process.env.API_KEY,
-                apiSecret: process.env.API_SECRET,
-                accessToken: twitter.oauth_token,
-                accessTokenSecret: twitter.oauth_token_secret
-            });
-            let ids = [];
-            let cursor = -1;
-            do {
-                let response = await twitterClient.accountsAndUsers.friendsIds({cursor: cursor});
-                response['ids'].forEach(id => {
-                    ids.push(id);
+
+                const twitterClient = new TwitterClient({
+                    apiKey: process.env.API_KEY,
+                    apiSecret: process.env.API_SECRET,
+                    accessToken: twitter.oauth_token,
+                    accessTokenSecret: twitter.oauth_token_secret
                 });
-                cursor = response['next_cursor'];
+
+                let ids = [];
+                let cursor = -1;
+                do {
+                    let response = await twitterClient.accountsAndUsers.friendsIds({cursor: cursor});
+                    response['ids'].forEach(id => {
+                        ids.push(id);
+                    });
+                    cursor = response['next_cursor'];
+                }
+                while(cursor !== 0);
+                console.log(ids);
+
+                let response = await twitterClient.directMessages.eventsList();
+                let data;
+                for(let i; i < response.events.length; i++){
+                    data = response.events[i];
+                    if(data['type'] === 'message_create'){
+                        break;
+                    }
+                }
+
+                let dm = await DM.findOne({screen_name: twitter.screen_name}).exec();
+                if(!dm){
+                    /* Initial */
+                    dm.id = data['id'];
+                    dm.created_timestamp = data['created_timestamp'];
+                }
+                else{
+                    if(dm.id !== data['id'] && new Date(dm.created_timestamp) < new Date(data['created_timestamp'])){
+                        /* New DM */
+                        if(ids.filter(el => el === data['message_create']['sender_id'])){
+                            /* Request DM */
+                            console.log('***** Detect Request DM! *****');
+                        }
+                    }
+                    dm.id = data['id'];
+                    dm.created_timestamp = data['created_timestamp'];
+                }
+                await dm.save();
+
+                console.log('Wait...');
+                const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+                await _sleep(1000 * 60);
             }
-            while(cursor !== 0);
-            console.log(ids);
-            //let
-           }
        }
     }
     catch(error){
