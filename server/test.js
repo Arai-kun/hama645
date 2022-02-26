@@ -1,8 +1,7 @@
 let mongoose = require('mongoose');
 let Twitter = require('./models/twitter');
-const { TwitterClient } = require('twitter-api-client');
 let User = require('./models/user');
-let Twitter = require('./models/twitter');
+const { TwitterClient } = require('twitter-api-client');
 
 require('dotenv').config();mongoose.connect(
     'mongodb://localhost:27017/hama645?authSource=admin',
