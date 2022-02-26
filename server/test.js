@@ -18,9 +18,8 @@ db.once('open', () => {
 });
 
 
-for(let i = 0; i < 60; i++){
-    detectDMRequest();
-}
+detectDMRequest();
+
 
 //receiveDM();
 //sendDM();
