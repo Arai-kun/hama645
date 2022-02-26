@@ -33,6 +33,7 @@ import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { DmtoolRegisterComponent } from './dmtool-register/dmtool-register.component';
+import { DmtoolDeleteComponent } from './dmtool-delete/dmtool-delete.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { DmtoolRegisterComponent } from './dmtool-register/dmtool-register.compo
     HomeComponent,
     LoginComponent,
     RegisterComponent,
-    DmtoolRegisterComponent
+    DmtoolRegisterComponent,
+    DmtoolDeleteComponent
   ],
   imports: [
     BrowserModule,

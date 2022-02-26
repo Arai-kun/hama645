@@ -34,16 +34,16 @@ export class DbService {
 
   add<T>(kind: string, data: T): Observable<boolean> {
     const url = `db/${kind}`;
-    return this.http.post<T>(url, data, this.httpOptions)
+    return this.http.post<boolean>(url, data, this.httpOptions)
     .pipe(
-      map(result => {
-        if(result){
-          return true;
-        }
-        else{
-          return false;
-        }
-      }),
+      catchError(this.handleError<boolean>(false))
+    );
+  }
+
+  delete(kind: string, id: string): Observable<boolean>{
+    const url = `db/${kind}/${id}`;
+    return this.http.delete<boolean>(url, this.httpOptions)
+    .pipe(
       catchError(this.handleError<boolean>(false))
     );
   }

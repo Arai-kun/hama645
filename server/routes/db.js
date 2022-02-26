@@ -31,4 +31,12 @@ router.post('/twitter', (req, res, next) => {
     });
 });
 
+/* DELETE db/twitter/:screen_name */
+router.delete('/twitter/:screen_name', (req, res, next) => {
+    Twitter.deleteOne({screen_name: req.params.screen_name}, error => {
+      if(error) next(error);
+      res.json(true);
+    });
+  });
+
 module.exports = router;

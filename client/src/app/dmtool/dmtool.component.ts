@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../auth.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DmtoolRegisterComponent } from '../dmtool-register/dmtool-register.component';
 import { DbService } from '../db.service';
 import { twitter } from '../models/twitter';
+import { DmtoolDeleteComponent } from '../dmtool-delete/dmtool-delete.component';
 
 @Component({
   selector: 'app-dmtool',
@@ -31,7 +31,13 @@ export class DmtoolComponent implements OnInit {
   }
 
   onDelete(screen_name: string){
-    
+    let dialogRef = this.dialog.open(DmtoolDeleteComponent, {
+      width: '400px',
+      data: screen_name
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.ngOnInit();
+    });
   }
 
   onRegister(): void {
