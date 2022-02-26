@@ -124,7 +124,7 @@ async function detectDMRequest(){
                     cursor = response['next_cursor'];
                 }
                 while(cursor !== 0);
-                console.log(ids);
+                //console.log(ids);
 
                 let response = await twitterClient.directMessages.eventsList();
                 let data;
