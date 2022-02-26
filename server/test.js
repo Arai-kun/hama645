@@ -147,9 +147,8 @@ async function detectDMRequest(){
                 else{
                     if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
                         /* New DM */
-                        console.log('New DM')
-                        console.log(data['message_create']['sender_id']);
-                        if(!ids.filter(id => id === Number(data['message_create']['sender_id']))){
+                        console.log('New DM');
+                        if(ids.find(id => id === Number(data['message_create']['sender_id'])) === undefined){
                             /* Request DM */
                             console.log('***** Detect Request DM! *****');
                         }
