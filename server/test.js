@@ -26,8 +26,8 @@ db.once('open', () => {
 //getFriends();
 
 async function main(){
-    console.log('Active');
     while(1){
+        console.log('Active loop');
         const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
         await _sleep(1000 * 5);
 
@@ -145,11 +145,10 @@ async function detectDMRequest(){
                     });
                 }
                 else{
-                    console.log(data);
-                    if(dm.id !== data['id'] && new Date(Number(dm.created_timestamp)) < new Date(Number(data['created_timestamp']))){
+                    if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
                         /* New DM */
                         console.log('New DM')
-                        if(ids.filter(el => el === data['message_create']['sender_id'])){
+                        if(ids.filter(el => el === Number(data['message_create']['sender_id']))){
                             /* Request DM */
                             console.log('***** Detect Request DM! *****');
                         }
