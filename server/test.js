@@ -17,9 +17,10 @@ db.once('open', () => {
 
 
 
-main();
+receiveDM();
+//sendDM();
 
-async function main(){
+async function sendDM(){
     try{
         let twitter = await Twitter.findOne({screen_name: 'ka01_7'}).exec();
         const twitterClient = new TwitterClient({
@@ -42,6 +43,23 @@ async function main(){
             }
         });
 
+        console.log(response)
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+
+async function receiveDM(){
+    try {
+        let twitter = await Twitter.findOne({screen_name: 'mismoov'}).exec();
+        const twitterClient = new TwitterClient({
+            apiKey: process.env.API_KEY,
+            apiSecret: process.env.API_SECRET,
+            accessToken: twitter.oauth_token,
+            accessTokenSecret: twitter.oauth_token_secret
+        });
+        let response = await twitterClient.directMessages.eventsList();
         console.log(response)
     }
     catch(error){
