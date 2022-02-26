@@ -17,10 +17,8 @@ mongoose.connect(
 let db = mongoose.connection;
 db.once('open', () => {
   console.log('Successed connecting to DB');
+  main();
 });
-
-
-main();
 
 
 //receiveDM();
@@ -32,7 +30,7 @@ async function main(){
     while(1){
         const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
         await _sleep(1000 * 5);
-        
+
         await detectDMRequest();
     }
 }
@@ -141,6 +139,7 @@ async function detectDMRequest(){
                 if(!dm){
                     /* Initial */
                     await Dm.create({
+                        screen_name: twitter.screen_name,
                         id: data['id'],
                         created_timestamp: data['created_timestamp'],
                     });
