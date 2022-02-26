@@ -18,7 +18,7 @@ db.once('open', () => {
 });
 
 
-while(true){
+for(let i = 0; i < 60; i++){
     detectDMRequest();
 }
 
@@ -119,7 +119,7 @@ async function detectDMRequest(){
 
                 let response = await twitterClient.directMessages.eventsList();
                 let data;
-                for(let i; i < response.events.length; i++){
+                for(let i = 0; i < response.events.length; i++){
                     data = response.events[i];
                     if(data['type'] === 'message_create'){
                         break;
