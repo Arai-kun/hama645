@@ -4,7 +4,9 @@ let User = require('./models/user');
 let Dm = require('./models/dm');
 const { TwitterClient } = require('twitter-api-client');
 
-require('dotenv').config();mongoose.connect(
+require('dotenv').config();
+
+mongoose.connect(
     'mongodb://localhost:27017/hama645?authSource=admin',
     {
         useNewUrlParser: true,
@@ -24,6 +26,16 @@ main();
 //receiveDM();
 //sendDM();
 //getFriends();
+
+async function main(){
+    console.log('Active');
+    while(1){
+        const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+        await _sleep(1000 * 5);
+        
+        await detectDMRequest();
+    }
+}
 
 async function sendDM(){
     try{
@@ -154,15 +166,6 @@ async function detectDMRequest(){
     }
     catch(error){
         console.log(error);
-    }
-}
-
-async function main(){
-    console.log('Active');
-    while(1){
-        const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-        await _sleep(1000 * 5);
-        detectDMRequest();
     }
 }
 
