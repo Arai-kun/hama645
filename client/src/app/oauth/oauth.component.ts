@@ -23,7 +23,7 @@ export class OauthComponent implements OnInit {
     this.params = this.route.snapshot.queryParams;
     if(this.params['screen_name'] && !this.params['oauth_token'] && !this.params['oauth_verifier']){
       if(this.params['denied']){
-        this.router.navigate(['home']);
+        this.router.navigate(['/']);
       }
       /* Step1: Request Token */
       this.authService.requestToken(this.params['screen_name'])
