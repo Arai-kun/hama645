@@ -2,9 +2,12 @@ let mongoose = require('mongoose');
 let Twitter = require('./models/twitter');
 let User = require('./models/user');
 let Dm = require('./models/dm');
+let Log = require('../models/log');
 const { TwitterClient } = require('twitter-api-client');
-
+const sendgrid = require('@sendgrid/mail');
 require('dotenv').config();
+
+sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 
 mongoose.connect(
     'mongodb://localhost:27017/hama645?authSource=admin',
@@ -158,11 +161,29 @@ async function detectDMRequest(){
 				}
 				else{
 					if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
-						/* New DM */
-						log('New DM');
 						if(ids.find(id => id === Number(data['message_create']['sender_id'])) === undefined){
 							/* Request DM */
 							log('***** Detect Request DM! *****');
+							await Log.create({
+								timestamp: `${Date.now() - (new Date().getTimezoneOffset() * 60 * 1000)}`,
+								screen_name: twitter.screen_name,
+								event: 1
+							});
+							await sendgrid.send({
+								to: 'koki.alright@gmail.com',
+								from: 'noreply@enginestarter.nl',
+								subject: '【通知】Great Tools',
+								html: `<p>@${twitter.screen_name} でDMリクエストが届きました</p>`
+							});
+						}
+						else{
+							/* New DM */
+							log('Get new DM');
+							await Log.create({
+								timestamp: `${Date.now() - (new Date().getTimezoneOffset() * 60 * 1000)}`,
+								screen_name: twitter.screen_name,
+								event: 2
+							});
 						}
 					}
 					dm.id = data['id'];
