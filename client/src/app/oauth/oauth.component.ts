@@ -11,6 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class OauthComponent implements OnInit {
   params: Params = {};
+  iframe: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -47,7 +48,8 @@ export class OauthComponent implements OnInit {
           .subscribe(result => {
             if(result){
               this.snackBar.open('連携に成功しました', '閉じる', { duration: 5000 });
-              this.router.navigate(['home']);
+              this.iframe = true;
+              //this.router.navigate(['home']);
             }
             else{
               console.log('Exchange token failed');
