@@ -22,11 +22,14 @@ export class OauthComponent implements OnInit {
   ngOnInit(): void {
     this.params = this.route.snapshot.queryParams;
     if(this.params['screen_name'] && !this.params['oauth_token'] && !this.params['oauth_verifier']){
+      if(this.params['denied']){
+        this.router.navigate(['home']);
+      }
       /* Step1: Request Token */
       this.authService.requestToken(this.params['screen_name'])
       .subscribe(result => {
         if(result.oauth_callback_confirmed){
-          window.location.href = `https://api.twitter.com/oauth/authorize?oauth_token=${result.oauth_token}&force_login=true&screen_name=${this.params['screen_name']}`;
+          window.location.href = encodeURI(`https://api.twitter.com/oauth/authorize?oauth_token=${result.oauth_token}&force_login=true&screen_name=${this.params['screen_name']}`);
         }
         else{
           console.log('Request token failed');
