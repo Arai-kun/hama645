@@ -11,6 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class OauthComponent implements OnInit {
   params: Params = {};
+  iframe: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,7 +30,7 @@ export class OauthComponent implements OnInit {
       this.authService.requestToken(this.params['screen_name'])
       .subscribe(result => {
         if(result.oauth_callback_confirmed){
-          window.location.href = encodeURI(`https://api.twitter.com/oauth/authorize?oauth_token=${result.oauth_token}&force_login=true&screen_name=`);
+          window.location.href = encodeURI(`https://api.twitter.com/oauth/authenticate?oauth_token=${result.oauth_token}&force_login=true&screen_name=${this.params['screen_name']}`);
         }
         else{
           console.log('Request token failed');
