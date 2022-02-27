@@ -106,19 +106,17 @@ async function detectDMRequest(){
 		for(let user of users){
 			let twitters = await Twitter.find({email: user.email, authorized: true}).exec();
 			for(let twitter of twitters){
-				if(!twitter.latest_request_time){
-					/* Initial */	
-					twitter.latest_request_time = `${Date.now() - (new Date().getTimezoneOffset() * 60 * 1000)}`;
-					await twitter.save();
-				}
-				else{
+				log(`Start ${twitter.screen_name}`);
+				if(twitter.latest_request_time){
 					let diff = (Date.now() - (new Date().getTimezoneOffset() * 60 * 1000)) - Number(twitter.latest_request_time);
 					if( diff < (60 * 1000)){
-						console.log(`Wait ${(60 * 1000) - diff}ms ...`);
+						log(`Wait ${(60 * 1000) - diff} ms ...`);
 						const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 						await _sleep((60 * 1000) - diff);
 					}
 				}
+				twitter.latest_request_time = `${Date.now() - (new Date().getTimezoneOffset() * 60 * 1000)}`;
+				await twitter.save();
 
 				const twitterClient = new TwitterClient({
 					apiKey: process.env.API_KEY,
@@ -144,7 +142,7 @@ async function detectDMRequest(){
 				for(let i = 0; i < response.events.length; i++){
 					data = response.events[i];
 					if(data['type'] === 'message_create'){
-						console.log(`Found message_create index: ${i}`);
+						log(`Found message_create index: ${i}`);
 						break;
 					}
 				}
@@ -161,10 +159,10 @@ async function detectDMRequest(){
 				else{
 					if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
 						/* New DM */
-						console.log('New DM');
+						log('New DM');
 						if(ids.find(id => id === Number(data['message_create']['sender_id'])) === undefined){
 							/* Request DM */
-							console.log('***** Detect Request DM! *****');
+							log('***** Detect Request DM! *****');
 						}
 					}
 					dm.id = data['id'];
@@ -175,7 +173,12 @@ async function detectDMRequest(){
 		}
 	}
 	catch(error){
-			console.log(error);
+			log(error);
 	}
+}
+
+function log(str) {
+	const now = new Date(Date.now() - (new Date().getTimezoneOffset() * 60 * 1000));
+	console.log(`${now.toString()}: ` + str);
 }
 
