@@ -14,7 +14,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     /* Initial display */
-    this.router.navigate(['/home/dmtool']);
+    this.router.navigate(['/home/account']);
   }
 
 }

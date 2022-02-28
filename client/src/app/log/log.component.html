@@ -1,13 +1,11 @@
 <mat-card>
-    <!--<mat-card-header class="header">-->
-        <!--<mat-card-title class="mat-title">イベントログ</mat-card-title>-->
-            <span fxLayout="row" fxFlexOffset="auto">
-                <button mat-icon-button color="primary" (click)="onRefresh()"><mat-icon class="refresh-icon">refresh</mat-icon></button>
-            </span>
-    <!--</mat-card-header>-->
+    <mat-card-title>イベントログ</mat-card-title>
+    <span fxLayout="row" fxFlexOffset="auto">
+        <button mat-icon-button color="primary" (click)="onRefresh()"><mat-icon class="refresh-icon">refresh</mat-icon></button>
+    </span>
     <mat-card-content>
         <div class="mat-elevation-z8">
-            <table mat-table matTableExporter [dataSource]="dataSource" matSort matSortActive="no" matSortDirection="desc">
+            <table mat-table [dataSource]="dataSource" matSort matSortActive="no" matSortDirection="desc">
 
                 <!--- Note that these columns can be defined in any order.
                     The actual rendered columns are set as a property on the row definition" -->
