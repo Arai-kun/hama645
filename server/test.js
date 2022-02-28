@@ -113,13 +113,20 @@ async function detectDMRequest(){
 				if(twitter.latest_request_time){
 					//let diff = (Date.now() - (new Date().getTimezoneOffset() * 60 * 1000)) - Number(twitter.latest_request_time);
 					let diff = Date.now() - Number(twitter.latest_request_time);
-					if( 0 < diff && diff < (60 * 1000)){
+					const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+					if( 0 <= diff && diff < (60 * 1000)){
 						log(`Wait ${(60 * 1000) - diff} ms ...`);
-						const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 						await _sleep((60 * 1000) - diff);
 					}
+					else if(diff < 0){
+						log(`Wait ${(60 * 1000)} ms ...`);
+						await _sleep((60 * 1000));
+					}
+					else{
+						// No wait
+					}
 				}
-				twitter.latest_request_time = `${Date.now() - (new Date().getTimezoneOffset() * 60 * 1000)}`;
+				twitter.latest_request_time = `${Date.now()}`;
 				await twitter.save();
 
 				const twitterClient = new TwitterClient({
@@ -142,7 +149,7 @@ async function detectDMRequest(){
 				//console.log(ids);
 
 				let response = await twitterClient.directMessages.eventsList();
-				console.log(response);
+				console.log(response.events[0].message_create);
 				let data;
 				for(let i = 0; i < response.events.length; i++){
 					data = response.events[i];
