@@ -113,7 +113,7 @@ async function detectDMRequest(){
 				if(twitter.latest_request_time){
 					//let diff = (Date.now() - (new Date().getTimezoneOffset() * 60 * 1000)) - Number(twitter.latest_request_time);
 					let diff = Date.now() - Number(twitter.latest_request_time);
-					if( diff < (60 * 1000)){
+					if( 0 < diff && diff < (60 * 1000)){
 						log(`Wait ${(60 * 1000) - diff} ms ...`);
 						const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 						await _sleep((60 * 1000) - diff);
