@@ -149,7 +149,7 @@ async function detectDMRequest(){
 				//console.log(ids);
 
 				let response = await twitterClient.directMessages.eventsList();
-				console.log(response.events[0].message_create);
+				//console.log(response.events[0].message_create);
 				let data;
 				for(let i = 0; i < response.events.length; i++){
 					data = response.events[i];
@@ -159,18 +159,18 @@ async function detectDMRequest(){
 					}
 				}
 
-				/* Only receiver */
-				if(twitter.screen_name !== data['message_create']['sender_id']){
-					let dm = await Dm.findOne({screen_name: twitter.screen_name}).exec();
-					if(!dm){
-						/* Initial */
-						await Dm.create({
-							screen_name: twitter.screen_name,
-							id: data['id'],
-							created_timestamp: data['created_timestamp'],
-						});
-					}
-					else{
+				let dm = await Dm.findOne({screen_name: twitter.screen_name}).exec();
+				if(!dm){
+					/* Initial */
+					await Dm.create({
+						screen_name: twitter.screen_name,
+						id: data['id'],
+						created_timestamp: data['created_timestamp'],
+					});
+				}
+				else{
+					/* If sender, ignore. Then data updates only */
+					if(twitter.screen_name !== data['message_create']['sender_id']){
 						if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
 							if(ids.find(id => id === Number(data['message_create']['sender_id'])) === undefined){
 								/* Request DM */
@@ -197,11 +197,12 @@ async function detectDMRequest(){
 								});
 							}
 						}
-						dm.id = data['id'];
-						dm.created_timestamp = data['created_timestamp'];
-						await dm.save();
 					}
+					dm.id = data['id'];
+					dm.created_timestamp = data['created_timestamp'];
+					await dm.save();
 				}
+				
 			}
 		}
 	}
