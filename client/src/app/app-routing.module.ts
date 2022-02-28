@@ -17,7 +17,7 @@ const routes: Routes = [
     component: HomeComponent,
     canActivate: [AuthGuard],
     children: [
-      { path: 'dmtool', component: DmtoolComponent },
+      { path: 'account', component: DmtoolComponent },
       { path: 'log', component: LogComponent }
     ]
   }
