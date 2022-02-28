@@ -2,7 +2,7 @@ let mongoose = require('mongoose');
 let Twitter = require('./models/twitter');
 let User = require('./models/user');
 let Dm = require('./models/dm');
-let Log = require('../models/log');
+let Log = require('./models/log');
 const { TwitterClient } = require('twitter-api-client');
 const sendgrid = require('@sendgrid/mail');
 require('dotenv').config();
