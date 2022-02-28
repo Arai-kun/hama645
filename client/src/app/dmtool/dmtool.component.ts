@@ -4,7 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { DmtoolRegisterComponent } from '../dmtool-register/dmtool-register.component';
 import { DbService } from '../db.service';
 import { twitter } from '../models/twitter';
+import { special } from '../models/special'
 import { DmtoolDeleteComponent } from '../dmtool-delete/dmtool-delete.component';
+import { DmtoolRegisterSpComponent } from '../dmtool-register-sp/dmtool-register-sp.component';
+import { DmtoolDeleteSpComponent } from '../dmtool-delete-sp/dmtool-delete-sp.component';
 
 @Component({
   selector: 'app-dmtool',
@@ -13,6 +16,7 @@ import { DmtoolDeleteComponent } from '../dmtool-delete/dmtool-delete.component'
 })
 export class DmtoolComponent implements OnInit {
   twitters: twitter[] = [];
+  specials: special[] = [];
 
   constructor(
     private router: Router,
@@ -22,6 +26,7 @@ export class DmtoolComponent implements OnInit {
 
   ngOnInit(): void {
     this.getTwitters();
+    this.getSpecials();
   }
 
   onDM(): void { }
@@ -52,5 +57,31 @@ export class DmtoolComponent implements OnInit {
   getTwitters(): void {
     this.dbService.getAll<twitter>('twitters')
     .subscribe(twitters => this.twitters = twitters);
+  }
+  
+  onRegisterSP(): void {
+    let dialogRef = this.dialog.open(DmtoolRegisterSpComponent, {
+      width: '400px'
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.ngOnInit();
+    });
+
+  }
+
+  onDeleteSP(screen_name: string): void {
+    let dialogRef = this.dialog.open(DmtoolDeleteSpComponent, {
+      width: '400px',
+      data: screen_name
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.ngOnInit();
+    });
+
+  }
+
+  getSpecials(): void {
+    this.dbService.getAll<special>('specials')
+    .subscribe(spcials => this.specials = spcials);
   }
 }

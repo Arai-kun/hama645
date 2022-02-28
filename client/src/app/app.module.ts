@@ -24,6 +24,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTabsModule } from '@angular/material/tabs';
 
 /* Component */
 import { AppComponent } from './app.component';
@@ -36,6 +37,8 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { DmtoolRegisterComponent } from './dmtool-register/dmtool-register.component';
 import { DmtoolDeleteComponent } from './dmtool-delete/dmtool-delete.component';
+import { DmtoolRegisterSpComponent } from './dmtool-register-sp/dmtool-register-sp.component';
+import { DmtoolDeleteSpComponent } from './dmtool-delete-sp/dmtool-delete-sp.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +51,9 @@ import { DmtoolDeleteComponent } from './dmtool-delete/dmtool-delete.component';
     LoginComponent,
     RegisterComponent,
     DmtoolRegisterComponent,
-    DmtoolDeleteComponent
+    DmtoolDeleteComponent,
+    DmtoolRegisterSpComponent,
+    DmtoolDeleteSpComponent
   ],
   imports: [
     BrowserModule,
@@ -74,7 +79,8 @@ import { DmtoolDeleteComponent } from './dmtool-delete/dmtool-delete.component';
     MatDividerModule,
     MatAutocompleteModule,
     MatSortModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatTabsModule
   ],
   providers: [],
   bootstrap: [AppComponent],
