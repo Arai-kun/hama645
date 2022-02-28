@@ -40,7 +40,7 @@ router.delete('/twitter/:screen_name', (req, res, next) => {
 });
 
 /* GET db/logs */
-dbRouter.get('/logs', (req, res, next) => {
+router.get('/logs', (req, res, next) => {
   Log.find({}, (error, logs) => {
     if(error) next(error);
     res.json(logs);
