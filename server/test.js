@@ -170,7 +170,7 @@ async function detectDMRequest(){
 				}
 				else{
 					/* If sender, ignore. Then data updates only */
-					if(twitter.screen_name !== data['message_create']['sender_id']){
+					if(twitter.user_id !== data['message_create']['sender_id']){
 						if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
 							if(ids.find(id => id === Number(data['message_create']['sender_id'])) === undefined){
 								/* Request DM */
