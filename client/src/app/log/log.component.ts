@@ -55,7 +55,7 @@ export class LogComponent implements OnInit, AfterViewInit{
       }
       let displaylogs: displayData[] = [];
       logs.forEach(log => {
-        let time = new Date(Number(log.msec));
+        let time = new Date(Number(log.timestamp));
         let event: string = '';
         switch(log.event){
           case 1:

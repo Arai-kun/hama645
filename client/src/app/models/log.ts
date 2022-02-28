@@ -1,6 +1,6 @@
 export interface log {
     no: number,
-    msec: string,
+    timestamp: string,
     screen_name: string,
     event: number,
 }
