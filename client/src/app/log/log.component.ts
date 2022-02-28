@@ -9,7 +9,6 @@ import { MatSort } from '@angular/material/sort';
 export interface displayData {
   no: number,
   date: string,
-  time: string,
   screen_name: string,
   event: string
 }
@@ -23,7 +22,6 @@ export class LogComponent implements OnInit, AfterViewInit{
   displayedColumns: string[] = [
     'no',
     'date',
-    'time',
     'screen_name',
     'event'
   ];
@@ -70,7 +68,7 @@ export class LogComponent implements OnInit, AfterViewInit{
         displaylogs.push({
           no: log.no,
           date: `${time.getFullYear()}/${this.pad(time.getMonth() + 1)}/${this.pad(time.getDate())}`,
-          time: `${this.pad(time.getHours())}:${this.pad(time.getMinutes())}:${this.pad(time.getSeconds())}`,
+          //time: `${this.pad(time.getHours())}:${this.pad(time.getMinutes())}:${this.pad(time.getSeconds())}`,
           screen_name: log.screen_name,
           event: event
         });
