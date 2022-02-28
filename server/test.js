@@ -111,7 +111,8 @@ async function detectDMRequest(){
 			for(let twitter of twitters){
 				log(`Start ${twitter.screen_name}`);
 				if(twitter.latest_request_time){
-					let diff = (Date.now() - (new Date().getTimezoneOffset() * 60 * 1000)) - Number(twitter.latest_request_time);
+					//let diff = (Date.now() - (new Date().getTimezoneOffset() * 60 * 1000)) - Number(twitter.latest_request_time);
+					let diff = Date.now() - Number(twitter.latest_request_time);
 					if( diff < (60 * 1000)){
 						log(`Wait ${(60 * 1000) - diff} ms ...`);
 						const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -141,6 +142,7 @@ async function detectDMRequest(){
 				//console.log(ids);
 
 				let response = await twitterClient.directMessages.eventsList();
+				console.log(response);
 				let data;
 				for(let i = 0; i < response.events.length; i++){
 					data = response.events[i];
@@ -165,7 +167,7 @@ async function detectDMRequest(){
 							/* Request DM */
 							log('***** Detect Request DM! *****');
 							await Log.create({
-								timestamp: `${Date.now() - (new Date().getTimezoneOffset() * 60 * 1000)}`,
+								timestamp: `${Date.now()}`,
 								screen_name: twitter.screen_name,
 								event: 1
 							});
@@ -180,7 +182,7 @@ async function detectDMRequest(){
 							/* New DM */
 							log('Get new DM');
 							await Log.create({
-								timestamp: `${Date.now() - (new Date().getTimezoneOffset() * 60 * 1000)}`,
+								timestamp: `${Date.now()}`,
 								screen_name: twitter.screen_name,
 								event: 2
 							});
@@ -199,7 +201,7 @@ async function detectDMRequest(){
 }
 
 function log(str) {
-	const now = new Date(Date.now() - (new Date().getTimezoneOffset() * 60 * 1000));
+	const now = new Date();
 	console.log(`${now.toString()}: ` + str);
 }
 
