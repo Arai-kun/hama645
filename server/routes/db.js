@@ -1,6 +1,7 @@
 let express = require('express');
 let router = express.Router();
 let Twitter = require('../models/twitter');
+let Log = require('../models/log');
 
 /* GET db/twitter/:screen_name */
 router.get('/twitter/:screen_name', (req, res, next) => {
