@@ -35,7 +35,7 @@ export class DmtoolRegisterSpComponent implements OnInit {
     let special: special = {
       screen_name: this.form.get('screenName')?.value,
     }
-    this.dbService.get<special>('twitter', special.screen_name)
+    this.dbService.get<special>('special', special.screen_name)
     .subscribe(exist => {
       if(exist){
         this.snackBar.open('このTwitter IDは既に登録済みです', '閉じる', { duration: 7000 });
