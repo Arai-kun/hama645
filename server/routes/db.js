@@ -66,7 +66,7 @@ router.get('/specials', (req, res, next) => {
 });
 
 /* POST db/special */
-router.post('/special', (req, res, next) => {
+router.post('/special', async (req, res, next) => {
   const twitterClient = new TwitterClient({
     apiKey: process.env.API_KEY,
     apiSecret: process.env.API_SECRET,
