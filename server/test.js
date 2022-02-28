@@ -159,45 +159,48 @@ async function detectDMRequest(){
 					}
 				}
 
-				let dm = await Dm.findOne({screen_name: twitter.screen_name}).exec();
-				if(!dm){
-					/* Initial */
-					await Dm.create({
-						screen_name: twitter.screen_name,
-						id: data['id'],
-						created_timestamp: data['created_timestamp'],
-					});
-				}
-				else{
-					if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
-						if(ids.find(id => id === Number(data['message_create']['sender_id'])) === undefined){
-							/* Request DM */
-							log('***** Detect Request DM! *****');
-							await Log.create({
-								timestamp: `${Date.now()}`,
-								screen_name: twitter.screen_name,
-								event: 1
-							});
-							await sendgrid.send({
-								to: 'koki.alright@gmail.com',
-								from: 'noreply@enginestarter.nl',
-								subject: '【通知】Great Tools',
-								html: `<p>@${twitter.screen_name} でDMリクエストが届きました</p>`
-							});
-						}
-						else{
-							/* New DM */
-							log('Get new DM');
-							await Log.create({
-								timestamp: `${Date.now()}`,
-								screen_name: twitter.screen_name,
-								event: 2
-							});
-						}
+				/* Only receiver */
+				if(twitter.screen_name !== data['message_create']['sender_id']){
+					let dm = await Dm.findOne({screen_name: twitter.screen_name}).exec();
+					if(!dm){
+						/* Initial */
+						await Dm.create({
+							screen_name: twitter.screen_name,
+							id: data['id'],
+							created_timestamp: data['created_timestamp'],
+						});
 					}
-					dm.id = data['id'];
-					dm.created_timestamp = data['created_timestamp'];
-					await dm.save();
+					else{
+						if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
+							if(ids.find(id => id === Number(data['message_create']['sender_id'])) === undefined){
+								/* Request DM */
+								log('***** Detect Request DM! *****');
+								await Log.create({
+									timestamp: `${Date.now()}`,
+									screen_name: twitter.screen_name,
+									event: 1
+								});
+								await sendgrid.send({
+									to: 'koki.alright@gmail.com',
+									from: 'noreply@enginestarter.nl',
+									subject: '【通知】Great Tools',
+									html: `<p>@${twitter.screen_name} でDMリクエストが届きました</p>`
+								});
+							}
+							else{
+								/* New DM */
+								log('Get new DM');
+								await Log.create({
+									timestamp: `${Date.now()}`,
+									screen_name: twitter.screen_name,
+									event: 2
+								});
+							}
+						}
+						dm.id = data['id'];
+						dm.created_timestamp = data['created_timestamp'];
+						await dm.save();
+					}
 				}
 			}
 		}
