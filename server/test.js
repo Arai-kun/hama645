@@ -210,7 +210,7 @@ async function detectDMRequest(){
 										to: 'koki.alright@gmail.com',
 										from: 'noreply@enginestarter.nl',
 										subject: '【特殊通知】タイトル未定',
-										html: `<p>${special.screen_name} から@${twitter.screen_name} にDMが届きました</p>`
+										html: `<p>@${special.screen_name} から@${twitter.screen_name} にDMが届きました</p>`
 									});
 								}
 							}
