@@ -21,9 +21,9 @@
                     <mat-card-actions>
                         <button mat-button (click)="onDelete(twitter.screen_name)">削除</button>
                         <span fxlayout="row" fxFlexOffset="auto" fxLayoutGap="8px">
-                            <span *ngIf="!twitter.authorized">
-                                <button mat-raised-button color="accent" (click)="onOAuth(twitter.screen_name)">連携</button>
-                            </span>
+                            <!--<span *ngIf="!twitter.authorized">-->
+                                <button *ngIf="!twitter.authorized" mat-raised-button color="accent" (click)="onOAuth(twitter.screen_name)">連携</button>
+                            <!--</span>-->
                             <button mat-raised-button color="primary" (click)="onDM()">DM</button>
                         </span>
                     </mat-card-actions>
