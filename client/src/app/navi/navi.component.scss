@@ -5,11 +5,11 @@
 .sidenav {
     width: 184px;
     background-color: #3f51b5;
-    color: #FFFFFF;
 }
 
 .sidenav .mat-toolbar {
     background: inherit;
+    color: #FFFFFF;
 }
 
 .mat-toolbar.mat-primary {
@@ -29,4 +29,8 @@
 
 .list-icon {
     padding-right: 8px;
+}
+
+.mat-nav-list {
+    color: #FFFFFF;
 }
