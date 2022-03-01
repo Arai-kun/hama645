@@ -84,7 +84,14 @@ router.post('/special', async (req, res, next) => {
     res.json(true);
   }
   catch(error){
-    console.log(error);
+    /* User not found */
+    if('statusCode' in error){
+      if(error.statusCode === 404){
+        res.json(false);
+        return;
+      }
+    }
+    
     next(error);
   }
 });
