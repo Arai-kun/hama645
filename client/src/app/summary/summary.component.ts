@@ -10,10 +10,13 @@ import { summary } from '../models/summary';
 
 export interface displayData {
   screen_name: string,
+  date5: number,
+  date4: number,
   date3: number,
   date2: number,
   date1: number,
-  sum: number
+  sum2: number,
+  sum1: number
 }
 
 @Component({
@@ -24,15 +27,20 @@ export interface displayData {
 export class SummaryComponent implements OnInit, AfterViewInit{
   displayedColumns: string[] = [
     'screen_name',
+    'date5',
+    'date4',
     'date3',
     'date2',
     'date1',
-    'sum'
+    'sum2',
+    'sum1'
   ];
   dataSource = new MatTableDataSource<displayData>();
   date1: string = ''; 
   date2: string = '';
   date3: string = '';
+  date4: string = '';
+  date5: string = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -55,6 +63,20 @@ export class SummaryComponent implements OnInit, AfterViewInit{
     }
     else{
       let previous = new Date(Date.now() - (47 * 60 * 60 * 1000 + 59 * 60 * 1000 + 59 * 1000));
+      this.date3 = `${previous.getMonth() + 1}/${previous.getDate()}`;
+    }
+    if((new Date().getDate() - 3) > 0){
+      this.date3 = `${new Date().getMonth() + 1}/${new Date().getDate()- 3}`;
+    }
+    else{
+      let previous = new Date(Date.now() - (71 * 60 * 60 * 1000 + 59 * 60 * 1000 + 59 * 1000));
+      this.date3 = `${previous.getMonth() + 1}/${previous.getDate()}`;
+    }
+    if((new Date().getDate() - 4) > 0){
+      this.date3 = `${new Date().getMonth() + 1}/${new Date().getDate()- 4}`;
+    }
+    else{
+      let previous = new Date(Date.now() - (95 * 60 * 60 * 1000 + 59 * 60 * 1000 + 59 * 1000));
       this.date3 = `${previous.getMonth() + 1}/${previous.getDate()}`;
     }
     this.getSummary();
