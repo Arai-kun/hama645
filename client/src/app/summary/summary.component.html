@@ -40,16 +40,10 @@
             <td mat-cell *matCellDef="let element"> {{element.date1}} </td>
         </ng-container>
 
-        <!-- sum1 Column -->
-        <ng-container matColumnDef="sum2">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>前月合計</th>
-            <td mat-cell *matCellDef="let element"> {{element.sum2}} </td>
-        </ng-container>
-
-        <!-- sum1 Column -->
-        <ng-container matColumnDef="sum1">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>当月合計</th>
-            <td mat-cell *matCellDef="let element"> {{element.sum1}} </td>
+        <!-- sum Column -->
+        <ng-container matColumnDef="sum">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>当月</th>
+            <td mat-cell *matCellDef="let element"> {{element.sum}} </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

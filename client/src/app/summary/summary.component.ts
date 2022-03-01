@@ -15,8 +15,7 @@ export interface displayData {
   date3: number,
   date2: number,
   date1: number,
-  sum2: number,
-  sum1: number
+  sum: number
 }
 
 @Component({
@@ -32,8 +31,7 @@ export class SummaryComponent implements OnInit, AfterViewInit{
     'date3',
     'date2',
     'date1',
-    'sum2',
-    'sum1'
+    'sum'
   ];
   dataSource = new MatTableDataSource<displayData>();
   date1: string = ''; 
