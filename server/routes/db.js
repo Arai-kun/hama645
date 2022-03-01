@@ -104,4 +104,9 @@ router.delete('/special/:screen_name', (req, res, next) => {
   });
 });
 
+/* GET db/summary */
+router.get('summary', (req, res, next) => {
+  Log.find({})
+})
+
 module.exports = router;

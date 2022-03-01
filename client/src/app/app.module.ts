@@ -39,6 +39,7 @@ import { DmtoolRegisterComponent } from './dmtool-register/dmtool-register.compo
 import { DmtoolDeleteComponent } from './dmtool-delete/dmtool-delete.component';
 import { DmtoolRegisterSpComponent } from './dmtool-register-sp/dmtool-register-sp.component';
 import { DmtoolDeleteSpComponent } from './dmtool-delete-sp/dmtool-delete-sp.component';
+import { SummaryComponent } from './summary/summary.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { DmtoolDeleteSpComponent } from './dmtool-delete-sp/dmtool-delete-sp.com
     DmtoolRegisterComponent,
     DmtoolDeleteComponent,
     DmtoolRegisterSpComponent,
-    DmtoolDeleteSpComponent
+    DmtoolDeleteSpComponent,
+    SummaryComponent
   ],
   imports: [
     BrowserModule,
