@@ -184,14 +184,14 @@ async function detectDMRequest(){
 								await sendgrid.send({
 									to: 'koki.alright@gmail.com',
 									from: 'noreply@enginestarter.nl',
-									subject: '【通知】Great Tools',
+									subject: '【通知】タイトル未定',
 									html: `<p>@${twitter.screen_name} にDMリクエストが届きました</p>`
 								});
 							}
 							else{
 								/* New DM */
 								let special = await Special.findOne({user_id: data['message_create']['sender_id']}).exec();
-								if(special){
+								if(!special){
 									log('Get new DM');
 									await Log.create({
 										timestamp: `${Date.now()}`,
@@ -209,7 +209,7 @@ async function detectDMRequest(){
 									await sendgrid.send({
 										to: 'koki.alright@gmail.com',
 										from: 'noreply@enginestarter.nl',
-										subject: '【特殊通知】Great Tools',
+										subject: '【特殊通知】タイトル未定',
 										html: `<p>${special.screen_name} から@${twitter.screen_name} にDMが届きました</p>`
 									});
 								}
