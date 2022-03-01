@@ -76,6 +76,10 @@ router.post('/special', async (req, res, next) => {
 
   try {
     let response = await twitterClient.accountsAndUsers.usersShow({screen_name: req.body['screen_name']});
+    if(!response){
+      res.json(false);
+      return;
+    }
     await Special.create({
       email: req.user['email'],
       screen_name: req.body['screen_name'],
