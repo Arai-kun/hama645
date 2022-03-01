@@ -3,6 +3,7 @@ let Twitter = require('./models/twitter');
 let User = require('./models/user');
 let Dm = require('./models/dm');
 let Log = require('./models/log');
+let Special = require('./models/special');
 const { TwitterClient } = require('twitter-api-client');
 const sendgrid = require('@sendgrid/mail');
 require('dotenv').config();
@@ -173,7 +174,7 @@ async function detectDMRequest(){
 					if(twitter.user_id !== data['message_create']['sender_id']){
 						if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
 							if(ids.find(id => id === Number(data['message_create']['sender_id'])) === undefined){
-								/* Request DM */
+								/* DM Request */
 								log('***** Detect Request DM! *****');
 								await Log.create({
 									timestamp: `${Date.now()}`,
@@ -184,17 +185,34 @@ async function detectDMRequest(){
 									to: 'koki.alright@gmail.com',
 									from: 'noreply@enginestarter.nl',
 									subject: '【通知】Great Tools',
-									html: `<p>@${twitter.screen_name} でDMリクエストが届きました</p>`
+									html: `<p>@${twitter.screen_name} にDMリクエストが届きました</p>`
 								});
 							}
 							else{
 								/* New DM */
-								log('Get new DM');
-								await Log.create({
-									timestamp: `${Date.now()}`,
-									screen_name: twitter.screen_name,
-									event: 2
-								});
+								let special = await Special.findOne({user_id: data['message_create']['sender_id']}).exec();
+								if(special){
+									log('Get new DM');
+									await Log.create({
+										timestamp: `${Date.now()}`,
+										screen_name: twitter.screen_name,
+										event: 2
+									});
+								}
+								else{
+									log('Get new special DM');
+									await Log.create({
+										timestamp: `${Date.now()}`,
+										screen_name: twitter.screen_name,
+										event: 3
+									});
+									await sendgrid.send({
+										to: 'koki.alright@gmail.com',
+										from: 'noreply@enginestarter.nl',
+										subject: '【特殊通知】Great Tools',
+										html: `<p>${special.screen_name} から@${twitter.screen_name} にDMが届きました</p>`
+									});
+								}
 							}
 						}
 					}

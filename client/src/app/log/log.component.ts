@@ -62,6 +62,9 @@ export class LogComponent implements OnInit, AfterViewInit{
           case 2:
             event = 'DM受信';
             break;
+          case 3:
+            event = '特殊DM受信';
+            break;
           default:
             break;
         }

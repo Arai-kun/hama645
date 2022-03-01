@@ -1,5 +1,5 @@
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #drawer class="sidenav" fixedInViewport
+  <mat-sidenav #drawer color="primary" class="sidenav" fixedInViewport
       [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
       [mode]="(isHandset$ | async) ? 'over' : 'side'"
       [opened]="(isHandset$ | async) === false">
@@ -10,7 +10,7 @@
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    <mat-toolbar color="primary">
+    <mat-toolbar>
       <button
         type="button"
         aria-label="Toggle sidenav"
