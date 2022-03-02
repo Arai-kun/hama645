@@ -112,30 +112,8 @@ router.get('/summary', async (req, res, next) => {
   for(let i = 1; i < date.length; i++){
     date[i] = new Date(Date.now() - (24 * (i - 1) * 60 * 60 + 23 * 60 * 60 + 59 * 60 + 59) * 1000);
   }
-  /*
-  Twitter.find({email: req.user['email']}, (error, twitters) => {
-    if(error) next(error);
-    for(let twitter of twitters){
-      Log.find({screen_name: twitter.screen_name}, (error, logs) => {
-        if(error) next(error);
-        let count_date = new Array(5);
-        for(let i = 0; i < count_date.length; i++){
-          count_date[i] = logs.filter(log => new Date(Number(log.timestamp)).getMonth() === date[i].getMonth() && new Date(Number(log.timestamp)).getDate() === date[i].getDate()).length;
-        }
-        let count_sum = logs.filter(log => new Date(Number(log.timestamp)).getMonth() === date[0].getMonth()).length;
-        summary.push({
-          screen_name: twitter.screen_name,
-          date: count_date,
-          sum: count_sum
-        });
-      });
-    }
-    console.log(summary);
-    res.json(summary);
-  })*/
-  
   try {
-    let twitters = await Twitter.find({email: req.user['email']}).exec();
+    let twitters = await Twitter.find({email: req.user['email'], authorized: true}).exec();
     for(let twitter of twitters){
       let logs = await Log.find({screen_name: twitter.screen_name}).exec();
       let count_date = new Array(5);

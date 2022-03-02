@@ -45,35 +45,6 @@ export class SummaryComponent implements OnInit, AfterViewInit{
       let time = new Date(Date.now() - (24 * (i - 1) * 60 * 60 + 23 * 60 * 60 + 59 * 60 + 59) * 1000);
       this.date[i] = `${time.getMonth() + 1}/${time.getDate()}`;
     }
-    /*
-    if((new Date().getDate() - 1) > 0){
-      this.date2 = `${new Date().getMonth() + 1}/${new Date().getDate() - 1}`;
-    }
-    else{
-      let previous = new Date(Date.now() - (23 * 60 * 60 * 1000 + 59 * 60 * 1000 + 59 * 1000));
-      this.date2 = `${previous.getMonth() + 1}/${previous.getDate()}`;
-    }
-    if((new Date().getDate() - 2) > 0){
-      this.date3 = `${new Date().getMonth() + 1}/${new Date().getDate() - 2}`;
-    }
-    else{
-      let previous = new Date(Date.now() - (47 * 60 * 60 * 1000 + 59 * 60 * 1000 + 59 * 1000));
-      this.date3 = `${previous.getMonth() + 1}/${previous.getDate()}`;
-    }
-    if((new Date().getDate() - 3) > 0){
-      this.date4 = `${new Date().getMonth() + 1}/${new Date().getDate() - 3}`;
-    }
-    else{
-      let previous = new Date(Date.now() - (71 * 60 * 60 * 1000 + 59 * 60 * 1000 + 59 * 1000));
-      this.date4 = `${previous.getMonth() + 1}/${previous.getDate()}`;
-    }
-    if((new Date().getDate() - 4) > 0){
-      this.date5 = `${new Date().getMonth() + 1}/${new Date().getDate() - 4}`;
-    }
-    else{
-      let previous = new Date(Date.now() - (95 * 60 * 60 * 1000 + 59 * 60 * 1000 + 59 * 1000));
-      this.date5 = `${previous.getMonth() + 1}/${previous.getDate()}`;
-    }*/
     this.getSummary();
   }
 
