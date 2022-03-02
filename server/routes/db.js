@@ -128,9 +128,9 @@ router.get('/summary', (req, res, next) => {
           sum: count_sum
         });
       });
-      console.log(summary);
-      res.json(summary);
     }
+    console.log(summary);
+    res.json(summary);
   })
   /*
   try {
