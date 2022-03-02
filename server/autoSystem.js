@@ -107,81 +107,81 @@ async function detectDMRequest(){
 
 				let response = await twitterClient.directMessages.eventsList();
 				//console.log(response.events[0].message_create);
-				let data;
-				for(let i = 0; i < response.events.length; i++){
-					data = response.events[i];
-					if(data['type'] === 'message_create'){
-						log(`Found message_create index: ${i}`);
-						break;
+				if(response.events.length !== 0){
+					let data;
+					for(let i = 0; i < response.events.length; i++){
+						data = response.events[i];
+						if(data['type'] === 'message_create'){
+							log(`Found message_create index: ${i}`);
+							break;
+						}
 					}
-				}
 
-				let dm = await Dm.findOne({email: user.email, screen_name: twitter.screen_name}).exec();
-				if(!dm){
-					/* Initial */
-					log(JSON.stringify(response));
-					await Dm.create({
-						email: user.email, 
-						screen_name: twitter.screen_name,
-						id: data['id'],
-						created_timestamp: data['created_timestamp'],
-					});
-				}
-				else{
-					/* If sender, ignore. Then data updates only */
-					if(twitter.user_id !== data['message_create']['sender_id']){
-						if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
-							if(ids.find(id => id === Number(data['message_create']['sender_id'])) === undefined){
-								/* DM Request */
-								log('***** Detect Request DM! *****');
-								await Log.create({
-									email: user.email,
-									timestamp: `${Date.now()}`,
-									screen_name: twitter.screen_name,
-									event: 1
-								});
-								await sendgrid.send({
-									to: user.email,
-									from: 'noreply@enginestarter.nl',
-									subject: '【通知】タイトル未定',
-									html: `<p>@${twitter.screen_name} にDMリクエストが届きました</p>`
-								});
-							}
-							else{
-								/* New DM */
-								let special = await Special.findOne({user_id: data['message_create']['sender_id']}).exec();
-								if(!special){
-									log('Get new DM');
+					let dm = await Dm.findOne({email: user.email, screen_name: twitter.screen_name}).exec();
+					if(!dm){
+						/* Initial */
+						await Dm.create({
+							email: user.email, 
+							screen_name: twitter.screen_name,
+							id: data['id'],
+							created_timestamp: data['created_timestamp'],
+						});
+					}
+					else{
+						/* If sender, ignore. Then data updates only */
+						if(twitter.user_id !== data['message_create']['sender_id']){
+							if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
+								if(ids.find(id => id === Number(data['message_create']['sender_id'])) === undefined){
+									/* DM Request */
+									log('***** Detect Request DM! *****');
 									await Log.create({
 										email: user.email,
 										timestamp: `${Date.now()}`,
 										screen_name: twitter.screen_name,
-										event: 2
-									});
-								}
-								else{
-									log('Get new special DM');
-									await Log.create({
-										email: user.email,
-										timestamp: `${Date.now()}`,
-										screen_name: twitter.screen_name,
-										event: 3
+										event: 1
 									});
 									await sendgrid.send({
 										to: user.email,
 										from: 'noreply@enginestarter.nl',
-										subject: '【特殊通知】タイトル未定',
-										html: `<p>@${special.screen_name} から@${twitter.screen_name} にDMが届きました</p>`
+										subject: '【通知】タイトル未定',
+										html: `<p>@${twitter.screen_name} にDMリクエストが届きました</p>`
 									});
+								}
+								else{
+									/* New DM */
+									let special = await Special.findOne({user_id: data['message_create']['sender_id']}).exec();
+									if(!special){
+										log('Get new DM');
+										await Log.create({
+											email: user.email,
+											timestamp: `${Date.now()}`,
+											screen_name: twitter.screen_name,
+											event: 2
+										});
+									}
+									else{
+										log('Get new special DM');
+										await Log.create({
+											email: user.email,
+											timestamp: `${Date.now()}`,
+											screen_name: twitter.screen_name,
+											event: 3
+										});
+										await sendgrid.send({
+											to: user.email,
+											from: 'noreply@enginestarter.nl',
+											subject: '【特殊通知】タイトル未定',
+											html: `<p>@${special.screen_name} から@${twitter.screen_name} にDMが届きました</p>`
+										});
+									}
 								}
 							}
 						}
+						dm.id = data['id'];
+						dm.created_timestamp = data['created_timestamp'];
+						await dm.save();
 					}
-					dm.id = data['id'];
-					dm.created_timestamp = data['created_timestamp'];
-					await dm.save();
 				}
-				
 			}
 		}
 	}
