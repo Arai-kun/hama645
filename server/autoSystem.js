@@ -140,7 +140,7 @@ async function detectDMRequest(){
 									event: 1
 								});
 								await sendgrid.send({
-									to: process.env.EMAIL,
+									to: user.email,
 									from: 'noreply@enginestarter.nl',
 									subject: '【通知】タイトル未定',
 									html: `<p>@${twitter.screen_name} にDMリクエストが届きました</p>`
@@ -167,7 +167,7 @@ async function detectDMRequest(){
 										event: 3
 									});
 									await sendgrid.send({
-										to: 'koki.alright@gmail.com',
+										to: user.email,
 										from: 'noreply@enginestarter.nl',
 										subject: '【特殊通知】タイトル未定',
 										html: `<p>@${special.screen_name} から@${twitter.screen_name} にDMが届きました</p>`

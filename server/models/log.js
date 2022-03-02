@@ -9,5 +9,5 @@ let logSchema = new Schema({
     event: Number,
 });
 
-logSchema.plugin(autoIncrement, {id:'no_per_user', inc_field: 'no', reference_fields: ['email']});
+logSchema.plugin(autoIncrement, {id:'email', inc_field: 'no', reference_fields: ['email']});
 module.exports = mongoose.model("Log", logSchema, 'log');
