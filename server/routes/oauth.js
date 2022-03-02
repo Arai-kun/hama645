@@ -43,7 +43,7 @@ router.post('/checkToken', (req, res, next) => {
 router.post('/exchangeToken', async (req, res, next) => {
   try {
     let twitter = await Twitter.findOne({screen_name: req.body['screen_name']}).exec();
-    const twitterClient = new TwitterClient({
+    let twitterClient = new TwitterClient({
       apiKey: process.env.API_KEY,
       apiSecret: process.env.API_SECRET,
       accessToken: twitter.oauth_token,
@@ -54,8 +54,14 @@ router.post('/exchangeToken', async (req, res, next) => {
     twitter.oauth_token_secret = response.oauth_token_secret;
     twitter.user_id = response.user_id;
     twitter.authorized = true;
-
     console.log(response);
+
+    let twitterClient = new TwitterClient({
+      apiKey: process.env.API_KEY,
+      apiSecret: process.env.API_SECRET,
+      accessToken: twitter.oauth_token,
+      accessTokenSecret: twitter.oauth_token_secret
+    });
     let response2 = await twitterClient.accountsAndUsers.usersShow({screen_name: req.body['screen_name']});
     if(response.user_id !== response2.id_str){
       res.json(false);
