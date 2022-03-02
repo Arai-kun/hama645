@@ -43,7 +43,7 @@ async function detectDMRequest(){
 			for(let twitter of twitters){
 				log(`Start ${twitter.screen_name}`);
 				let rate = await Rate.findOne({screen_name: twitter.screen_name}).exec();
-				if(rate){
+				if(!rate){
 					await Rate.create({
 						screen_name: twitter.screen_name,
 						latest_request_time: `${Date.now()}`
