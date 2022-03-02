@@ -5,6 +5,7 @@ import { DbService } from '../db.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { SpinnerService } from '../spinner.service';
 
 export interface displayData {
   no: number,
@@ -33,9 +34,11 @@ export class LogComponent implements OnInit, AfterViewInit{
   constructor(
     private dbService: DbService,
     private snackBar: MatSnackBar,
+    private spinnerService: SpinnerService
   ) { }
 
   ngOnInit(): void {
+    this.spinnerService.attach();
     this.getLogs();
   }
 
@@ -49,6 +52,7 @@ export class LogComponent implements OnInit, AfterViewInit{
     .subscribe(logs => {
       if(logs.length === 0){
         this.snackBar.open('イベントがありません', '閉じる', {duration: 5000});
+        this.spinnerService.detach();
         return;
       }
       let displaylogs: displayData[] = [];
@@ -77,6 +81,7 @@ export class LogComponent implements OnInit, AfterViewInit{
         });
       });
       this.dataSource.data = displaylogs;
+      this.spinnerService.detach();
     });
   }
 

@@ -24,11 +24,6 @@ db.once('open', () => {
   main();
 });
 
-
-//receiveDM();
-//sendDM();
-//getFriends();
-
 async function main(){
     while(1){
         console.log('Active loop');
@@ -36,71 +31,6 @@ async function main(){
         await _sleep(1000 * 5);
 
         await detectDMRequest();
-    }
-}
-
-async function sendDM(){
-    try{
-        let twitter = await Twitter.findOne({screen_name: 'ka01_7'}).exec();
-        const twitterClient = new TwitterClient({
-            apiKey: process.env.API_KEY,
-            apiSecret: process.env.API_SECRET,
-            accessToken: twitter.oauth_token,
-            accessTokenSecret: twitter.oauth_token_secret
-        });
-        let response = await twitterClient.directMessages.eventsNew({
-            event: {
-                type: 'message_create',
-                message_create: {
-                    target: {
-                        recipient_id: '2239265863'
-                    },
-                    message_data: {
-                        text: 'No weekend!'
-                    }
-                }
-            }
-        });
-
-        console.log(response)
-    }
-    catch(error){
-        console.log(error);
-    }
-}
-
-async function receiveDM(){
-    try {
-        let twitter = await Twitter.findOne({screen_name: 'mismoov'}).exec();
-        const twitterClient = new TwitterClient({
-            apiKey: process.env.API_KEY,
-            apiSecret: process.env.API_SECRET,
-            accessToken: twitter.oauth_token,
-            accessTokenSecret: twitter.oauth_token_secret
-        });
-        let response = await twitterClient.directMessages.eventsList();
-        console.log(response);
-        console.log(response.events[0].message_create)
-    }
-    catch(error){
-        console.log(error);
-    }
-}
-
-async function getFriends(){
-    try {
-        let twitter = await Twitter.findOne({screen_name: 'mismoov'}).exec();
-        const twitterClient = new TwitterClient({
-            apiKey: process.env.API_KEY,
-            apiSecret: process.env.API_SECRET,
-            accessToken: twitter.oauth_token,
-            accessTokenSecret: twitter.oauth_token_secret
-        });
-        let response = await twitterClient.accountsAndUsers.friendsIds();
-        console.log(response);
-    }
-    catch(error){
-        console.log(error);
     }
 }
 
@@ -182,7 +112,7 @@ async function detectDMRequest(){
 									event: 1
 								});
 								await sendgrid.send({
-									to: 'koki.alright@gmail.com',
+									to: process.env.EMAIL,
 									from: 'noreply@enginestarter.nl',
 									subject: '【通知】タイトル未定',
 									html: `<p>@${twitter.screen_name} にDMリクエストが届きました</p>`

@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { summary } from '../models/summary';
+import { SpinnerService } from '../spinner.service';
 
 
 
@@ -37,9 +38,12 @@ export class SummaryComponent implements OnInit, AfterViewInit{
 
   constructor(
     private dbService: DbService,
+    private spinnerService: SpinnerService,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
+    this.spinnerService.attach();
     this.date[0] = `${new Date().getMonth() + 1}/${new Date().getDate()}`;
     for(let i = 1; i < this.date.length; i++){
       let time = new Date(Date.now() - (24 * (i - 1) * 60 * 60 + 23 * 60 * 60 + 59 * 60 + 59) * 1000);
@@ -56,6 +60,11 @@ export class SummaryComponent implements OnInit, AfterViewInit{
   getSummary(): void {
     this.dbService.getAll<summary>('summary')
     .subscribe(summary => {
+      if(summary.length === 0){
+        this.snackBar.open('連携しているTwitter ID がありません', '閉じる', {duration: 5000});
+        this.spinnerService.detach();
+        return;
+      }
       let displaylogs: displayData[] = [];
       summary.forEach(el => {
         displaylogs.push({
@@ -65,6 +74,7 @@ export class SummaryComponent implements OnInit, AfterViewInit{
         });
       });
       this.dataSource.data = displaylogs;
+      this.spinnerService.detach();
     });
   }
 
