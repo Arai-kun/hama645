@@ -93,6 +93,7 @@ export class SummaryComponent implements OnInit, AfterViewInit{
           sum: el.sum
         });
       });
+      this.dataSource.data = displaylogs;
     });
   }
 
