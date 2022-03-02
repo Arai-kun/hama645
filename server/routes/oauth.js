@@ -56,7 +56,7 @@ router.post('/exchangeToken', async (req, res, next) => {
     twitter.authorized = true;
     console.log(response);
 
-    let twitterClient = new TwitterClient({
+    twitterClient = new TwitterClient({
       apiKey: process.env.API_KEY,
       apiSecret: process.env.API_SECRET,
       accessToken: twitter.oauth_token,
