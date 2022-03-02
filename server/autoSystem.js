@@ -107,6 +107,7 @@ async function detectDMRequest(){
 								/* DM Request */
 								log('***** Detect Request DM! *****');
 								await Log.create({
+									email: user.email,
 									timestamp: `${Date.now()}`,
 									screen_name: twitter.screen_name,
 									event: 1
@@ -124,6 +125,7 @@ async function detectDMRequest(){
 								if(!special){
 									log('Get new DM');
 									await Log.create({
+										email: user.email,
 										timestamp: `${Date.now()}`,
 										screen_name: twitter.screen_name,
 										event: 2
@@ -132,6 +134,7 @@ async function detectDMRequest(){
 								else{
 									log('Get new special DM');
 									await Log.create({
+										email: user.email,
 										timestamp: `${Date.now()}`,
 										screen_name: twitter.screen_name,
 										event: 3

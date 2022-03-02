@@ -7,7 +7,7 @@ const { TwitterClient } = require('twitter-api-client');
 
 /* GET db/twitter/:screen_name */
 router.get('/twitter/:screen_name', (req, res, next) => {
-  Twitter.findOne({screen_name: req.params.screen_name}, (error, twitter) => {
+  Twitter.findOne({email: req.user['email'], screen_name: req.params.screen_name}, (error, twitter) => {
     if(error) next(error);
     res.json(twitter);
   });
@@ -15,7 +15,7 @@ router.get('/twitter/:screen_name', (req, res, next) => {
 
 /* GET db/twitters */
 router.get('/twitters', (req, res, next) => {
-  Twitter.find({}, (error, twitters) => {
+  Twitter.find({email: req.user['email']}, (error, twitters) => {
     if(error) next(error);
     res.json(twitters);
   });
@@ -35,7 +35,7 @@ router.post('/twitter', (req, res, next) => {
 
 /* DELETE db/twitter/:screen_name */
 router.delete('/twitter/:screen_name', (req, res, next) => {
-  Twitter.deleteOne({screen_name: req.params.screen_name}, error => {
+  Twitter.deleteOne({email: req.user['email'], screen_name: req.params.screen_name}, error => {
     if(error) next(error);
     res.json(true);
   });
@@ -43,7 +43,7 @@ router.delete('/twitter/:screen_name', (req, res, next) => {
 
 /* GET db/logs */
 router.get('/logs', (req, res, next) => {
-  Log.find({}, (error, logs) => {
+  Log.find({email: req.user['email']}, (error, logs) => {
     if(error) next(error);
     res.json(logs);
   });
@@ -51,7 +51,7 @@ router.get('/logs', (req, res, next) => {
 
 /* GET db/special/:screen_name */
 router.get('/special/:screen_name', (req, res, next) => {
-  Special.findOne({screen_name: req.params.screen_name}, (error, special) => {
+  Special.findOne({email: req.user['email'], screen_name: req.params.screen_name}, (error, special) => {
     if(error) next(error);
     res.json(special);
   });
@@ -59,7 +59,7 @@ router.get('/special/:screen_name', (req, res, next) => {
 
 /* GET db/twitters */
 router.get('/specials', (req, res, next) => {
-  Special.find({}, (error, specials) => {
+  Special.find({email: req.user['email']}, (error, specials) => {
     if(error) next(error);
     res.json(specials);
   });
@@ -98,7 +98,7 @@ router.post('/special', async (req, res, next) => {
 
 /* DELETE db/twitter/:screen_name */
 router.delete('/special/:screen_name', (req, res, next) => {
-  Special.deleteOne({screen_name: req.params.screen_name}, error => {
+  Special.deleteOne({email: req.user['email'], screen_name: req.params.screen_name}, error => {
     if(error) next(error);
     res.json(true);
   });
@@ -115,7 +115,7 @@ router.get('/summary', async (req, res, next) => {
   try {
     let twitters = await Twitter.find({email: req.user['email'], authorized: true}).exec();
     for(let twitter of twitters){
-      let logs = await Log.find({screen_name: twitter.screen_name}).exec();
+      let logs = await Log.find({email: req.user['email'], screen_name: twitter.screen_name}).exec();
       let count_date = new Array(5);
       for(let i = 0; i < count_date.length; i++){
         count_date[i] = logs.filter(log => new Date(Number(log.timestamp)).getMonth() === date[i].getMonth() && new Date(Number(log.timestamp)).getDate() === date[i].getDate()).length;
