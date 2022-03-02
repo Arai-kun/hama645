@@ -91,7 +91,7 @@ router.post('/special', async (req, res, next) => {
         return;
       }
     }
-    
+
     next(error);
   }
 });
@@ -105,8 +105,34 @@ router.delete('/special/:screen_name', (req, res, next) => {
 });
 
 /* GET db/summary */
-router.get('summary', (req, res, next) => {
-  Log.find({})
-})
+router.get('summary', async (req, res, next) => {
+  let summary = [];
+  let date = new Array(5);
+  date[0] = new Date();
+  for(let i = 1; i < date.length; i++){
+    date[i] = new Date(Date.now() - (24 * (i - 1) * 60 * 60 + 23 * 60 * 60 + 59 * 60 + 59) * 1000);
+  }
+
+  try {
+    let twitters = await Twitter.find({email: req.user['email']}).exec();
+    for(let twitter of twitters){
+      let logs = await Log.find({screen_name: twitter.screen_name}).exec();
+      let count_date = new Array(5);
+      for(let i = 0; i < count_date.length; i++){
+        count_date[i] = logs.filter(log => new Date(Number(log.timestamp)).getMonth() === date[i].getMonth() && new Date(Number(log.timestamp)).getDate() === date[i].getDate()).length;
+      }
+      let count_sum = logs.filter(log => new Date(Number(log.timestamp)).getMonth() === date[0].getMonth()).length;
+      summary.push({
+        screen_name: twitter.screen_name,
+        date: count_date,
+        sum: count_sum
+      })
+    }
+    res.json(summary);
+  }
+  catch(error){
+    next(error);
+  }
+});
 
 module.exports = router;

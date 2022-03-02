@@ -10,11 +10,7 @@ import { summary } from '../models/summary';
 
 export interface displayData {
   screen_name: string,
-  date5: number,
-  date4: number,
-  date3: number,
-  date2: number,
-  date1: number,
+  date: number[],
   sum: number
 }
 
@@ -26,19 +22,15 @@ export interface displayData {
 export class SummaryComponent implements OnInit, AfterViewInit{
   displayedColumns: string[] = [
     'screen_name',
-    'date5',
-    'date4',
-    'date3',
-    'date2',
+    'date0',
     'date1',
+    'date2',
+    'date3',
+    'date4',
     'sum'
   ];
   dataSource = new MatTableDataSource<displayData>();
-  date1: string = ''; 
-  date2: string = '';
-  date3: string = '';
-  date4: string = '';
-  date5: string = '';
+  date: Array<string> = new Array(5);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -48,7 +40,12 @@ export class SummaryComponent implements OnInit, AfterViewInit{
   ) { }
 
   ngOnInit(): void {
-    this.date1 = `${new Date().getMonth() + 1}/${new Date().getDate()}`;
+    this.date[0] = `${new Date().getMonth() + 1}/${new Date().getDate()}`;
+    for(let i = 1; i < this.date.length; i++){
+      let time = new Date(Date.now() - (24 * (i - 1) * 60 * 60 + 23 * 60 * 60 + 59 * 60 + 59) * 1000);
+      this.date[i] = `${time.getMonth() + 1}/${time.getDate()}`;
+    }
+    /*
     if((new Date().getDate() - 1) > 0){
       this.date2 = `${new Date().getMonth() + 1}/${new Date().getDate() - 1}`;
     }
@@ -57,26 +54,26 @@ export class SummaryComponent implements OnInit, AfterViewInit{
       this.date2 = `${previous.getMonth() + 1}/${previous.getDate()}`;
     }
     if((new Date().getDate() - 2) > 0){
-      this.date3 = `${new Date().getMonth() + 1}/${new Date().getDate()- 2}`;
+      this.date3 = `${new Date().getMonth() + 1}/${new Date().getDate() - 2}`;
     }
     else{
       let previous = new Date(Date.now() - (47 * 60 * 60 * 1000 + 59 * 60 * 1000 + 59 * 1000));
       this.date3 = `${previous.getMonth() + 1}/${previous.getDate()}`;
     }
     if((new Date().getDate() - 3) > 0){
-      this.date4 = `${new Date().getMonth() + 1}/${new Date().getDate()- 3}`;
+      this.date4 = `${new Date().getMonth() + 1}/${new Date().getDate() - 3}`;
     }
     else{
       let previous = new Date(Date.now() - (71 * 60 * 60 * 1000 + 59 * 60 * 1000 + 59 * 1000));
       this.date4 = `${previous.getMonth() + 1}/${previous.getDate()}`;
     }
     if((new Date().getDate() - 4) > 0){
-      this.date5 = `${new Date().getMonth() + 1}/${new Date().getDate()- 4}`;
+      this.date5 = `${new Date().getMonth() + 1}/${new Date().getDate() - 4}`;
     }
     else{
       let previous = new Date(Date.now() - (95 * 60 * 60 * 1000 + 59 * 60 * 1000 + 59 * 1000));
       this.date5 = `${previous.getMonth() + 1}/${previous.getDate()}`;
-    }
+    }*/
     this.getSummary();
   }
 
@@ -88,8 +85,15 @@ export class SummaryComponent implements OnInit, AfterViewInit{
   getSummary(): void {
     this.dbService.getAll<summary>('summary')
     .subscribe(summary => {
-
-    })
+      let displaylogs: displayData[] = [];
+      summary.forEach(el => {
+        displaylogs.push({
+          screen_name: el.screen_name,
+          date: el.date,
+          sum: el.sum
+        });
+      });
+    });
   }
 
 }
