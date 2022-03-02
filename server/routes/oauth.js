@@ -5,7 +5,7 @@ const { TwitterClient } = require('twitter-api-client');
 
 /* GET auth/requestToken/:screen_name */
 router.get('/requestToken/:screen_name', async (req, res, next) => {
-  const twitterClient = new TwitterClient({
+  let twitterClient = new TwitterClient({
     apiKey: process.env.API_KEY,
     apiSecret: process.env.API_SECRET,
     accessToken: process.env.ACCESS_TOKEN,
@@ -50,20 +50,27 @@ router.post('/exchangeToken', async (req, res, next) => {
       accessTokenSecret: twitter.oauth_token_secret
     });
     let response = await twitterClient.basics.oauthAccessToken({oauth_verifier: req.body['oauth_verifier']});
+
+    /* Check whether the oauth_token already exist */
+    let exist = await Twitter.findOne({oauth_token: response.oauth_token}).exec();
+    if(exist){
+      res.json(false);
+      return;
+    }
     twitter.oauth_token = response.oauth_token;
     twitter.oauth_token_secret = response.oauth_token_secret;
     twitter.user_id = response.user_id;
     twitter.authorized = true;
-    console.log(response);
 
+    /* Check whether the screen_name matches to returned screen_name of oauth_token */
     twitterClient = new TwitterClient({
       apiKey: process.env.API_KEY,
       apiSecret: process.env.API_SECRET,
       accessToken: twitter.oauth_token,
       accessTokenSecret: twitter.oauth_token_secret
     });
-    let response2 = await twitterClient.accountsAndUsers.usersShow({screen_name: req.body['screen_name']});
-    if(response.user_id !== response2.id_str){
+    response = await twitterClient.accountsAndUsers.usersShow({screen_name: req.body['screen_name']});
+    if(twitter.user_id !== response.id_str){
       res.json(false);
       return;
     }
