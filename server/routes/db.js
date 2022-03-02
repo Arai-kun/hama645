@@ -105,7 +105,7 @@ router.delete('/special/:screen_name', (req, res, next) => {
 });
 
 /* GET db/summary */
-router.get('/summary', (req, res, next) => {
+router.get('/summary', async (req, res, next) => {
   let summary = [];
   let date = new Array(5);
   date[0] = new Date();
