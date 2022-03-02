@@ -4,6 +4,7 @@ let User = require('./models/user');
 let Dm = require('./models/dm');
 let Log = require('./models/log');
 let Special = require('./models/special');
+let Rate = require('./models/rate');
 const { TwitterClient } = require('twitter-api-client');
 const sendgrid = require('@sendgrid/mail');
 require('dotenv').config();
@@ -41,9 +42,34 @@ async function detectDMRequest(){
 			let twitters = await Twitter.find({email: user.email, authorized: true}).exec();
 			for(let twitter of twitters){
 				log(`Start ${twitter.screen_name}`);
-				if(twitter.latest_request_time){
+				let rate = await Rate.findOne({screen_name: twitter.screen_name}).exec();
+				if(rate){
+					await Rate.create({
+						screen_name: twitter.screen_name,
+						latest_request_time: `${Date.now()}`
+					});
+				}
+				else{
+					let diff = Date.now() - Number(rate.latest_request_time);
+					const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+					if( 0 <= diff && diff < (60 * 1000)){
+						log(`Wait ${(60 * 1000) - diff} ms ...`);
+						await _sleep((60 * 1000) - diff);
+					}
+					else if(diff < 0){
+						log(`Wait ${(60 * 1000)} ms ...`);
+						await _sleep((60 * 1000));
+					}
+					else{
+						// No wait
+					}
+					rate.latest_request_time = `${Date.now()}`;
+					await rate.save();
+				}
+				/*
+				if(rate.latest_request_time){
 					//let diff = (Date.now() - (new Date().getTimezoneOffset() * 60 * 1000)) - Number(twitter.latest_request_time);
-					let diff = Date.now() - Number(twitter.latest_request_time);
+					let diff = Date.now() - Number(rate.latest_request_time);
 					const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 					if( 0 <= diff && diff < (60 * 1000)){
 						log(`Wait ${(60 * 1000) - diff} ms ...`);
@@ -57,8 +83,8 @@ async function detectDMRequest(){
 						// No wait
 					}
 				}
-				twitter.latest_request_time = `${Date.now()}`;
-				await twitter.save();
+				rate.latest_request_time = `${Date.now()}`;
+				await rate.save();*/
 
 				const twitterClient = new TwitterClient({
 					apiKey: process.env.API_KEY,
