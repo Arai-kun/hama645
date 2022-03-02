@@ -126,8 +126,9 @@ router.get('summary', async (req, res, next) => {
         screen_name: twitter.screen_name,
         date: count_date,
         sum: count_sum
-      })
+      });
     }
+    console.log(summary);
     res.json(summary);
   }
   catch(error){

@@ -22,11 +22,11 @@ export interface displayData {
 export class SummaryComponent implements OnInit, AfterViewInit{
   displayedColumns: string[] = [
     'screen_name',
-    'date0',
-    'date1',
-    'date2',
-    'date3',
     'date4',
+    'date3',
+    'date2',
+    'date1',
+    'date0',
     'sum'
   ];
   dataSource = new MatTableDataSource<displayData>();
