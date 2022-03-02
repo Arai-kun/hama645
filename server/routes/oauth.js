@@ -14,7 +14,7 @@ router.get('/requestToken/:screen_name', async (req, res, next) => {
 
   try{
     let response = await twitterClient.basics.oauthRequestToken({oauth_callback: `https://enginestarter.nl/oauth?screen_name=${req.params.screen_name}`});
-    let twitter = await Twitter.findOne({email:req.body['email'], screen_name: req.params.screen_name}).exec();
+    let twitter = await Twitter.findOne({email:req.user['email'], screen_name: req.params.screen_name}).exec();
     twitter.oauth_token = response.oauth_token;
     twitter.oauth_token_secret = response.oauth_token_secret;
     await twitter.save();
@@ -28,7 +28,7 @@ router.get('/requestToken/:screen_name', async (req, res, next) => {
 
 /* POST oauth/checkToken */
 router.post('/checkToken', (req, res, next) => {
-  Twitter.findOne({email:req.body['email'], screen_name: req.body['screen_name']}, (error, twitter) => {
+  Twitter.findOne({email:req.user['email'], screen_name: req.body['screen_name']}, (error, twitter) => {
     if(error) next(error);
     if(req.body['oauth_token'] === twitter.oauth_token){
       res.json(true);
@@ -42,7 +42,7 @@ router.post('/checkToken', (req, res, next) => {
 /* POST oauth/exchangeToken */
 router.post('/exchangeToken', async (req, res, next) => {
   try {
-    let twitter = await Twitter.findOne({email:req.body['email'], screen_name: req.body['screen_name']}).exec();
+    let twitter = await Twitter.findOne({email:req.user['email'], screen_name: req.body['screen_name']}).exec();
     let twitterClient = new TwitterClient({
       apiKey: process.env.API_KEY,
       apiSecret: process.env.API_SECRET,
@@ -52,7 +52,7 @@ router.post('/exchangeToken', async (req, res, next) => {
     let response = await twitterClient.basics.oauthAccessToken({oauth_verifier: req.body['oauth_verifier']});
 
     /* Check whether the oauth_token already exist */
-    let exist = await Twitter.findOne({email:req.body['email'], oauth_token: response.oauth_token}).exec();
+    let exist = await Twitter.findOne({email:req.user['email'], oauth_token: response.oauth_token}).exec();
     if(exist){
       res.json(false);
       return;
