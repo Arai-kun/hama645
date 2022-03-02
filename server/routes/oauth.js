@@ -55,6 +55,7 @@ router.post('/exchangeToken', async (req, res, next) => {
     twitter.user_id = response.user_id;
     twitter.authorized = true;
 
+    console.log(response);
     let response2 = await twitterClient.accountsAndUsers.usersShow({screen_name: req.body['screen_name']});
     if(response.user_id !== response2.id_str){
       res.json(false);
