@@ -28,6 +28,7 @@ export class OauthComponent implements OnInit {
       if(this.params['denied']){
         this.spinnerService.detach();
         this.router.navigate(['/']);
+        return;
       }
       /* Step1: Request Token */
       this.authService.requestToken(this.params['screen_name'])

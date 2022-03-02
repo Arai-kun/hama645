@@ -38,7 +38,6 @@ export class LogComponent implements OnInit, AfterViewInit{
   ) { }
 
   ngOnInit(): void {
-    this.spinnerService.attach();
     this.getLogs();
   }
 
@@ -48,6 +47,7 @@ export class LogComponent implements OnInit, AfterViewInit{
   }
 
   getLogs(): void {
+    this.spinnerService.attach();
     this.dbService.getAll<log>('logs')
     .subscribe(logs => {
       if(logs.length === 0){

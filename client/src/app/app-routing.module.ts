@@ -20,7 +20,8 @@ const routes: Routes = [
       { path: 'account', component: DmtoolComponent },
       { path: 'log', component: LogComponent }
     ]
-  }
+  },
+  { path: "**", redirectTo: "home" }
 ];
 
 @NgModule({
