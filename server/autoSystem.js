@@ -119,8 +119,7 @@ async function detectDMRequest(){
 				let dm = await Dm.findOne({email: user.email, screen_name: twitter.screen_name}).exec();
 				if(!dm){
 					/* Initial */
-					log('Test!');
-					log(response);
+					log(JSON.stringify(response));
 					await Dm.create({
 						email: user.email, 
 						screen_name: twitter.screen_name,
