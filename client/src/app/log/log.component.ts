@@ -47,7 +47,7 @@ export class LogComponent implements OnInit, AfterViewInit{
   }
 
   getLogs(): void {
-    this.spinnerService.attach();
+    //this.spinnerService.attach();
     this.dbService.getAll<log>('logs')
     .subscribe(logs => {
       if(logs.length === 0){
@@ -81,7 +81,7 @@ export class LogComponent implements OnInit, AfterViewInit{
         });
       });
       this.dataSource.data = displaylogs;
-      this.spinnerService.detach();
+      //this.spinnerService.detach();
     });
   }
 
