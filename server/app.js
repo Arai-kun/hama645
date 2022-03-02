@@ -6,14 +6,19 @@ let mongoose = require('mongoose');
 let compression = require('compression');
 require('dotenv').config();
 
-mongoose.connect(
+if(process.env.MODE === 'LOCAL'){
+  mongoose.connect('mongodb://localhost:27017/hama645');
+}
+else if(process.env.MODE === 'REMOTE'){
+  mongoose.connect(
     'mongodb://localhost:27017/hama645?authSource=admin',
     {
         useNewUrlParser: true,
         user: 'admin',
         pass: process.env.DB_PW
     }
-);
+  );
+}
 let db = mongoose.connection;
 db.once('open', () => {
   console.log('Successed connecting to DB');

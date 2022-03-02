@@ -134,4 +134,9 @@ router.get('/summary', async (req, res, next) => {
   }
 });
 
+/* GET db/email */
+router.get('/email', (req, res, next) => {
+  res.json(req.user['email']);
+})
+
 module.exports = router;

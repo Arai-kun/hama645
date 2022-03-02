@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map, shareReplay } from 'rxjs/operators';
+import { user } from './models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +47,13 @@ export class DbService {
     .pipe(
       catchError(this.handleError<boolean>(false))
     );
+  }
+
+  getEmail(): Observable<string>{
+    return this.http.get<string>('db/email', this.httpOptions)
+    .pipe(
+      catchError(this.handleError<string>(''))
+    )
   }
 
   private handleError<T>(result?: T) {

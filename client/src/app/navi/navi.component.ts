@@ -6,6 +6,7 @@ import { MatDrawer } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DbService } from '../db.service';
 
 @Component({
   selector: 'app-navi',
@@ -13,6 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./navi.component.scss']
 })
 export class NaviComponent implements OnInit {
+  email: string = '';
   @ViewChild('drawer') drawer!: MatDrawer;
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(
@@ -24,10 +26,12 @@ export class NaviComponent implements OnInit {
     private breakpointObserver: BreakpointObserver,
     private router: Router,
     private authService: AuthService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dbService: DbService
   ) { }
 
   ngOnInit(): void {
+    this.getEmail();
   }
 
   onLogout(): void {
@@ -54,6 +58,11 @@ export class NaviComponent implements OnInit {
         this.drawer.close();
       }
     });
+  }
+
+  getEmail(): void {
+    this.dbService.getEmail()
+    .subscribe(email => this.email = email);
   }
 
 }
