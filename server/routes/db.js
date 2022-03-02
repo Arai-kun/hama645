@@ -112,6 +112,7 @@ router.get('/summary', (req, res, next) => {
   for(let i = 1; i < date.length; i++){
     date[i] = new Date(Date.now() - (24 * (i - 1) * 60 * 60 + 23 * 60 * 60 + 59 * 60 + 59) * 1000);
   }
+  /*
   Twitter.find({email: req.user['email']}, (error, twitters) => {
     if(error) next(error);
     for(let twitter of twitters){
@@ -131,8 +132,8 @@ router.get('/summary', (req, res, next) => {
     }
     console.log(summary);
     res.json(summary);
-  })
-  /*
+  })*/
+  
   try {
     let twitters = await Twitter.find({email: req.user['email']}).exec();
     for(let twitter of twitters){
@@ -153,7 +154,7 @@ router.get('/summary', (req, res, next) => {
   }
   catch(error){
     next(error);
-  }*/
+  }
 });
 
 module.exports = router;
