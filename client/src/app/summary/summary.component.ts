@@ -43,7 +43,6 @@ export class SummaryComponent implements OnInit, AfterViewInit{
   ) { }
 
   ngOnInit(): void {
-    this.spinnerService.attach();
     this.date[0] = `${new Date().getMonth() + 1}/${new Date().getDate()}`;
     for(let i = 1; i < this.date.length; i++){
       let time = new Date(Date.now() - (24 * (i - 1) * 60 * 60 + 23 * 60 * 60 + 59 * 60 + 59) * 1000);
@@ -58,6 +57,7 @@ export class SummaryComponent implements OnInit, AfterViewInit{
   }
 
   getSummary(): void {
+    this.spinnerService.attach();
     this.dbService.getAll<summary>('summary')
     .subscribe(summary => {
       if(summary.length === 0){
