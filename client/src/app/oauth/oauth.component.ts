@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { AuthService } from '../auth.service';
-import { twitter } from '../models/twitter';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SpinnerService } from '../spinner.service';
 
 @Component({
   selector: 'app-oauth',
@@ -17,13 +17,16 @@ export class OauthComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private spinnerService: SpinnerService
   ) { }
 
   ngOnInit(): void {
+    this.spinnerService.attach();
     this.params = this.route.snapshot.queryParams;
     if(this.params['screen_name'] && !this.params['oauth_token'] && !this.params['oauth_verifier']){
       if(this.params['denied']){
+        this.spinnerService.detach();
         this.router.navigate(['/']);
       }
       /* Step1: Request Token */
@@ -47,6 +50,7 @@ export class OauthComponent implements OnInit {
           this.authService.exchangeToken(this.params['screen_name'], this.params['oauth_verifier'])
           .subscribe(result => {
             if(result){
+              this.spinnerService.detach();
               this.snackBar.open('連携に成功しました', '閉じる', { duration: 5000 });
               this.router.navigate(['home']);
             }
@@ -66,6 +70,7 @@ export class OauthComponent implements OnInit {
   }
 
   failed(): void {
+    this.spinnerService.detach();
     this.snackBar.open('連携に失敗しました', '閉じる', { duration: 7000 });
     this.router.navigate(['home']);
   }

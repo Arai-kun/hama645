@@ -5,6 +5,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { PortalModule } from '@angular/cdk/portal';
 
 /* Material */
 import { MatButtonModule } from '@angular/material/button';
@@ -25,6 +27,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatProgressSpinnerModule, MatSpinner } from '@angular/material/progress-spinner';
 
 /* Component */
 import { AppComponent } from './app.component';
@@ -82,7 +85,13 @@ import { SummaryComponent } from './summary/summary.component';
     MatAutocompleteModule,
     MatSortModule,
     MatPaginatorModule,
-    MatTabsModule
+    MatTabsModule,
+    MatProgressSpinnerModule,
+    OverlayModule,
+    PortalModule
+  ],
+  entryComponents: [
+    MatSpinner
   ],
   providers: [],
   bootstrap: [AppComponent],
