@@ -3,6 +3,8 @@ let router = express.Router();
 let Twitter = require('../models/twitter');
 let Log = require('../models/log');
 let Special = require('../models/special');
+let User = require('../models/user');
+let Dm = require('../models/dm')
 const { TwitterClient } = require('twitter-api-client');
 
 /* GET db/twitter/:screen_name */
@@ -137,6 +139,21 @@ router.get('/summary', async (req, res, next) => {
 /* GET db/email */
 router.get('/email', (req, res, next) => {
   res.json(req.user['email']);
+})
+
+/* DELETE db/user/:email */
+router.delete('/user/:email', async (req, res, next) => {
+  try {
+    await User.deleteMany({email: req.params.email}).exec();
+    await Twitter.deleteMany({email: req.params.email}).exec();
+    await Special.deleteMany({email: req.params.email}).exec();
+    await Log.deleteMany({email: req.params.email}).exec();
+    await Dm.deleteMany({email: req.params.email}).exec();
+    res.json(true);
+  }
+  catch(error){
+    next(error);
+  }
 })
 
 module.exports = router;

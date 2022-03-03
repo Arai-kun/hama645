@@ -7,6 +7,8 @@ import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DbService } from '../db.service';
+import { MatDialog } from '@angular/material/dialog';
+import { NaviDeleteComponent } from '../navi-delete/navi-delete.component';
 
 @Component({
   selector: 'app-navi',
@@ -27,7 +29,8 @@ export class NaviComponent implements OnInit {
     private router: Router,
     private authService: AuthService,
     private snackBar: MatSnackBar,
-    private dbService: DbService
+    private dbService: DbService,
+    public dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -46,8 +49,11 @@ export class NaviComponent implements OnInit {
     });
   }
 
-  onDelete(): void {
-
+  onDelete(){
+    this.dialog.open(NaviDeleteComponent, {
+      width: '400px',
+      data: this.email
+    });
   }
 
   onRouter(place: string): void {

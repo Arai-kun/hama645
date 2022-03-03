@@ -4,11 +4,10 @@
       [mode]="(isHandset$ | async) ? 'over' : 'side'"
       [opened]="(isHandset$ | async) === false">
     <mat-toolbar>DM管理ツール</mat-toolbar>
-    <span class="email">{{email}}</span>
-    <mat-divider></mat-divider>
+    <!--<mat-divider></mat-divider>-->
     <mat-nav-list>
-      <a mat-list-item (click)="onRouter('home/account')">Twitter ID 連携</a>
-      <a mat-list-item (click)="onRouter('home/log')">イベントログ</a>
+      <a mat-list-item (click)="onRouter('home/account')"><mat-icon class="list-icon">group</mat-icon>Twitter ID 連携</a>
+      <a mat-list-item (click)="onRouter('home/log')"><mat-icon class="list-icon">description</mat-icon>イベントログ</a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
@@ -23,7 +22,6 @@
       </button>
       <!--<span class="mat-headline">タイトル未定</span>-->
       <span class="navi-email" fxFlexOffset="auto">
-        <!--test@example.com-->
         <button
           type="button"
           mat-icon-button
@@ -31,11 +29,13 @@
           <mat-icon>keyboard_arrow_down</mat-icon>
         </button>
         <mat-menu #userMenu="matMenu" class="user-profile">
+              <span mat-menu-item>{{email}}</span>
+              <mat-divider></mat-divider>
               <button mat-menu-item (click)="onLogout()">
                   <mat-icon>logout</mat-icon>
                   ログアウト
               </button>
-              <button mat-menu-item (click)="onDelete()" disabled>
+              <button mat-menu-item (click)="onDelete()">
                   <mat-icon>delete_forever</mat-icon>
                   アカウント削除
               </button>

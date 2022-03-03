@@ -78,4 +78,8 @@ export class SummaryComponent implements OnInit, AfterViewInit{
     });
   }
 
+  onRefresh(): void {
+    this.ngOnInit();
+  }
+
 }

@@ -25,7 +25,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSortModule } from '@angular/material/sort';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorModule, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatProgressSpinnerModule, MatSpinner } from '@angular/material/progress-spinner';
 
@@ -43,6 +43,10 @@ import { DmtoolDeleteComponent } from './dmtool-delete/dmtool-delete.component';
 import { DmtoolRegisterSpComponent } from './dmtool-register-sp/dmtool-register-sp.component';
 import { DmtoolDeleteSpComponent } from './dmtool-delete-sp/dmtool-delete-sp.component';
 import { SummaryComponent } from './summary/summary.component';
+import { NaviDeleteComponent } from './navi-delete/navi-delete.component';
+
+/* Class */
+import { MatPaginatorIntlJa } from './mat-paginator-jp';
 
 @NgModule({
   declarations: [
@@ -58,7 +62,8 @@ import { SummaryComponent } from './summary/summary.component';
     DmtoolDeleteComponent,
     DmtoolRegisterSpComponent,
     DmtoolDeleteSpComponent,
-    SummaryComponent
+    SummaryComponent,
+    NaviDeleteComponent
   ],
   imports: [
     BrowserModule,
@@ -93,7 +98,7 @@ import { SummaryComponent } from './summary/summary.component';
   entryComponents: [
     MatSpinner
   ],
-  providers: [],
+  providers: [{provide: MatPaginatorIntl, useClass: MatPaginatorIntlJa}],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
