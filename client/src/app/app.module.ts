@@ -98,8 +98,8 @@ import { MatPaginatorIntlJa } from './mat-paginator-jp';
   entryComponents: [
     MatSpinner
   ],
-  //providers: [{provide: MatPaginatorIntl, useClass: MatPaginatorIntlJa}],
-  providers: [],
+  providers: [{provide: MatPaginatorIntl, useClass: MatPaginatorIntlJa}],
+  //providers: [],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
