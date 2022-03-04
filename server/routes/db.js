@@ -36,11 +36,15 @@ router.post('/twitter', (req, res, next) => {
 });
 
 /* DELETE db/twitter/:screen_name */
-router.delete('/twitter/:screen_name', (req, res, next) => {
-  Twitter.deleteOne({email: req.user['email'], screen_name: req.params.screen_name}, error => {
-    if(error) next(error);
+router.delete('/twitter/:screen_name', async (req, res, next) => {
+  try {
+    await Twitter.deleteOne({email: req.user['email'], screen_name: req.params.screen_name}).exec();
+    await Dm.deleteOne({email: req.user['email'], screen_name: req.params.screen_name}).exec();
     res.json(true);
-  });
+  }
+  catch(error){
+    next(error);
+  }
 });
 
 /* GET db/logs */

@@ -106,7 +106,7 @@ async function detectDMRequest(){
 				//console.log(ids);
 
 				let response = await twitterClient.directMessages.eventsList();
-				//console.log(response.events[0].message_create);
+				console.log(JSON.stringify(response.events));
 				if(response.events.length !== 0){
 					let data;
 					for(let i = 0; i < response.events.length; i++){
@@ -193,6 +193,15 @@ async function detectDMRequest(){
 							id: '0',
 							created_timestamp: `${Date.now()}`,
 						});
+					}
+					else{
+						/*
+						if(dm.id !== '0'){
+							dm.id = '0';
+							dm.created_timestamp = `${Date.now()}`;
+							await dm.save();
+						}
+						*/
 					}
 				}
 			}
