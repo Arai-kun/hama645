@@ -106,10 +106,6 @@ async function detectDMRequest(){
 				//console.log(ids);
 
 				let response = await twitterClient.directMessages.eventsList();
-				if(twitter.screen_name === 'b3tube'){
-					console.log('*********************')
-					console.log(JSON.stringify(response));
-				}
 				if(response.events.length !== 0){
 					let data;
 					for(let i = 0; i < response.events.length; i++){
@@ -186,7 +182,7 @@ async function detectDMRequest(){
 					}
 				}
 				else{
-					/* Case that the account receives DM for the first time */
+					/* Case that the account receives DM for the first time or spent for 30 days */
 					log('Detect events null account');
 					let dm = await Dm.findOne({email: user.email, screen_name: twitter.screen_name}).exec();
 					if(!dm){
@@ -196,15 +192,6 @@ async function detectDMRequest(){
 							id: '0',
 							created_timestamp: `${Date.now()}`,
 						});
-					}
-					else{
-						/*
-						if(dm.id !== '0'){
-							dm.id = '0';
-							dm.created_timestamp = `${Date.now()}`;
-							await dm.save();
-						}
-						*/
 					}
 				}
 			}
