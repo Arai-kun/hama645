@@ -108,7 +108,7 @@ async function detectDMRequest(){
 				let response = await twitterClient.directMessages.eventsList();
 				if(twitter.screen_name === 'b3tube'){
 					console.log('*********************')
-					console.log(JSON.stringify(response.events));
+					console.log(JSON.stringify(response));
 				}
 				if(response.events.length !== 0){
 					let data;
