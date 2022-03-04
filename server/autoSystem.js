@@ -143,7 +143,7 @@ async function detectDMRequest(){
 									await sendgrid.send({
 										to: user.email,
 										from: 'noreply@enginestarter.nl',
-										subject: '【通知】タイトル未定',
+										subject: '【通知】DM管理ツール',
 										html: `<p>@${twitter.screen_name} にDMリクエストが届きました</p>`
 									});
 								}
@@ -170,7 +170,7 @@ async function detectDMRequest(){
 										await sendgrid.send({
 											to: user.email,
 											from: 'noreply@enginestarter.nl',
-											subject: '【特殊通知】タイトル未定',
+											subject: '【特殊通知】DM管理ツール',
 											html: `<p>@${special.screen_name} から@${twitter.screen_name} にDMが届きました</p>`
 										});
 									}
@@ -180,6 +180,19 @@ async function detectDMRequest(){
 						dm.id = data['id'];
 						dm.created_timestamp = data['created_timestamp'];
 						await dm.save();
+					}
+				}
+				else{
+					/* Case that the account receives DM for the first time */
+					log('Detect events null account');
+					let dm = await Dm.findOne({email: user.email, screen_name: twitter.screen_name}).exec();
+					if(!dm){
+						await Dm.create({
+							email: user.email, 
+							screen_name: twitter.screen_name,
+							id: '0',
+							created_timestamp: `${Date.now()}`,
+						});
 					}
 				}
 			}
