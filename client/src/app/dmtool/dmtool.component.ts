@@ -30,7 +30,7 @@ export class DmtoolComponent implements OnInit {
   }
 
   onDM(screen_name: string): void {
-    this.router.navigate([`/dm/${screen_name}`]);
+    this.router.navigate([`/home/dm/${screen_name}`]);
   }
 
   onOAuth(screen_name: string): void {
