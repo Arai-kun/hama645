@@ -12,9 +12,36 @@ const userActivityWebhook = twitterWebhooks.userActivity({
   accessToken: process.env.ACCESS_TOKEN,
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
   environment: 'dev',
-  app: app
+  //app: app
 });
 //userActivityWebhook.register();
+
+userActivityWebhook.subscribe({
+	userId: tw.user_id,
+	accessToken: tw.oauth_token,
+	accessTokenSecret: tw.oauth_token_secret
+})
+.then(userActivity => {
+	userActivity
+	//.on('favorite', (data) => console.log (userActivity.id + ' - favorite'))
+	//.on ('tweet_create', (data) => console.log (userActivity.id + ' - tweet_create'))
+	.on('follow', (data) => {
+		console.log(data);
+		ws.send({text: 'Receive msg', date: 'date'});
+	})
+	//.on ('mute', (data) => console.log (userActivity.id + ' - mute'))
+	//.on ('revoke', (data) => console.log (userActivity.id + ' - revoke'))
+	.on('direct_message', data => {
+		console.log(data);
+		ws.send({text: 'Receive msg', date: 'date'});
+	})
+	.on('direct_message_indicate_typing', (data) => {
+		console.log(data);
+		ws.send({text: 'Typing', date: 'date'});
+	})
+	//.on ('direct_message_mark_read', (data) => console.log (userActivity.id + ' - direct_message_mark_read'))
+	//.on ('tweet_delete', (data) => console.log (userActivity.id + ' - tweet_delete'))
+});
 
 router.ws('/:id', async (ws, req) => {
 	/* Connected */
@@ -34,6 +61,7 @@ router.ws('/:id', async (ws, req) => {
 		next(error);
 	}
 
+	/*
 	userActivityWebhook.subscribe({
 		userId: tw.user_id,
 		accessToken: tw.oauth_token,
@@ -59,7 +87,7 @@ router.ws('/:id', async (ws, req) => {
 		})
 		//.on ('direct_message_mark_read', (data) => console.log (userActivity.id + ' - direct_message_mark_read'))
 		//.on ('tweet_delete', (data) => console.log (userActivity.id + ' - tweet_delete'))
-	});
+	});*/
 
 	ws.on('message', (msg) => {
 		console.log('message');
