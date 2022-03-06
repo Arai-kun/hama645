@@ -49,8 +49,11 @@ router.ws('/:id', async (ws, req) => {
 		.on('direct_message', data => {
 			console.log(data);
 			ws.send({text: 'Receive msg', date: 'date'});
-		});
-		//.on ('direct_message_indicate_typing', (data) => console.log (userActivity.id + ' - direct_message_indicate_typing'))
+		})
+		.on('direct_message_indicate_typing', (data) => {
+			console.log(data);
+			ws.send({text: 'Typing', date: 'date'});
+		})
 		//.on ('direct_message_mark_read', (data) => console.log (userActivity.id + ' - direct_message_mark_read'))
 		//.on ('tweet_delete', (data) => console.log (userActivity.id + ' - tweet_delete'))
 	});

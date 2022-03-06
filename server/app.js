@@ -113,7 +113,7 @@ const userActivityWebhook = twitterWebhooks.userActivity({
 });
 //userActivityWebhook.register();
 userActivityWebhook.getWebhooks()
-.then(res => console.log(res));
+.then(res => console.log(JSON.stringify(res)));
 
 
 
