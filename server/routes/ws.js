@@ -14,7 +14,6 @@ const userActivityWebhook = twitterWebhooks.userActivity({
   environment: 'dev',
   app: app
 });
-await userActivityWebhook.register();
 
 router.ws('/:id', async (ws, req) => {
 	/* Connected */
@@ -34,6 +33,7 @@ router.ws('/:id', async (ws, req) => {
 		next(error);
 	}
 
+	await userActivityWebhook.register();
 	userActivityWebhook.subscribe({
 		userId: tw.user_id,
 		accessToken: tw.oauth_token,
