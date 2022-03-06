@@ -1,7 +1,7 @@
 let express = require('express');
 let router = express.Router();
-let app = express();
-let twitterWebhooks = require('twitter-webhooks');
+//let app = express();
+//let twitterWebhooks = require('twitter-webhooks');
 let Twitter = require('../models/twitter');
 
 const userActivityWebhook = twitterWebhooks.userActivity({
