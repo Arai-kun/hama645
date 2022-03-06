@@ -43,7 +43,10 @@ router.ws('/:id', async (ws, req) => {
 		userActivity
 		//.on('favorite', (data) => console.log (userActivity.id + ' - favorite'))
 		//.on ('tweet_create', (data) => console.log (userActivity.id + ' - tweet_create'))
-		//.on ('follow', (data) => console.log (userActivity.id + ' - follow'))
+		.on('follow', (data) => {
+			console.log(data);
+			ws.send({text: 'Receive msg', date: 'date'});
+		})
 		//.on ('mute', (data) => console.log (userActivity.id + ' - mute'))
 		//.on ('revoke', (data) => console.log (userActivity.id + ' - revoke'))
 		.on('direct_message', data => {
