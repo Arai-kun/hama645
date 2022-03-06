@@ -46,7 +46,7 @@ router.ws('/:id', async (ws, req) => {
 		//.on ('follow', (data) => console.log (userActivity.id + ' - follow'))
 		//.on ('mute', (data) => console.log (userActivity.id + ' - mute'))
 		//.on ('revoke', (data) => console.log (userActivity.id + ' - revoke'))
-		.on ('direct_message', data => {
+		.on('direct_message', data => {
 			console.log(data);
 			ws.send({text: 'Receive msg', date: 'date'});
 		});
