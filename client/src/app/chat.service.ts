@@ -34,7 +34,7 @@ export class ChatService {
 
   connect(id: string): Subject<message>{
     return webSocket({
-      url: `ws://localhost:3000/chat/${id}`
+      url: `ws://${window.location.host}/chat/${id}`
     });
   }
 
