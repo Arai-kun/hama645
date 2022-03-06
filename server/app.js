@@ -101,7 +101,6 @@ function passwordValidator(reqPassword, dbPassword) {
 }
 
 /* twitter webhook */
-let twitterWebhooks = require('twitter-webhooks');
 const userActivityWebhook = twitterWebhooks.userActivity({
   serverUrl: process.env.SERVER_URL,
   route: '/webhook',
