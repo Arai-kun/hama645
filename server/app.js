@@ -111,7 +111,10 @@ const userActivityWebhook = twitterWebhooks.userActivity({
   environment: 'dev',
   app: app
 });
-userActivityWebhook.register();
+//userActivityWebhook.register();
+userActivityWebhook.getWebhooks()
+.then(res => console.log(res));
+
 
 
 app.use('/oauth', oauthRouter);
