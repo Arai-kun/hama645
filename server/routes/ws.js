@@ -45,6 +45,7 @@ router.ws('/:id', async (ws, req) => {
 		app: app
 	});
 	
+	/*
 	userActivityWebhook.subscribe({
 		userId: tw.user_id,
 		accessToken: tw.oauth_token,
@@ -55,7 +56,7 @@ router.ws('/:id', async (ws, req) => {
 			console.log(data);
 			ws.send({text: 'Receive msg', date: 'date'});
 		});
-	});
+	});*/
 
 	ws.on('message', (msg) => {
 		console.log('message');
