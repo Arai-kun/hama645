@@ -12,7 +12,7 @@ const userActivityWebhook = twitterWebhooks.userActivity({
   accessToken: process.env.ACCESS_TOKEN,
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
   environment: 'dev',
-  //app: app
+  app: app
 });
 //userActivityWebhook.register();
 
