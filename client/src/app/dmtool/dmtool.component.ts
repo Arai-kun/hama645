@@ -29,7 +29,9 @@ export class DmtoolComponent implements OnInit {
     this.getSpecials();
   }
 
-  onDM(): void { }
+  onDM(screen_name: string): void {
+    this.router.navigate([`/dm/${screen_name}`]);
+  }
 
   onOAuth(screen_name: string): void {
     this.router.navigate(['/oauth'], {queryParams: {screen_name: screen_name}});

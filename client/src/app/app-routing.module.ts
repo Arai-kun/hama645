@@ -7,6 +7,7 @@ import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { AuthGuard } from './auth.guard';
+import { ChatComponent } from './chat/chat.component';
 
 const routes: Routes = [
   { path: 'oauth', component: OauthComponent },
@@ -18,7 +19,8 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: 'account', component: DmtoolComponent },
-      { path: 'log', component: LogComponent }
+      { path: 'log', component: LogComponent },
+      { path: 'dm/:id', component: ChatComponent}
     ]
   },
   { path: "**", redirectTo: "home" }

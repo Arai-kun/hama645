@@ -47,6 +47,7 @@ import { NaviDeleteComponent } from './navi-delete/navi-delete.component';
 
 /* Class */
 import { MatPaginatorIntlJa } from './mat-paginator-jp';
+import { ChatComponent } from './chat/chat.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +64,8 @@ import { MatPaginatorIntlJa } from './mat-paginator-jp';
     DmtoolRegisterSpComponent,
     DmtoolDeleteSpComponent,
     SummaryComponent,
-    NaviDeleteComponent
+    NaviDeleteComponent,
+    ChatComponent,
   ],
   imports: [
     BrowserModule,

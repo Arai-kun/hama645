@@ -33,9 +33,13 @@ let User = require('./models/user');
 
 let oauthRouter = require('./routes/oauth');
 let userRouter = require('./routes/user');
-let dbRouter = require('./routes/db')
+let dbRouter = require('./routes/db');
 
-var app = express();
+let app = express();
+
+/* Websocket */
+let expressWs = require('express-ws')(app);
+let wsRouter = require('./routes/ws');
 
 app.use(compression());
 app.enable('trust proxy');
@@ -98,6 +102,7 @@ function passwordValidator(reqPassword, dbPassword) {
 app.use('/oauth', oauthRouter);
 app.use('/user', userRouter);
 app.use('/db', dbRouter);
+app.use('/chat', wsRouter);
 
 
 app.use(express.static(path.join(__dirname, '../client/dist/client')));

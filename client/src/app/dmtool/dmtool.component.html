@@ -24,7 +24,7 @@
                             <!--<span *ngIf="!twitter.authorized">-->
                                 <button *ngIf="!twitter.authorized" mat-raised-button color="accent" (click)="onOAuth(twitter.screen_name)">連携</button>
                             <!--</span>-->
-                            <button mat-raised-button color="primary" (click)="onDM()">DM</button>
+                            <button mat-raised-button color="primary" (click)="onDM(twitter.screen_name)">DM</button>
                         </span>
                     </mat-card-actions>
                 </mat-card>
