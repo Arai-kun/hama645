@@ -4,6 +4,7 @@ let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 let mongoose = require('mongoose');
 let compression = require('compression');
+let twitterWebhooks = require('twitter-webhooks');
 require('dotenv').config();
 
 if(process.env.MODE === 'LOCAL'){
@@ -103,7 +104,6 @@ app.use('/oauth', oauthRouter);
 app.use('/user', userRouter);
 app.use('/db', dbRouter);
 app.use('/chat', wsRouter);
-
 
 app.use(express.static(path.join(__dirname, '../client/dist/client')));
 app.use('/*', express.static(path.join(__dirname, '../client/dist/client/index.html')));

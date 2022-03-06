@@ -21,6 +21,7 @@
     "morgan": "~1.9.1",
     "passport": "^0.5.2",
     "passport-local": "^1.0.0",
-    "twitter-api-client": "^1.5.2"
+    "twitter-api-client": "^1.5.2",
+    "twitter-webhooks": "^0.3.3"
   }
 }
