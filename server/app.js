@@ -102,6 +102,7 @@ function passwordValidator(reqPassword, dbPassword) {
 }
 
 /* twitter webhook */
+/*
 const userActivityWebhook = twitterWebhooks.userActivity({
   serverUrl: process.env.SERVER_URL,
   route: '/webhook',
@@ -114,7 +115,7 @@ const userActivityWebhook = twitterWebhooks.userActivity({
 });
 //userActivityWebhook.register();
 userActivityWebhook.getWebhooks()
-.then(res => console.log(JSON.stringify(res)));
+.then(res => console.log(JSON.stringify(res)));*/
 
 
 

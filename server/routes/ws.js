@@ -2,7 +2,9 @@ let express = require('express');
 let router = express.Router();
 let twitterWebhooks = require('twitter-webhooks');
 let Twitter = require('../models/twitter');
+let app = express();
 
+/*
 const userActivityWebhook = twitterWebhooks.userActivity({
   serverUrl: process.env.SERVER_URL,
   route: '/webhook',
@@ -11,7 +13,7 @@ const userActivityWebhook = twitterWebhooks.userActivity({
   accessToken: process.env.ACCESS_TOKEN,
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
   environment: 'dev',
-});
+});*/
 //userActivityWebhook.register();
 
 router.ws('/:id', async (ws, req) => {
@@ -32,7 +34,17 @@ router.ws('/:id', async (ws, req) => {
 		next(error);
 	}
 
-	/*
+	const userActivityWebhook = twitterWebhooks.userActivity({
+		serverUrl: process.env.SERVER_URL,
+		route: '/webhook',
+		consumerKey: process.env.API_KEY,
+		consumerSecret: process.env.API_SECRET,
+		accessToken: process.env.ACCESS_TOKEN,
+		accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
+		environment: 'dev',
+		app: app
+	});
+	
 	userActivityWebhook.subscribe({
 		userId: tw.user_id,
 		accessToken: tw.oauth_token,
@@ -43,7 +55,7 @@ router.ws('/:id', async (ws, req) => {
 			console.log(data);
 			ws.send({text: 'Receive msg', date: 'date'});
 		});
-	});*/
+	});
 
 	ws.on('message', (msg) => {
 		console.log('message');
