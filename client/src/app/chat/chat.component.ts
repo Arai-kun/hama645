@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -11,7 +11,7 @@ import { Subject } from 'rxjs';
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent implements OnInit {
+export class ChatComponent implements OnInit, OnDestroy {
   message: message[] = [];
   private subject: Subject<message> = new Subject();
 
@@ -51,6 +51,10 @@ export class ChatComponent implements OnInit {
   failed(): void{
     this.snackBar.open('エラーが発生しました', '閉じる', {duration: 7000});
     this.location.back();
+  }
+
+  ngOnDestroy(): void {
+      this.subject.complete();
   }
 
 }
