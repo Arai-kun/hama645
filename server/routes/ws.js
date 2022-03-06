@@ -15,6 +15,23 @@ const userActivityWebhook = twitterWebhooks.userActivity({
   //app: app
 });
 //userActivityWebhook.register();
+async () => {
+let tw = {
+	user_id: '',
+	oauth_token: '',
+	oauth_token_secret: ''
+}
+try {
+	let twitter = await Twitter.findOne({email: req.user['email'], screen_name: req.params.id}).exec();
+	tw.user_id = twitter.user_id;
+	tw.oauth_token = twitter.oauth_token;
+	tw.oauth_token_secret = twitter.oauth_token_secret;
+}
+catch(error) {
+	next(error);
+}
+}
+
 
 userActivityWebhook.subscribe({
 	userId: tw.user_id,
@@ -46,6 +63,7 @@ userActivityWebhook.subscribe({
 router.ws('/:id', async (ws, req) => {
 	/* Connected */
 	console.log('connected');
+	/*
 	let tw = {
 		user_id: '',
 		oauth_token: '',
@@ -61,7 +79,7 @@ router.ws('/:id', async (ws, req) => {
 		next(error);
 	}
 
-	/*
+	
 	userActivityWebhook.subscribe({
 		userId: tw.user_id,
 		accessToken: tw.oauth_token,
