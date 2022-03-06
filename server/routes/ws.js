@@ -1,6 +1,5 @@
 let express = require('express');
 let router = express.Router();
-let app = express();
 let twitterWebhooks = require('twitter-webhooks');
 let Twitter = require('../models/twitter');
 
@@ -12,7 +11,6 @@ const userActivityWebhook = twitterWebhooks.userActivity({
   accessToken: process.env.ACCESS_TOKEN,
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
   environment: 'dev',
-  //app: app
 });
 //userActivityWebhook.register();
 
@@ -35,7 +33,7 @@ router.ws('/:id', async (ws, req) => {
 	}
 
 	
-	let userActivity = await userActivityWebhook.subscribe({
+	await userActivityWebhook.subscribe({
 		userId: tw.user_id,
 		accessToken: tw.oauth_token,
 		accessTokenSecret: tw.oauth_token_secret
@@ -62,11 +60,6 @@ router.ws('/:id', async (ws, req) => {
 		//.on ('tweet_delete', (data) => console.log (userActivity.id + ' - tweet_delete'))
 	});*/
 
-	userActivity.on('direct_message', data => {
-		console.log(data);
-		ws.send({text: 'Receive msg', date: 'date'});
-	});
-
 	ws.on('message', (msg) => {
 		console.log('message');
 		ws.send(msg);
@@ -81,5 +74,6 @@ router.ws('/:id', async (ws, req) => {
 		});
 	});
 });
+
 
 module.exports = router;
