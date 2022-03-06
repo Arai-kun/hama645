@@ -14,7 +14,7 @@ const userActivityWebhook = twitterWebhooks.userActivity({
   environment: 'dev',
   app: app
 });
-userActivityWebhook.register();
+await userActivityWebhook.register();
 
 router.ws('/:id', async (ws, req) => {
 	/* Connected */
