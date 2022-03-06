@@ -100,6 +100,21 @@ function passwordValidator(reqPassword, dbPassword) {
   return bcrypt.compareSync(reqPassword, dbPassword);
 }
 
+/* twitter webhook */
+let twitterWebhooks = require('twitter-webhooks');
+const userActivityWebhook = twitterWebhooks.userActivity({
+  serverUrl: process.env.SERVER_URL,
+  route: '/webhook',
+  consumerKey: process.env.API_KEY,
+  consumerSecret: process.env.API_SECRET,
+  accessToken: process.env.ACCESS_TOKEN,
+  accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
+  environment: 'dev',
+  app: app
+});
+userActivityWebhook.register();
+
+
 app.use('/oauth', oauthRouter);
 app.use('/user', userRouter);
 app.use('/db', dbRouter);

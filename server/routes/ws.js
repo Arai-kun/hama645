@@ -12,10 +12,9 @@ const userActivityWebhook = twitterWebhooks.userActivity({
   accessToken: process.env.ACCESS_TOKEN,
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
   environment: 'dev',
-  app: app
+  //app: app
 });
-console.log(process.env.SERVER_URL);
-userActivityWebhook.register();
+//userActivityWebhook.register();
 
 router.ws('/:id', async (ws, req) => {
 	/* Connected */
