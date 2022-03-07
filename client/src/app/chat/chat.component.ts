@@ -4,7 +4,8 @@ import { Location } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ChatService } from '../chat.service';
 import { message } from '../models/message';
-import { Subject } from 'rxjs';
+import { Subject, interval, Observable } from 'rxjs';
+import { mergeMap, takeWhile } from 'rxjs/operators';
 
 @Component({
   selector: 'app-chat',
@@ -30,6 +31,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     else{
       this.subject = this.chatService.connect(screen_name);
       this.recieveMsg();
+      this.polling();
     }
   }
 
@@ -46,6 +48,14 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   sendMsg(): void {
     this.subject.next({text: 'test', timestamp: 'date'});
+  }
+
+  polling(): Observable<any> {
+    return interval(1000)
+    .pipe(
+      mergeMap(async () => this.subject.next({ text: 'polling', timestamp: 'date' })),
+      takeWhile(() => true)
+    );
   }
 
   failed(): void{

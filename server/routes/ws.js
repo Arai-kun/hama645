@@ -49,7 +49,10 @@ router.ws('/:id', async (ws, req) => {
 
 	ws.on('message', (msg) => {
 		console.log('message');
-		ws.send(msg);
+		if(msg.text === 'pplling'){
+			ws.send({text: 'update', timestamp: 'date'});
+		}
+		//ws.send(msg);
 	});
 
 	ws.on('close', async () => {
