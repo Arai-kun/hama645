@@ -80,8 +80,8 @@ router.delete('/delete/:id', (req, res, next) => {
 			accessToken: twitter.oauth_token,
 			accessTokenSecret: twitter.oauth_token_secret
 		})
-		.then(res => {
-			console.log(res);
+		.then(response => {
+			console.log(response);
 			res.json(true);
 		})
 		.catch(error => {
@@ -99,8 +99,8 @@ router.get('/create/:id', (req, res, next) => {
 			accessToken: twitter.oauth_token,
 			accessTokenSecret: twitter.oauth_token_secret
 		})
-		.then(res => {
-			console.log(res);
+		.then(responce => {
+			console.log(responce);
 			res.json(true);
 		})
 		.catch(error => {
