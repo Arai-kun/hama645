@@ -1,8 +1,13 @@
 let express = require('express');
 let router = express.Router();
-let twitterWebhooks = require('twitter-webhooks');
+//let twitterWebhooks = require('twitter-webhooks');
 let Twitter = require('../models/twitter');
-let app = express();
+//let app = express();
+
+const request = require('request');
+const TWITTER_API_URI = 'https://api.twitter.com/1.1/';
+const ENVIRONMENT = process.env.ENVIRONMENT;
+let twitterServerTimeOffset = 0;
 
 /*
 const userActivityWebhook = twitterWebhooks.userActivity({
@@ -33,30 +38,14 @@ router.ws('/:id', async (ws, req) => {
 	catch(error) {
 		next(error);
 	}
-
-	const userActivityWebhook = twitterWebhooks.userActivity({
-		serverUrl: process.env.SERVER_URL,
-		route: '/webhook',
-		consumerKey: process.env.API_KEY,
-		consumerSecret: process.env.API_SECRET,
-		accessToken: process.env.ACCESS_TOKEN,
-		accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
-		environment: 'dev',
-		app: app
-	});
 	
-	/*
-	userActivityWebhook.subscribe({
+	subscribe({
 		userId: tw.user_id,
 		accessToken: tw.oauth_token,
 		accessTokenSecret: tw.oauth_token_secret
 	})
-	.then(userActivity => {
-		userActivity.on('direct_message', data => {
-			console.log(data);
-			ws.send({text: 'Receive msg', date: 'date'});
-		});
-	});*/
+	.then(res => console.log(res))
+	.catch(error => console.log(error));
 
 	ws.on('message', (msg) => {
 		console.log('message');
@@ -65,13 +54,77 @@ router.ws('/:id', async (ws, req) => {
 
 	ws.on('close', async () => {
 		console.log('close');
-		await userActivityWebhook.unsubscribe({
+		unsubscribe({
 			userId: tw.user_id,
 			accessToken: tw.oauth_token,
 			accessTokenSecret: tw.oauth_token_secret
-		});
+		})
+		.then(res => console.log(res))
+		.catch(error => console.log(error));
 	});
 });
+
+function subscribe(args = {}) {
+	const options = prepareUserContextRequest(args);
+
+	args = Object.assign({}, args);
+	options.uri = `${TWITTER_API_URI}account_activity/all/${ENVIRONMENT}/subscriptions.json`;
+	options.method = 'POST';
+
+	return sendApiRequest(options);
+}
+
+function unsubscribe (args = {}) {
+	const options = prepareUserContextRequest(args);
+
+	options.uri = `${TWITTER_API_URI}account_activity/all/${ENVIRONMENT}/subscriptions.json`;
+	options.method = 'DELETE';
+
+	return sendApiRequest(options);
+}
+
+function prepareUserContextRequest(args) {
+	if (!args.userId) throw new Error('Twitter webhooks : You must provide userId');
+	if (!args.accessToken) throw new Error('Twitter webhooks : You must provide user accessToken');
+	if (!args.accessTokenSecret) throw new Error('Twitter webhooks : You must provide user accessTokenSecret');
+
+	return {
+		json: true,
+		oauth: {
+			consumer_key: consumerKey,
+			consumer_secret: consumerSecret,
+			token: args.accessToken,
+			token_secret: args.accessTokenSecret,
+			timestamp: Math.floor((Date.now() + twitterServerTimeOffset) / 1000).toString()
+		}
+	};
+}
+
+function sendApiRequest(options) {
+	return new Promise((resolve, reject) => {
+		request(options, (error, response, json) => {
+			if (error) {
+				error.statusCode = -1;
+				return reject(error);
+			}
+			if (response.statusCode >= 200 && response.statusCode < 300) {
+				resolve(response);
+			} else {
+				if (Array.isArray(json.errors)) {
+					error = new Error(json.errors[0].message);
+					error.code = json.errors[0].code;
+				} else {
+					error = new Error(response.statusMessage);
+					error.code = -1;
+				}
+				error.statusCode = response.statusCode;
+				error.body = json;
+				reject(error);
+			}
+		});
+	});
+}
+
 
 
 module.exports = router;
