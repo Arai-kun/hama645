@@ -67,6 +67,48 @@ router.ws('/:id', async (ws, req) => {
 	});
 });
 
+router.get('/update/:id', (req, res, next) => {
+	res.json({text: 'polling', timestamp: 'date'});
+});
+
+router.delete('/delete/:id', (req, res, next) => {
+	Twitter.findOne({email: req.user['email'], screen_name: req.params.id}, (error, twitter) => {
+		if(error) next(error);
+		console.log('close');
+		unsubscribe({
+			userId: twitter.user_id,
+			accessToken: twitter.oauth_token,
+			accessTokenSecret: twitter.oauth_token_secret
+		})
+		.then(res => {
+			console.log(res);
+			res.json(true);
+		})
+		.catch(error => {
+			next(error);
+		});
+	});
+});
+
+router.get('/create/:id', (req, res, next) => {
+	Twitter.findOne({email: req.user['email'], screen_name: req.params.id}, (error, twitter) => {
+		if(error) next(error);
+		console.log('create');
+		subscribe({
+			userId: twitter.user_id,
+			accessToken: twitter.oauth_token,
+			accessTokenSecret: twitter.oauth_token_secret
+		})
+		.then(res => {
+			console.log(res);
+			res.json(true);
+		})
+		.catch(error => {
+			next(error);
+		});
+	});
+})
+
 function subscribe(args = {}) {
 	const options = prepareUserContextRequest(args);
 

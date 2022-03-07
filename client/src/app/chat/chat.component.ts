@@ -15,6 +15,7 @@ import { mergeMap, takeWhile } from 'rxjs/operators';
 export class ChatComponent implements OnInit, OnDestroy {
   message: message[] = [];
   private subject: Subject<message> = new Subject();
+  screen_name: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -24,14 +25,21 @@ export class ChatComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    let screen_name = this.route.snapshot.paramMap.get('id');
-    if(!screen_name){
+    this.screen_name = this.route.snapshot.paramMap.get('id');
+    if(!this.screen_name){
       this.failed();
     }
     else{
-      this.subject = this.chatService.connect(screen_name);
-      this.recieveMsg();
-      this.polling();
+      //this.subject = this.chatService.connect(this.screen_name);
+      this.chatService.create(this.screen_name)
+      .subscribe(result => {
+        if(result){
+          this.recieveMsg();
+          this.polling().subscribe(data => {
+            this.subject.next(data);
+          });
+        }
+      })
     }
   }
 
@@ -53,7 +61,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   polling(): Observable<any> {
     return interval(1000)
     .pipe(
-      mergeMap(async () => this.subject.next({ text: 'polling', timestamp: 'date' })),
+      mergeMap(() => this.chatService.update(this.screen_name)),
       takeWhile(() => true)
     );
   }
@@ -65,6 +73,12 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
       this.subject.complete();
+      this.chatService.delete(this.screen_name)
+      .subscribe(result => {
+        if(result){
+          console.log('Deleted');
+        }
+      })
   }
 
 }

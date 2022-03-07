@@ -24,10 +24,10 @@ export class ChatService {
     return `ws://localhost:3000/chat/${id}`;
   }
 
-  init(id: string): Observable<any> {
-    return this.http.get<any>(`/chat/${id}`, this.httpOptions)
+  create(id: string): Observable<boolean> {
+    return this.http.get<boolean>(`/chat/create/${id}`, this.httpOptions)
     .pipe(
-      catchError(this.handleError<any>()),
+      catchError(this.handleError<boolean>(false)),
       shareReplay(1)
     );
   }
@@ -36,6 +36,26 @@ export class ChatService {
     return webSocket({
       url: `wss://${window.location.host}/chat/${id}`
     });
+  }
+
+  update(id: string | null): Observable<message> {
+    if(!id){
+      return new Observable<message>();
+    }
+    return this.http.get<message>(`/chat/update/${id}`, this.httpOptions)
+    .pipe(
+      catchError(this.handleError<message>()),
+    );
+  }
+
+  delete(id: string | null): Observable<boolean> {
+    if(!id){
+      return of<boolean>(false);
+    }
+    return this.http.delete<boolean>(`/chat/delete/${id}`, this.httpOptions)
+    .pipe(
+      catchError(this.handleError<boolean>(false)),
+    );
   }
 
   private handleError<T>(result?: T) {
