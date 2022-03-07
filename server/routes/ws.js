@@ -92,7 +92,7 @@ function prepareUserContextRequest(args) {
 		json: true,
 		oauth: {
 			consumer_key: process.env.API_KEY,
-			consumer_secret: API_SECRET,
+			consumer_secret: process.env.API_SECRET,
 			token: args.accessToken,
 			token_secret: args.accessTokenSecret,
 			timestamp: Math.floor((Date.now() + twitterServerTimeOffset) / 1000).toString()
