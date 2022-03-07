@@ -4,7 +4,7 @@ import { Location } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ChatService } from '../chat.service';
 import { message } from '../models/message';
-import { Subject, interval, Observable } from 'rxjs';
+import { Subject, interval, Observable, Subscription } from 'rxjs';
 import { mergeMap, takeWhile } from 'rxjs/operators';
 
 @Component({
@@ -16,6 +16,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   message: message[] = [];
   private subject: Subject<message> = new Subject();
   screen_name: string | null = null;
+  subscription: Subscription = new Subscription();
 
   constructor(
     private route: ActivatedRoute,
@@ -35,7 +36,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       .subscribe(result => {
         if(result){
           this.recieveMsg();
-          this.polling().subscribe(data => {
+          this.subscription = this.polling().subscribe(data => {
             this.subject.next(data);
           });
         }
@@ -50,7 +51,10 @@ export class ChatComponent implements OnInit, OnDestroy {
         this.message.push(msg);
       },
       error: e => console.log('error: ', e),
-      complete: () => console.log('disconnected')
+      complete: () => {
+        console.log('disconnected');
+        this.subscription.unsubscribe();
+      }
     })
   }
 
