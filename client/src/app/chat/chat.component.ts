@@ -13,10 +13,11 @@ import { mergeMap, takeWhile } from 'rxjs/operators';
   styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent implements OnInit, OnDestroy {
-  message: message[] = [];
+  messages: message[] = [];
   private subject: Subject<message> = new Subject();
-  screen_name: string | null = null;
+  screen_name: string = '';
   subscription: Subscription = new Subscription();
+  text: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -26,12 +27,11 @@ export class ChatComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.screen_name = this.route.snapshot.paramMap.get('id');
-    if(!this.screen_name){
+    if(!this.route.snapshot.paramMap.get('id')){
       this.failed();
     }
     else{
-      //this.subject = this.chatService.connect(this.screen_name);
+      this.screen_name = this.route.snapshot.paramMap.get('id')!;
       this.chatService.create(this.screen_name)
       .subscribe(result => {
         if(result){
@@ -48,7 +48,12 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.subject.subscribe({
       next: msg => {
         console.log(msg);
-        this.message.push(msg);
+        let date = new Date(msg.timestamp);
+        this.messages.push({
+          self: msg.self,
+          text: msg.text,
+          timestamp: `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${date.getHours()}:${date.getMinutes()}`
+        });
       },
       error: e => console.log('error: ', e),
       complete: () => {
@@ -59,10 +64,18 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   sendMsg(): void {
-    this.subject.next({text: 'test', timestamp: 'date'});
+    this.chatService.send(this.screen_name, this.text)
+    .subscribe(result => {
+      if(!result){
+        this.snackBar.open('送信できませんでした', '閉じる', {duration: 5000});
+      }
+      else{
+        this.text = '';
+      }
+    })
   }
 
-  polling(): Observable<any> {
+  polling(): Observable<message> {
     return interval(1000)
     .pipe(
       mergeMap(() => this.chatService.update(this.screen_name)),
@@ -76,13 +89,13 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-      this.subject.complete();
-      this.chatService.delete(this.screen_name)
-      .subscribe(result => {
-        if(result){
-          console.log('Deleted');
-        }
-      })
+    this.subject.complete();
+    this.chatService.delete(this.screen_name)
+    .subscribe(result => {
+      if(result){
+        console.log('Deleted');
+      }
+    });
   }
 
 }

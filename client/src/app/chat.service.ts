@@ -20,10 +20,6 @@ export class ChatService {
     private ws: WebsocketService
   ) { }
 
-  private chatUrl(id: string): string{ 
-    return `ws://localhost:3000/chat/${id}`;
-  }
-
   create(id: string): Observable<boolean> {
     return this.http.get<boolean>(`/chat/create/${id}`, this.httpOptions)
     .pipe(
@@ -32,23 +28,21 @@ export class ChatService {
     );
   }
 
-  connect(id: string): Subject<message>{
-    return webSocket({
-      url: `wss://${window.location.host}/chat/${id}`
-    });
+  send(id: string, text: string): Observable<boolean> {
+    return this.http.post<boolean>(`/chat/send/${id}`, this.httpOptions)
+    .pipe(
+      catchError(this.handleError<boolean>(false)),
+    );
   }
 
-  update(id: string | null): Observable<message> {
-    if(!id){
-      return new Observable<message>();
-    }
+  update(id: string): Observable<message> {
     return this.http.get<message>(`/chat/update/${id}`, this.httpOptions)
     .pipe(
       catchError(this.handleError<message>()),
     );
   }
 
-  delete(id: string | null): Observable<boolean> {
+  delete(id: string): Observable<boolean> {
     if(!id){
       return of<boolean>(false);
     }

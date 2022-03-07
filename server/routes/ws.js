@@ -3,6 +3,8 @@ let router = express.Router();
 //let twitterWebhooks = require('twitter-webhooks');
 let Twitter = require('../models/twitter');
 //let app = express();
+let System = require('../models/system');
+let Dm = require('../models/dm');
 
 const request = require('request');
 const TWITTER_API_URI = 'https://api.twitter.com/1.1/';
@@ -68,6 +70,12 @@ router.ws('/:id', async (ws, req) => {
 });
 
 router.get('/update/:id', (req, res, next) => {
+	Dm.find({email: req.user['email'], screen_name: req.params.id}, (error, dms) => {
+		if(error) next(error);
+		res.json({
+			
+		})
+	})
 	res.json({text: 'polling', timestamp: 'date'});
 });
 
@@ -82,7 +90,10 @@ router.delete('/delete/:id', (req, res, next) => {
 		})
 		.then(response => {
 			console.log(response);
-			res.json(true);
+			System.deleteOne({email: req.user['email'], screen_name: req.params.id}, error => {
+				if(error) next(error);
+				res.json(true);
+			});
 		})
 		.catch(error => {
 			next(error);
@@ -94,17 +105,23 @@ router.get('/create/:id', (req, res, next) => {
 	Twitter.findOne({email: req.user['email'], screen_name: req.params.id}, (error, twitter) => {
 		if(error) next(error);
 		console.log('create');
-		subscribe({
-			userId: twitter.user_id,
-			accessToken: twitter.oauth_token,
-			accessTokenSecret: twitter.oauth_token_secret
-		})
-		.then(responce => {
-			console.log(responce);
-			res.json(true);
-		})
-		.catch(error => {
-			next(error);
+		System.create({
+			email: req.user['email'],
+			screen_name: req.params.id
+		}, error => {
+			if(error) next(error);
+			subscribe({
+				userId: twitter.user_id,
+				accessToken: twitter.oauth_token,
+				accessTokenSecret: twitter.oauth_token_secret
+			})
+			.then(response => {
+				console.log(response);
+				res.json(true);
+			})
+			.catch(error => {
+				next(error);
+			});
 		});
 	});
 })

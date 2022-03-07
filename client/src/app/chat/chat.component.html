@@ -1,2 +1,37 @@
-<p>chat works!</p>
-<button mat-button type="button" (click)="sendMsg()">送信</button>
+<div class="container" fxLayout="column" fxLayoutGap="16px">
+    <span class="mat-title">勤務時間</span>
+    <div *ngFor="let msg of messages">
+        <div *ngIf="msg.self; else elseBlock">
+            <mat-card>
+                <mat-card-content>
+                    {{msg.text}}
+                </mat-card-content>
+                <mat-card-footer>
+                    <caption>{{msg.timestamp}}</caption>
+                </mat-card-footer>>
+            </mat-card>
+        </div>
+        <ng-templete #elseBlock>
+            <span fxLayout="row" fxFlexOffset="auto">
+                <mat-card>
+                    <mat-card-content>
+                        {{msg.text}}
+                    </mat-card-content>
+                    <mat-card-footer>
+                        <caption>{{msg.timestamp}}</caption>
+                    </mat-card-footer>>
+                </mat-card>
+            </span>
+        </ng-templete>
+    </div>
+</div>
+<div class="footer">
+    <span fxLayout="row" fxLayoutAlign="center center">
+        <mat-form-field class="full-with">
+            <textarea matInput [(ngModel)]="text"></textarea>
+        </mat-form-field>
+        <span fxLayout="row" fxFlexOffset="auto">
+            <button mat-raised-button color="accent" type="button" (click)="sendMsg()">送信</button>
+        </span>
+    </span>
+</div>
