@@ -4,7 +4,8 @@ let mongoose = require("mongoose"),
     screen_name: String,
     id: String,
     created_timestamp: String,
-    sender_id: String,
+    sender_id: String,  
+    recipient_id: String,
     text: String
 });
 

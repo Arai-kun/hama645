@@ -48,6 +48,7 @@ import { NaviDeleteComponent } from './navi-delete/navi-delete.component';
 /* Class */
 import { MatPaginatorIntlJa } from './mat-paginator-jp';
 import { ChatComponent } from './chat/chat.component';
+import { DmListComponent } from './dm-list/dm-list.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { ChatComponent } from './chat/chat.component';
     SummaryComponent,
     NaviDeleteComponent,
     ChatComponent,
+    DmListComponent,
   ],
   imports: [
     BrowserModule,

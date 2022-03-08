@@ -90,10 +90,7 @@ router.delete('/delete/:id', (req, res, next) => {
 		})
 		.then(response => {
 			console.log(response);
-			System.deleteOne({email: req.user['email'], screen_name: req.params.id}, error => {
-				if(error) next(error);
-				res.json(true);
-			});
+			res.json(true);
 		})
 		.catch(error => {
 			next(error);
@@ -105,26 +102,39 @@ router.get('/create/:id', (req, res, next) => {
 	Twitter.findOne({email: req.user['email'], screen_name: req.params.id}, (error, twitter) => {
 		if(error) next(error);
 		console.log('create');
-		System.create({
-			email: req.user['email'],
-			screen_name: req.params.id
-		}, error => {
-			if(error) next(error);
-			subscribe({
-				userId: twitter.user_id,
-				accessToken: twitter.oauth_token,
-				accessTokenSecret: twitter.oauth_token_secret
-			})
-			.then(response => {
-				console.log(response);
-				res.json(true);
-			})
-			.catch(error => {
-				next(error);
-			});
+		subscribe({
+			userId: twitter.user_id,
+			accessToken: twitter.oauth_token,
+			accessTokenSecret: twitter.oauth_token_secret
+		})
+		.then(response => {
+			console.log(response);
+			res.json(true);
+		})
+		.catch(error => {
+			next(error);
 		});
 	});
-})
+});
+
+router.get('/dmUserList/:id', (req, res, next) => {
+	let dmUserList = [];
+	Dm.find({email: req.user['email'], screen_name: req.params.id}, (error, dms) => {
+		if(error) next(error);
+		Twitter.findOne({email: req.user['email'], screen_name: req.params.id}, (error, twitter) => {
+			dms.forEach(dm => {
+				if(!dmUserList.includes(dm.sender_id)){
+					dmUserList.push(dm.sender_id);
+				}
+				if(!dmUserList.includes(dm.recipient_id)){
+					dmUserList.push(dm.recipient_id);
+				}
+			});
+			dmUserList = dmUserList.filter(el => el !== twitter.user_id);
+			res.json(dmUserList);
+		});
+	});
+});
 
 function subscribe(args = {}) {
 	const options = prepareUserContextRequest(args);

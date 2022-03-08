@@ -27,7 +27,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    if(!this.route.snapshot.paramMap.get('id')){
+    if(!this.route.snapshot.paramMap.get('id') || !this.route.snapshot.paramMap.get('dmUser')){
       this.failed();
     }
     else{
@@ -40,7 +40,7 @@ export class ChatComponent implements OnInit, OnDestroy {
             this.subject.next(data);
           });
         }
-      })
+      });
     }
   }
 
@@ -60,7 +60,7 @@ export class ChatComponent implements OnInit, OnDestroy {
         console.log('disconnected');
         this.subscription.unsubscribe();
       }
-    })
+    });
   }
 
   sendMsg(): void {

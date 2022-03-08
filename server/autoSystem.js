@@ -126,6 +126,7 @@ async function detectDMRequest(){
 								id: data['id'],
 								created_timestamp: data['created_timestamp'],
 								sender_id: data['message_create']['sender_id'],
+								recipient_id: data['message_create']['target']['recipient_id'],
 								text: data['message_create']['message_data']['text'],
 							});
 						}
@@ -192,10 +193,13 @@ async function detectDMRequest(){
 								id: data['id'],
 								created_timestamp: data['created_timestamp'],
 								sender_id: data['message_create']['sender_id'],
+								recipient_id: data['message_create']['target']['recipient_id'],
 								text: data['message_create']['message_data']['text']
 							});
 						}
 						await dms.save();
+
+						await Dm.findOneAndDelete({email: user.email, screen_name: twitter.screen_name, id: '0'}).exec();
 					}
 				}
 				else{
@@ -208,7 +212,8 @@ async function detectDMRequest(){
 							screen_name: twitter.screen_name,
 							id: '0',
 							created_timestamp: `${Date.now()}`,
-							send_id: '0',
+							send_id: '',
+							recipient_id: '',
 							text: ''
 						});
 					}

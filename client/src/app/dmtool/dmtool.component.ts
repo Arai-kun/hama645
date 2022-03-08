@@ -8,6 +8,7 @@ import { special } from '../models/special'
 import { DmtoolDeleteComponent } from '../dmtool-delete/dmtool-delete.component';
 import { DmtoolRegisterSpComponent } from '../dmtool-register-sp/dmtool-register-sp.component';
 import { DmtoolDeleteSpComponent } from '../dmtool-delete-sp/dmtool-delete-sp.component';
+import { DmListComponent } from '../dm-list/dm-list.component';
 
 @Component({
   selector: 'app-dmtool',
@@ -30,7 +31,13 @@ export class DmtoolComponent implements OnInit {
   }
 
   onDM(screen_name: string): void {
-    this.router.navigate([`/home/dm/${screen_name}`]);
+    let dialogRef = this.dialog.open(DmListComponent, {
+      width: '400px',
+      data: screen_name
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.ngOnInit();
+    });
   }
 
   onOAuth(screen_name: string): void {

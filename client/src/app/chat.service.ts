@@ -43,12 +43,16 @@ export class ChatService {
   }
 
   delete(id: string): Observable<boolean> {
-    if(!id){
-      return of<boolean>(false);
-    }
     return this.http.delete<boolean>(`/chat/delete/${id}`, this.httpOptions)
     .pipe(
       catchError(this.handleError<boolean>(false)),
+    );
+  }
+
+  getdmUserList(id: string): Observable<string[]> {
+    return this.http.get<string[]>(`/chat/dmUserList/${id}`, this.httpOptions)
+    .pipe(
+      catchError(this.handleError<string[]>([])),
     );
   }
 
