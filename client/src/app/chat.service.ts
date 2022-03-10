@@ -29,7 +29,7 @@ export class ChatService {
   }
 
   send(id: string, text: string, sub_id: string): Observable<boolean> {
-    return this.http.post<boolean>(`/chat/send/${id}/${sub_id}`, text,this.httpOptions)
+    return this.http.post<boolean>(`/chat/send/${id}/${sub_id}`, JSON.stringify({text: text}),this.httpOptions)
     .pipe(
       catchError(this.handleError<boolean>(false)),
     );

@@ -113,19 +113,19 @@ router.post('/send/:id/:sub_id', async (req, res, next) => {
 			accessTokenSecret: twitter.oauth_token_secret
 		});
 		console.log(req.body);
-		await twitterClient.directMessages.eventsNew(JSON.stringify({
-			'event': {
+		await twitterClient.directMessages.eventsNew({
+			event: {
 				type: 'message_create',
 				message_create: {
 					target: {
 						recipient_id: req.params.sub_id
 					},
 					message_data: {
-						text: `${req.body}`
+						text: req.body['text']
 					}
 				}
 			}
-		}));
+		});
 		res.json(true);
 	}
 	catch(error){
@@ -143,7 +143,7 @@ router.delete('/delete/:id', (req, res, next) => {
 			accessTokenSecret: twitter.oauth_token_secret
 		})
 		.then(response => {
-			console.log(response);
+			//console.log(response);
 			res.json(true);
 		})
 		.catch(error => {
@@ -162,7 +162,7 @@ router.get('/create/:id', (req, res, next) => {
 			accessTokenSecret: twitter.oauth_token_secret
 		})
 		.then(response => {
-			console.log(response);
+			//console.log(response);
 			res.json(true);
 		})
 		.catch(error => {
