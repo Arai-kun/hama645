@@ -106,6 +106,7 @@ async function detectDMRequest(){
 				//console.log(ids);
 
 				let response = await twitterClient.directMessages.eventsList();
+				console.log(response);
 				if(response.events.length !== 0){
 					/*let data;
 					for(let i = 0; i < response.events.length; i++){
