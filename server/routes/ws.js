@@ -72,31 +72,34 @@ router.ws('/:id', async (ws, req) => {
 router.get('/update/:id/:sub_id', (req, res, next) => {
 	Dm.find({email: req.user['email'], screen_name: req.params.id}, (error, dms) => {
 		if(error) next(error);
-		let data = [];
-		for(let dm of dms){
-			/* self = true */
-			if(dm.sender_id === req.params.id && dm.recipient_id === req.params.sub_id){
-				data.push({
-					id: dm.id,
-					self: true,
-					text: dm.text,
-					timestamp: dm.created_timestamp
-				});
+		Twitter.findOne({email: req.user['email'], screen_name: req.params.id}, (error, twitter) => {
+			if(error) next(error);
+			let data = [];
+			for(let dm of dms){
+				/* self = true */
+				if(dm.sender_id === twitter.user_id && dm.recipient_id === req.params.sub_id){
+					data.push({
+						id: dm.id,
+						self: true,
+						text: dm.text,
+						timestamp: dm.created_timestamp
+					});
+				}
+				/* self = false */
+				else if(dm.sender_id === req.params.sub_id && dm.recipient_id === twitter.user_id){
+					data.push({
+						id: dm.id,
+						self: false,
+						text: dm.text,
+						timestamp: dm.created_timestamp
+					});
+				}
+				else{
+					// Ignore
+				}
 			}
-			/* self = false */
-			else if(dm.sender_id === req.params.sub_id && dm.recipient_id === req.params.id){
-				data.push({
-					id: dm.id,
-					self: false,
-					text: dm.text,
-					timestamp: dm.created_timestamp
-				});
-			}
-			else{
-				// Ignore
-			}
-		}
-		res.json(data);
+			res.json(data);
+		})
 	});
 });
 
@@ -109,7 +112,7 @@ router.post('/send/:id/:sub_id', async (req, res, next) => {
 			accessToken: twitter.oauth_token,
 			accessTokenSecret: twitter.oauth_token_secret
 		});
-		await twitterClient.directMessages.eventsNew({
+		await twitterClient.directMessages.eventsNew(JSON.stringify({
 			event: {
 				type: 'message_create',
 				message_create: {
@@ -121,7 +124,7 @@ router.post('/send/:id/:sub_id', async (req, res, next) => {
 					}
 				}
 			}
-		});
+		}));
 		res.json(true);
 	}
 	catch(error){
