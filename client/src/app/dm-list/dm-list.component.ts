@@ -29,5 +29,10 @@ export class DmListComponent implements OnInit {
 
   onDM(dmUser: string): void {
     this.router.navigate([`/home/dm/${this.screen_name}/${dmUser}`]);
+    this.dialogRef.close();
+  }
+
+  onCancel(): void {
+    this.dialogRef.close();
   }
 }
