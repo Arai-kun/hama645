@@ -136,6 +136,8 @@ async function detectDMRequest(){
 						/* If sender, ignore. Then data updates only */
 						/* Extract the newest data from DB */
 						let dm = dms.find(dm => Math.max(dms.map(dm => Number(dm.created_timestamp))) === Number(dm.created_timestamp));
+						console.log(dms.map(dm => Number(dm.created_timestamp)));
+						console.log(Math.max(dms.map(dm => Number(dm.created_timestamp))));
 						console.log(dm);
 						/* Extract data which there is not in DB */
 						let new_data = response.events.filter(dm => !(dms.map(dm => dm.id)).includes(dm['id']));
