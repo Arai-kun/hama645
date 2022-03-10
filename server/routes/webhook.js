@@ -17,13 +17,14 @@ router.get('/', (req, res, next) => {
 })
 
 router.post('/', async (req, res, next) => {
+	res.sendStatus(200);
 	console.log(req.body);
 	if(req.body.direct_message_events){
 		try {
 			let twitters = await Twitter.find({user_id: req.body.for_user_id}).exec();
 			for(let twitter of twitters){
-				console.log('webhook dm data lenght: ' + request.body.direct_message_events.length);
-				for(let data of request.body.direct_message_events){
+				console.log('webhook dm data lenght: ' + req.body.direct_message_events.length);
+				for(let data of req.body.direct_message_events){
 					await Dm.create({
 						email: twitter.email,
 						screen_name: twitter.screen_name,
@@ -35,7 +36,6 @@ router.post('/', async (req, res, next) => {
 					});
 				}
 			}
-			res.sendStatus(200);
 		}
 		catch(error){
 			next(error);
