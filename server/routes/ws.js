@@ -112,15 +112,16 @@ router.post('/send/:id/:sub_id', async (req, res, next) => {
 			accessToken: twitter.oauth_token,
 			accessTokenSecret: twitter.oauth_token_secret
 		});
+		console.log(req.body);
 		await twitterClient.directMessages.eventsNew(JSON.stringify({
-			event: {
+			'event': {
 				type: 'message_create',
 				message_create: {
 					target: {
 						recipient_id: req.params.sub_id
 					},
 					message_data: {
-						text: req.body
+						text: `${req.body}`
 					}
 				}
 			}
