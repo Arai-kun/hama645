@@ -141,68 +141,70 @@ async function detectDMRequest(){
 						console.log(new_data);
 						/* Extract the newest data from new data */
 						//let data = new_data.filter(dm => Math.max(new_data.map(dm => Number(dm['created_timestamp']))) === Number(dm['created_timestamp']));
-						let data = new_data[0];
-						console.log(data);
-
-						if(twitter.user_id !== data['message_create']['sender_id']){
-							if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
-								if(ids.find(id => id === Number(data['message_create']['sender_id'])) === undefined){
-									/* DM Request */
-									log('***** Detect Request DM! *****');
-									await Log.create({
-										email: user.email,
-										timestamp: `${Date.now()}`,
-										screen_name: twitter.screen_name,
-										event: 1
-									});
-									await sendgrid.send({
-										to: user.email,
-										from: 'noreply@enginestarter.nl',
-										subject: '【通知】DM管理ツール',
-										html: `<p>@${twitter.screen_name} にDMリクエストが届きました</p>`
-									});
-								}
-								else{
-									/* New DM */
-									let special = await Special.findOne({user_id: data['message_create']['sender_id']}).exec();
-									if(!special){
-										log('Get new DM');
+						if(new_data.length !== 0){
+							/* Extract the newest data from new data */
+							let data = new_data[0];
+							console.log(data);
+							if(twitter.user_id !== data['message_create']['sender_id']){
+								if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
+									if(ids.find(id => id === Number(data['message_create']['sender_id'])) === undefined){
+										/* DM Request */
+										log('***** Detect Request DM! *****');
 										await Log.create({
 											email: user.email,
 											timestamp: `${Date.now()}`,
 											screen_name: twitter.screen_name,
-											event: 2
-										});
-									}
-									else{
-										log('Get new special DM');
-										await Log.create({
-											email: user.email,
-											timestamp: `${Date.now()}`,
-											screen_name: twitter.screen_name,
-											event: 3
+											event: 1
 										});
 										await sendgrid.send({
 											to: user.email,
 											from: 'noreply@enginestarter.nl',
-											subject: '【特殊通知】DM管理ツール',
-											html: `<p>@${special.screen_name} から@${twitter.screen_name} にDMが届きました</p>`
+											subject: '【通知】DM管理ツール',
+											html: `<p>@${twitter.screen_name} にDMリクエストが届きました</p>`
 										});
+									}
+									else{
+										/* New DM */
+										let special = await Special.findOne({user_id: data['message_create']['sender_id']}).exec();
+										if(!special){
+											log('Get new DM');
+											await Log.create({
+												email: user.email,
+												timestamp: `${Date.now()}`,
+												screen_name: twitter.screen_name,
+												event: 2
+											});
+										}
+										else{
+											log('Get new special DM');
+											await Log.create({
+												email: user.email,
+												timestamp: `${Date.now()}`,
+												screen_name: twitter.screen_name,
+												event: 3
+											});
+											await sendgrid.send({
+												to: user.email,
+												from: 'noreply@enginestarter.nl',
+												subject: '【特殊通知】DM管理ツール',
+												html: `<p>@${special.screen_name} から@${twitter.screen_name} にDMが届きました</p>`
+											});
+										}
 									}
 								}
 							}
+							for(let data of new_data){
+								await Dm.create({
+									email: user.email, 
+									screen_name: twitter.screen_name,
+									id: data['id'],
+									created_timestamp: data['created_timestamp'],
+									sender_id: data['message_create']['sender_id'],
+									recipient_id: data['message_create']['target']['recipient_id'],
+									text: data['message_create']['message_data']['text']
+								});
+							}
 						}
-						for(let data of new_data){
-							dms.push({
-								id: data['id'],
-								created_timestamp: data['created_timestamp'],
-								sender_id: data['message_create']['sender_id'],
-								recipient_id: data['message_create']['target']['recipient_id'],
-								text: data['message_create']['message_data']['text']
-							});
-						}
-						await dms.save();
-
 						await Dm.findOneAndDelete({email: user.email, screen_name: twitter.screen_name, id: '0'}).exec();
 					}
 				}
