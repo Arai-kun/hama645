@@ -135,10 +135,13 @@ async function detectDMRequest(){
 						/* If sender, ignore. Then data updates only */
 						/* Extract the newest data from DB */
 						let dm = dms.filter(dm => Math.max(dms.map(dm => Number(dm.created_timestamp))) === Number(dm.created_timestamp));
+						console.log(dm);
 						/* Extract data which there is not in DB */
 						let new_data = response.event.filter(dm => !(dms.map(dm => dm.id)).includes(dm['id']));
+						console.log(new_data);
 						/* Extract the newest data from new data */
-						let data = new_data.filter(dm => Math.max(new_data.map(dm => Number(dm['created_timestamp']))) === Number(dm['created_timestamp']))
+						let data = new_data.filter(dm => Math.max(new_data.map(dm => Number(dm['created_timestamp']))) === Number(dm['created_timestamp']));
+						console.log(data);
 
 						if(twitter.user_id !== data['message_create']['sender_id']){
 							if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
