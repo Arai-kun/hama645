@@ -18,7 +18,7 @@ router.get('/', (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
 	res.sendStatus(200);
-	console.log(req.body);
+	//console.log(req.body);
 	if(req.body.direct_message_events){
 		try {
 			let twitters = await Twitter.find({user_id: req.body.for_user_id}).exec();
