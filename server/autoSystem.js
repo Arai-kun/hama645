@@ -117,7 +117,6 @@ async function detectDMRequest(){
 					}*/
 
 					let dms = await Dm.find({email: user.email, screen_name: twitter.screen_name}).exec();
-					console.log(dms);
 					if(dms.length === 0){
 						/* Initial => All save */
 						for(let data of response.events){
@@ -135,9 +134,7 @@ async function detectDMRequest(){
 					else{
 						/* If sender, ignore. Then data updates only */
 						/* Extract the newest data from DB */
-						let dm = dms.find(dm => Math.max(dms.map(dm => Number(dm.created_timestamp))) === Number(dm.created_timestamp));
-						console.log(dms.map(dm => Number(dm.created_timestamp)));
-						console.log(Math.max(dms.map(dm => Number(dm.created_timestamp))));
+						let dm = dms.find(dm => Math.max.apply(null, dms.map(dm => Number(dm.created_timestamp))) === Number(dm.created_timestamp));
 						console.log(dm);
 						/* Extract data which there is not in DB */
 						let new_data = response.events.filter(dm => !(dms.map(dm => dm.id)).includes(dm['id']));
