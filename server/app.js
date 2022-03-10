@@ -12,7 +12,7 @@ if(process.env.MODE === 'LOCAL'){
 }
 else if(process.env.MODE === 'REMOTE'){
   mongoose.connect(
-    'mongodb://localhost:27017/hama645?authSource=admin',
+    `mongodb://localhost:27017/${process.env.DB_NAME}?authSource=admin`,
     {
         useNewUrlParser: true,
         user: 'admin',

@@ -12,7 +12,7 @@ require('dotenv').config();
 sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 
 mongoose.connect(
-    'mongodb://localhost:27017/hama645?authSource=admin',
+    `mongodb://localhost:27017/${process.env.DB_NAME}?authSource=admin`,
     {
         useNewUrlParser: true,
         user: 'admin',
