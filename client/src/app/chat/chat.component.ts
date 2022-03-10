@@ -14,8 +14,9 @@ import { mergeMap, takeWhile } from 'rxjs/operators';
 })
 export class ChatComponent implements OnInit, OnDestroy {
   messages: message[] = [];
-  private subject: Subject<message> = new Subject();
+  private subject: Subject<message[]> = new Subject();
   screen_name: string = '';
+  opposite_name: string = '';
   subscription: Subscription = new Subscription();
   text: string = '';
 
@@ -32,9 +33,11 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
     else{
       this.screen_name = this.route.snapshot.paramMap.get('id')!;
+      this.opposite_name = this.route.snapshot.paramMap.get('dmUser')!;
       this.chatService.create(this.screen_name)
       .subscribe(result => {
         if(result){
+          this.initMsg();
           this.recieveMsg();
           this.subscription = this.polling().subscribe(data => {
             this.subject.next(data);
@@ -46,14 +49,19 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   private recieveMsg(): void {
     this.subject.subscribe({
-      next: msg => {
-        console.log(msg);
-        let date = new Date(msg.timestamp);
-        this.messages.push({
-          self: msg.self,
-          text: msg.text,
-          timestamp: `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${date.getHours()}:${date.getMinutes()}`
-        });
+      next: msgs => {
+        console.log(msgs);
+        for(let msg of msgs){
+          let date = new Date(msg.timestamp);
+          if(!this.messages.map(msg => msg.id).includes(msg.id)){
+            this.messages.push({
+              id: msg.id,
+              self: msg.self,
+              text: msg.text,
+              timestamp: `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${date.getHours()}:${date.getMinutes()}`
+            });
+          }
+        }
       },
       error: e => console.log('error: ', e),
       complete: () => {
@@ -64,7 +72,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   sendMsg(): void {
-    this.chatService.send(this.screen_name, this.text)
+    this.chatService.send(this.screen_name, this.text, this.opposite_name)
     .subscribe(result => {
       if(!result){
         this.snackBar.open('送信できませんでした', '閉じる', {duration: 5000});
@@ -72,13 +80,18 @@ export class ChatComponent implements OnInit, OnDestroy {
       else{
         this.text = '';
       }
-    })
+    });
   }
 
-  polling(): Observable<message> {
+  initMsg(): void {
+    this.chatService.update(this.screen_name, this.opposite_name)
+    .subscribe(messages => this.messages = messages);
+  }
+
+  polling(): Observable<message[]> {
     return interval(1000)
     .pipe(
-      mergeMap(() => this.chatService.update(this.screen_name)),
+      mergeMap(() => this.chatService.update(this.screen_name, this.opposite_name)),
       takeWhile(() => true)
     );
   }

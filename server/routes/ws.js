@@ -3,7 +3,7 @@ let router = express.Router();
 //let twitterWebhooks = require('twitter-webhooks');
 let Twitter = require('../models/twitter');
 //let app = express();
-let System = require('../models/system');
+const { TwitterClient } = require('twitter-api-client');
 let Dm = require('../models/dm');
 
 const request = require('request');
@@ -69,14 +69,64 @@ router.ws('/:id', async (ws, req) => {
 	});
 });
 
-router.get('/update/:id', (req, res, next) => {
+router.get('/update/:id/:sub_id', (req, res, next) => {
 	Dm.find({email: req.user['email'], screen_name: req.params.id}, (error, dms) => {
 		if(error) next(error);
-		res.json({
-			
-		})
-	})
-	res.json({text: 'polling', timestamp: 'date'});
+		let data = [];
+		for(let dm of dms){
+			/* self = true */
+			if(dm.sender_id === req.params.id && dm.recipient_id === req.params.sub_id){
+				data.push({
+					id: dm.id,
+					self: true,
+					text: dm.text,
+					timestamp: dm.created_timestamp
+				});
+			}
+			/* self = false */
+			else if(dm.sender_id === req.params.sub_id && dm.recipient_id === req.params.id){
+				data.push({
+					id: dm.id,
+					self: false,
+					text: dm.text,
+					timestamp: dm.created_timestamp
+				});
+			}
+			else{
+				// Ignore
+			}
+		}
+		res.json(data);
+	});
+});
+
+router.post('/send/:id/:sub_id', async (req, res, next) => {
+	try {
+		let twitter = await Twitter.findOne({email: req.user['email'], screen_name: req.params.id}).exec();
+		const twitterClient = new TwitterClient({
+			apiKey: process.env.API_KEY,
+			apiSecret: process.env.API_SECRET,
+			accessToken: twitter.oauth_token,
+			accessTokenSecret: twitter.oauth_token_secret
+		});
+		await twitterClient.directMessages.eventsNew({
+			event: {
+				type: 'message_create',
+				message_create: {
+					target: {
+						recipient_id: req.params.sub_id
+					},
+					message_data: {
+						text: req.body
+					}
+				}
+			}
+		});
+		res.json(true);
+	}
+	catch(error){
+		next(error);
+	}
 });
 
 router.delete('/delete/:id', (req, res, next) => {

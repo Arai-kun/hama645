@@ -28,17 +28,17 @@ export class ChatService {
     );
   }
 
-  send(id: string, text: string): Observable<boolean> {
-    return this.http.post<boolean>(`/chat/send/${id}`, this.httpOptions)
+  send(id: string, text: string, sub_id: string): Observable<boolean> {
+    return this.http.post<boolean>(`/chat/send/${id}/${sub_id}`, text,this.httpOptions)
     .pipe(
       catchError(this.handleError<boolean>(false)),
     );
   }
 
-  update(id: string): Observable<message> {
-    return this.http.get<message>(`/chat/update/${id}`, this.httpOptions)
+  update(id: string, sub_id: string): Observable<message[]> {
+    return this.http.get<message[]>(`/chat/update/${id}/${sub_id}`, this.httpOptions)
     .pipe(
-      catchError(this.handleError<message>()),
+      catchError(this.handleError<message[]>([])),
     );
   }
 
