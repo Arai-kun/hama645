@@ -17,7 +17,6 @@ router.get('/', (req, res, next) => {
 })
 
 router.post('/', async (req, res, next) => {
-	res.sendStatus(200);
 	console.log(req.body);
 	if(req.body.direct_message_events){
 		try {
@@ -36,6 +35,7 @@ router.post('/', async (req, res, next) => {
 					});
 				}
 			}
+			res.sendStatus(200);
 		}
 		catch(error){
 			next(error);
