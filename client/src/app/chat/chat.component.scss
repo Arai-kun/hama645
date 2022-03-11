@@ -28,7 +28,15 @@
     margin: 0;
 }
 
-.mat-small {
+.mat-small-partner {
+    margin-left: 12px;
+    margin-top: 1px;
+    font-size: 2px;
+    color: rgba(0,0,0,.54);
+}
+
+.mat-small-me {
+    margin-right: 12px;
     margin-top: 1px;
     font-size: 2px;
     color: rgba(0,0,0,.54);
@@ -48,7 +56,7 @@
             margin: 24px 0;
 
             .message {
-            padding: 8px;
+            padding: 8px 12px;
             position: relative;
             box-shadow: 0 0px 0px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
             border-radius: 4px;
