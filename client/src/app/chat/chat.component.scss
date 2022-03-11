@@ -18,7 +18,7 @@
     width: 40vw;
 }
 
-.mat-toolbar.mat-primary {
+.toolbar {
     position: sticky;
     top: 0;
     z-index: 2;
@@ -26,10 +26,6 @@
 
 .mat-title {
     margin: 0;
-}
-
-.scroll-area {
-    overflow: scroll;
 }
 
 .mat-small {

@@ -40,7 +40,7 @@
 -->
 
 <div class="chat-inner-container">
-    <mat-toolbar>
+    <mat-toolbar class="toolbar">
         <span class="mat-title">{{opposite_name}}</span>
         <span fxLayout="row" fxFlexOffset="auto">
             <button mat-raised-button color="warn" (click)="onExit()">終了</button>
@@ -52,13 +52,14 @@
                 <div class="chat-message" *ngFor="let msg of messages" fxLayout="column" fxLayoutAlign="end start">
                     <div class="partner" *ngIf="msg.self; else elseBlock" fxFlexAlign="start" fxLayout="row" fxLayoutAlign="start start">
                         <span class="message mat-elevation-z1">{{msg.text}}</span>
+                        <span class="mat-small">{{msg.timestamp}}</span>
                     </div>
                     <ng-template #elseBlock>
                         <div class="me" fxFlexAlign="end" fxLayout="row" fxLayoutAlign="end start">
                             <span class="message mat-elevation-z1">{{msg.text}}</span>
+                            <span class="mat-small">{{msg.timestamp}}</span>
                         </div>
                     </ng-template>
-                    <span class="mat-small">{{msg.timestamp}}</span>
                 </div>
             </div>
             <div class="chat-respond" fxLayout="row" fxLayoutAlign="start center">
