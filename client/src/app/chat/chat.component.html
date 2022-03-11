@@ -1,4 +1,4 @@
-<div fxLayout="column" #scroll>
+<!--<div fxLayout="column" #scroll>
     <span class="mat-title">{{opposite_name}}</span>
     <div *ngFor="let msg of messages">
         <div *ngIf="msg.self; else elseBlock">
@@ -35,5 +35,32 @@
                 <button mat-raised-button color="accent" type="button" (click)="sendMsg()">送信</button>
             </span>
         </span>
+    </div>
+</div>
+-->
+
+<div class="chat-inner-container">
+    <div class="chat-content" fxLayout="column" fxLayoutAlign="end stretch">
+        <div #scroll>
+            <div class="messages-container">
+                <div class="chat-message" *ngFor="let msg of messages" fxLayout="column" fxLayoutAlign="end start">
+                    <div class="partner" *ngIf="msg.self; else elseBlock" fxFlexAlign="start" fxLayout="row" fxLayoutAlign="start start">
+                        <span class="message mat-elevation-z1">{{msg.text}}</span>
+                    </div>
+                    <ng-template #elseBlock>
+                        <div class="me" fxFlexAlign="end" fxLayout="row" fxLayoutAlign="end start">
+                            <span class="message mat-elevation-z1">{{msg.text}}</span>
+                        </div>
+                    </ng-template>
+
+                </div>
+            </div>
+            <div class="chat-respond" fxLayout="row" fxLayoutAlign="start center">
+                <div fxFlex>
+                    <textarea matInput [(ngModel)]="text" placeholder="メッセージ"></textarea>
+                </div>
+                <button mat-icon-button color="accent" type="button" (click)="sendMsg()"><mat-icon>send</mat-icon></button>
+            </div>
+        </div>
     </div>
 </div>
