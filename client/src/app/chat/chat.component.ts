@@ -21,7 +21,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
   subscription: Subscription = new Subscription();
   text: string = '';
 
-  @ViewChild('scroll') scroll!: ElementRef;
+  @ViewChild('scroll', {read: ElementRef}) scroll!: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -60,6 +60,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
   }
 
   scrollToBottom(): void {
+    console.log('Call!')
     this.scroll.nativeElement.scrollTop = this.scroll.nativeElement.scrollHeight;
   }
 
