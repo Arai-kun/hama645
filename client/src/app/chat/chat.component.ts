@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent implements OnInit, OnDestroy {
+export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   messages: message[] = [];
   private subject: Subject<message[]> = new Subject();
   screen_name: string = '';
@@ -21,7 +21,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   subscription: Subscription = new Subscription();
   text: string = '';
 
-  @ViewChild('scroll', {static: true}) scroll!: ElementRef;
+  @ViewChild('scroll') scroll!: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -51,6 +51,10 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
   }
 
+  ngAfterViewChecked(): void {
+    this.scroll.nativeElement.scrollTop = this.scroll.nativeElement.scrollHeight;
+  }
+
   private recieveMsg(): void {
     this.subject.subscribe({
       next: msgs => {
@@ -64,7 +68,6 @@ export class ChatComponent implements OnInit, OnDestroy {
               text: msg.text,
               timestamp: `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${date.getHours()}:${date.getMinutes()}`
             });
-            this.scroll.nativeElement.scrollTop = this.scroll.nativeElement.scrollHeight;
           }
         }
       },
