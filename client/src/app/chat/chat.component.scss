@@ -18,6 +18,12 @@
     width: 40vw;
 }
 
+.mat-toolbar.mat-primary {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
 /*********/
 .chat-inner-container {
     height: 100%;
@@ -58,7 +64,7 @@
 
             .me {
             .message {
-                background: #E1FFC7;
+                background: #40C4FF;
                 margin-right: 12px;
 
                 &:after {
@@ -80,7 +86,7 @@
         .chat-respond {
         background: white;
         width: 100%;
-        position: absolute;
+        //position: absolute;
         bottom: 0;
         left: 0;
         padding: 12px 24px;

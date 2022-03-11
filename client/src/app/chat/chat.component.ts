@@ -6,6 +6,7 @@ import { ChatService } from '../chat.service';
 import { message } from '../models/message';
 import { Subject, interval, Observable, Subscription } from 'rxjs';
 import { mergeMap, takeWhile } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chat',
@@ -26,7 +27,8 @@ export class ChatComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
     private location: Location,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -113,6 +115,10 @@ export class ChatComponent implements OnInit, OnDestroy {
   failed(): void{
     this.snackBar.open('エラーが発生しました', '閉じる', {duration: 7000});
     this.location.back();
+  }
+
+  onExit(): void {
+    this.router.navigate(['/home/account']);
   }
 
   ngOnDestroy(): void {

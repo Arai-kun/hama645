@@ -40,6 +40,12 @@
 -->
 
 <div class="chat-inner-container">
+    <mat-toolbar color="primary">
+        <span class="mat-title">{{opposite_name}}</span>
+        <span fxLayout="row" fxFlexOffset="auto">
+            <button mat-button color="warn" (click)="onExit()">終了</button>
+        </span>
+    </mat-toolbar>
     <div class="chat-content" fxLayout="column" fxLayoutAlign="end stretch">
         <div #scroll>
             <div class="messages-container">
