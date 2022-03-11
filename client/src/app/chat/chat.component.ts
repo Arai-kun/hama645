@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -19,6 +19,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   opposite_name: string = '';
   subscription: Subscription = new Subscription();
   text: string = '';
+
+  @ViewChild('scroll', {static: true}) scroll!: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -52,7 +54,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       next: msgs => {
         console.log(msgs);
         for(let msg of msgs){
-          let date = new Date(msg.timestamp);
+          let date = new Date(Number(msg.timestamp));
           if(!this.messages.map(msg => msg.id).includes(msg.id)){
             this.messages.push({
               id: msg.id,
@@ -60,6 +62,7 @@ export class ChatComponent implements OnInit, OnDestroy {
               text: msg.text,
               timestamp: `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${date.getHours()}:${date.getMinutes()}`
             });
+            this.scroll.nativeElement.scrollTop = this.scroll.nativeElement.scrollHeight;
           }
         }
       },
@@ -85,7 +88,18 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   initMsg(): void {
     this.chatService.update(this.screen_name, this.opposite_name)
-    .subscribe(messages => this.messages = messages);
+    .subscribe(messages => {
+      messages.forEach(msg => {
+        let date = new Date(Number(msg.timestamp));
+        this.messages.push({
+          id: msg.id,
+          self: msg.self,
+          text: msg.text,
+          timestamp: `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${date.getHours()}:${date.getMinutes()}`
+        });
+      });
+      this.messages.sort((x, y) => Number(x.timestamp) - Number(y.timestamp));
+    });
   }
 
   polling(): Observable<message[]> {

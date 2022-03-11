@@ -1,4 +1,4 @@
-<div fxLayout="column">
+<div fxLayout="column" #scroll>
     <span class="mat-title">{{opposite_name}}</span>
     <div *ngFor="let msg of messages">
         <div *ngIf="msg.self; else elseBlock">
@@ -18,7 +18,7 @@
                         {{msg.text}}
                     </mat-card-content>
                     <mat-card-footer>
-                        <caption>{{msg.timestamp}}</caption>
+                        {{msg.timestamp}}
                     </mat-card-footer>>
                 </mat-card>
             </span>
@@ -27,11 +27,13 @@
 
 
     <div class="footer">
-        <mat-form-field class="full-with">
-            <textarea matInput [(ngModel)]="text"></textarea>
-        </mat-form-field>
-        <span fxLayout="row" fxFlexOffset="auto">
-            <button mat-raised-button color="accent" type="button" (click)="sendMsg()">送信</button>
+        <span fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="16px">
+            <mat-form-field class="full-with">
+                <textarea matInput [(ngModel)]="text"></textarea>
+            </mat-form-field>
+            <span fxLayout="row" fxFlexOffset="auto">
+                <button mat-raised-button color="accent" type="button" (click)="sendMsg()">送信</button>
+            </span>
         </span>
     </div>
 </div>
