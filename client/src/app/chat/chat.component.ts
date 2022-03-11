@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked, AfterViewInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
+export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, AfterViewInit {
   messages: message[] = [];
   private subject: Subject<message[]> = new Subject();
   screen_name: string = '';
@@ -51,7 +51,15 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
+  ngAfterViewInit(): void {
+    this.scrollToBottom();
+  }
+
   ngAfterViewChecked(): void {
+    this.scrollToBottom();
+  }
+
+  scrollToBottom(): void {
     this.scroll.nativeElement.scrollTop = this.scroll.nativeElement.scrollHeight;
   }
 
@@ -66,7 +74,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
               id: msg.id,
               self: msg.self,
               text: msg.text,
-              timestamp: `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${date.getHours()}:${date.getMinutes()}`
+              timestamp: `${date.getMonth() + 1}/${date.getDate()}/ ${date.getHours()}:${('0' + date.getMinutes()).slice(-2)}`
             });
           }
         }
@@ -100,7 +108,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
           id: msg.id,
           self: msg.self,
           text: msg.text,
-          timestamp: `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${date.getHours()}:${date.getMinutes()}`
+          timestamp: `${date.getMonth() + 1}/${date.getDate()}/ ${date.getHours()}:${('0' + date.getMinutes()).slice(-2)}`
         });
       });
       this.messages.sort((x, y) => Number(x.timestamp) - Number(y.timestamp));
