@@ -68,7 +68,7 @@
             </div>
             <div class="chat-respond" fxLayout="row" fxLayoutAlign="start center">
                 <div fxFlex>
-                    <textarea matInput rows="1" [(ngModel)]="text" placeholder="メッセージ"></textarea>
+                    <textarea matInput autosize [(ngModel)]="text" placeholder="メッセージ"></textarea>
                 </div>
                 <button mat-icon-button color="accent" type="button" (click)="sendMsg()"><mat-icon>send</mat-icon></button>
             </div>
