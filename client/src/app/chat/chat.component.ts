@@ -66,13 +66,14 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
   scrollToBottom(): void {
     console.log('Call!')
     //this.scroll.nativeElement.scrollTop = this.scroll.nativeElement.scrollHeight;
-    window.scroll(0, 0);
+    //window.scroll(0, 0);
+    this.document.querySelector('.mat-sidenav-content')!.scrollTop = this.document.querySelector('.mat-sidenav-content')!.scrollHeight;
   }
 
   private recieveMsg(): void {
     this.subject.subscribe({
       next: msgs => {
-        console.log(msgs);
+        //console.log(msgs);
         for(let msg of msgs){
           let date = new Date(Number(msg.timestamp));
           if(!this.messages.map(msg => msg.id).includes(msg.id)){
