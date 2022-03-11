@@ -31,7 +31,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
     private chatService: ChatService,
     private router: Router,
     private elementRef: ElementRef,
-    @Inject(DOCUMENT) private document: Document
+    //@Inject(DOCUMENT) private document: Document
   ) { }
 
   ngOnInit(): void {
@@ -67,7 +67,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
     console.log('Call!')
     //this.scroll.nativeElement.scrollTop = this.scroll.nativeElement.scrollHeight;
     //window.scroll(0, 0);
-    this.document.querySelector('.mat-sidenav-content')!.scrollTop = this.document.querySelector('.mat-sidenav-content')!.scrollHeight;
+    console.log(document.querySelector('mat-sidenav-content')!.scrollTop);
+    console.log(document.querySelector('mat-sidenav-content')!.scrollHeight);
+  
+    document.querySelector('mat-sidenav-content')!.scrollTop = document.querySelector('mat-sidenav-content')!.scrollHeight;
   }
 
   private recieveMsg(): void {
@@ -83,6 +86,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
               text: msg.text,
               timestamp: `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${('0' + date.getMinutes()).slice(-2)}`
             });
+            this.scrollToBottom();
           }
         }
       },
