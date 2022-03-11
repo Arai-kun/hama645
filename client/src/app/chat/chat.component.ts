@@ -21,7 +21,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
   subscription: Subscription = new Subscription();
   text: string = '';
 
-  @ViewChild('scroll', {read: ElementRef}) scroll!: ElementRef;
+  @ViewChild('scrollArea', {read: ElementRef}) scroll!: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
