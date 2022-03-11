@@ -21,7 +21,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
   subscription: Subscription = new Subscription();
   text: string = '';
 
-  @ViewChild('scrollArea', {read: ElementRef}) scroll!: ElementRef;
+  @ViewChild('scroll', {read: ElementRef}) scroll!: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -75,7 +75,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
               id: msg.id,
               self: msg.self,
               text: msg.text,
-              timestamp: `${date.getMonth() + 1}/${date.getDate()}/ ${date.getHours()}:${('0' + date.getMinutes()).slice(-2)}`
+              timestamp: `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${('0' + date.getMinutes()).slice(-2)}`
             });
           }
         }
@@ -109,7 +109,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
           id: msg.id,
           self: msg.self,
           text: msg.text,
-          timestamp: `${date.getMonth() + 1}/${date.getDate()}/ ${date.getHours()}:${('0' + date.getMinutes()).slice(-2)}`
+          timestamp: `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${('0' + date.getMinutes()).slice(-2)}`
         });
       });
       this.messages.sort((x, y) => Number(x.timestamp) - Number(y.timestamp));
