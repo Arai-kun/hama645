@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked, AfterViewInit, Inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -7,6 +7,7 @@ import { message } from '../models/message';
 import { Subject, interval, Observable, Subscription } from 'rxjs';
 import { mergeMap, takeWhile } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-chat',
@@ -29,7 +30,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
     private location: Location,
     private chatService: ChatService,
     private router: Router,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    @Inject(DOCUMENT) private document: Document
   ) { }
 
   ngOnInit(): void {
@@ -54,16 +56,17 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
 
   ngAfterViewInit(): void {
     //this.scrollToBottom();
-    this.elementRef.nativeElement.scrollTop = this.elementRef.nativeElement.scrollHeight;
+    this.scrollToBottom();
   }
 
   ngAfterViewChecked(): void {
-    this.scrollToBottom();
+    //this.scrollToBottom();
   }
 
   scrollToBottom(): void {
     console.log('Call!')
     //this.scroll.nativeElement.scrollTop = this.scroll.nativeElement.scrollHeight;
+    window.scroll(0, 0);
   }
 
   private recieveMsg(): void {
