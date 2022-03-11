@@ -21,14 +21,15 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
   subscription: Subscription = new Subscription();
   text: string = '';
 
-  @ViewChild('scroll', {read: ElementRef}) scroll!: ElementRef;
+  //@ViewChild('scroll', {read: ElementRef}) scroll!: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
     private location: Location,
     private chatService: ChatService,
-    private router: Router
+    private router: Router,
+    private elementRef: ElementRef
   ) { }
 
   ngOnInit(): void {
@@ -53,6 +54,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
 
   ngAfterViewInit(): void {
     //this.scrollToBottom();
+    this.elementRef.nativeElement.scrollTop = this.elementRef.nativeElement.scrollHeight;
   }
 
   ngAfterViewChecked(): void {
@@ -61,7 +63,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
 
   scrollToBottom(): void {
     console.log('Call!')
-    this.scroll.nativeElement.scrollTop = this.scroll.nativeElement.scrollHeight;
+    //this.scroll.nativeElement.scrollTop = this.scroll.nativeElement.scrollHeight;
   }
 
   private recieveMsg(): void {
