@@ -7,7 +7,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PortalModule } from '@angular/cdk/portal';
-import { TextareaAutosizeModule } from 'ngx-textarea-autosize';
+import { TextFieldModule } from '@angular/cdk/text-field';
 
 /* Material */
 import { MatButtonModule } from '@angular/material/button';
@@ -99,7 +99,7 @@ import { DmListComponent } from './dm-list/dm-list.component';
     MatProgressSpinnerModule,
     OverlayModule,
     PortalModule,
-    TextareaAutosizeModule
+    TextFieldModule
   ],
   entryComponents: [
     MatSpinner
