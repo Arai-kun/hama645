@@ -60,7 +60,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
   }
 
   ngAfterViewChecked(): void {
-    this.scrollToBottom();
+    //this.scrollToBottom();
   }
 
   scrollToBottom(): void {
@@ -86,6 +86,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
               text: msg.text,
               timestamp: `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${('0' + date.getMinutes()).slice(-2)}`
             });
+            console.log('a' + document.querySelector('mat-sidenav-content')!.scrollTop);
+            console.log('a' + document.querySelector('mat-sidenav-content')!.scrollHeight);
             this.scrollToBottom();
           }
         }
