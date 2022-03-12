@@ -58,7 +58,7 @@ export class ChatService {
   }
 
   getScreenName(id: string, sub_id: string): Observable<text> {
-    return this.http.get<text>(`/screenName/${id}/${sub_id}`, this.httpOptions)
+    return this.http.get<text>(`/chat/screenName/${id}/${sub_id}`, this.httpOptions)
     .pipe(
       catchError(this.handleError<text>()),
     );

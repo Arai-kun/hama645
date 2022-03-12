@@ -438,7 +438,7 @@ class ChatService {
             .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_1__.catchError)(this.handleError([])));
     }
     getScreenName(id, sub_id) {
-        return this.http.get(`/screenName/${id}/${sub_id}`, this.httpOptions)
+        return this.http.get(`/chat/screenName/${id}/${sub_id}`, this.httpOptions)
             .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_1__.catchError)(this.handleError()));
     }
     handleError(result) {
