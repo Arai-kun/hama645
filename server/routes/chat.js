@@ -200,6 +200,8 @@ router.get('/screenName/:id/:sub_id', async (req, res, next) => {
 router.get('/isFriend/:id/:sub_id', (req, res, next) => {
 	Twitter.findOne({email: req.user['email'], screen_name: req.params.id}, (error, twitter) => {
 		if(error) next(error);
+		console.log(twitter.friendIds);
+		console.log(req.params.sub_id);
 		if(twitter.friendIds.includes(req.params.sub_id)){
 			res.json(true);
 		}
