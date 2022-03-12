@@ -3,7 +3,6 @@ let router = express.Router();
 let Twitter = require('../models/twitter');
 const { TwitterClient } = require('twitter-api-client');
 let Dm = require('../models/dm');
-let Subscription = require('../models/subscription');
 
 const request = require('request');
 const TWITTER_API_URI = 'https://api.twitter.com/1.1/';
