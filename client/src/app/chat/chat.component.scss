@@ -31,7 +31,7 @@
 
 /*********/
 
-.mat-drawer-content .chat-inner-container {
+.chat-inner-container {
     height: 100%;
   
     .chat-content {
@@ -92,6 +92,7 @@
         }
         }
         
+        /*
         .chat-respond {
         background: white;
         width: 100%;
@@ -110,11 +111,11 @@
             margin-left: 24px;
             margin-top: auto;
         }
-        }
+        }*/
     }
 }
 
-/*
+
 .chat-respond {
     background: white;
     width: 100%;
@@ -133,4 +134,4 @@
         margin-left: 24px;
         margin-top: auto;
     }
-    }*/
+    }
