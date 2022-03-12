@@ -10,19 +10,21 @@
                 <mat-card>
                     <mat-card-title>
                         @{{twitter.screen_name}}
-                        <span fxLayout="row" fxFlexOffset="auto" *ngIf="twitter.subsc">
-                            <button mat-icon-button type="button" color="warn" (click)="onDestroy(twitter.screen_name)"><mat-icon>warning</mat-icon></button>
-                            <br>
-                            <span class="mat-small" color="warn">DMが正常に終了できていません! 上のアイコンを触ってください</span>
-                        </span>
                     </mat-card-title>
                     <mat-card-content>
-                        <div *ngIf="twitter.authorized; else elseBlock">
-                            <span>連携済み</span>
-                        </div>
-                        <ng-template #elseBlock>
-                            <span class="warn">未連携</span>
-                        </ng-template>
+                        <span fxLayout="column" fxLayoutGap="8px">
+                            <div *ngIf="twitter.subsc">
+                                <button mat-icon-button type="button" color="warn" (click)="onDestroy(twitter.screen_name)"><mat-icon>warning</mat-icon></button>
+                                <span class="warn">DMが正常に終了できていません! 左のアイコンを触ってください</span>
+                            </div>
+
+                            <div *ngIf="twitter.authorized; else elseBlock">
+                                <span>連携済み</span>
+                            </div>
+                            <ng-template #elseBlock>
+                                <span class="warn">未連携</span>
+                            </ng-template>
+                        </span>
                     </mat-card-content>
                     <mat-divider inset></mat-divider>
                     <mat-card-actions>

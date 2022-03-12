@@ -85,7 +85,7 @@ router.delete('/delete/:id', (req, res, next) => {
 		})
 		.then(() => {
 			console.log(`[${req.user['email']}] Subscription deleted: ${twitter.screen_name}`);
-			Twitter.updateOne({email: req.user['email'], screen_name: twitter.screen_name}, {$set: {sunsc: false}},error => {
+			Twitter.updateOne({email: req.user['email'], screen_name: twitter.screen_name}, {$set: {subsc: false}}, error => {
 				if(error) next(error);
 				res.json(true);
 			});
