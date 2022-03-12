@@ -104,7 +104,7 @@ async function detectDMRequest(){
 					cursor = response['next_cursor'];
 				}
 				while(cursor !== 0);
-				//console.log(ids);
+				
 				/* Update friends */
 				await Twitter.updateOne({email: twitter.email, screen_name: twitter.screen_name}, {$set: {friendIds: ids}}).exec();
 

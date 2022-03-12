@@ -64,6 +64,20 @@ export class ChatService {
     );
   }
 
+  getIsFriend(id: string, sub_id: string): Observable<boolean> {
+    return this.http.get<boolean>(`/chat/isFriend/${id}/${sub_id}`, this.httpOptions)
+    .pipe(
+      catchError(this.handleError<boolean>(false)),
+    );
+  }
+
+  follow(id: string, sub_id: string): Observable<boolean> {
+    return this.http.get<boolean>(`/chat/follow/${id}/${sub_id}`, this.httpOptions)
+    .pipe(
+      catchError(this.handleError<boolean>(false)),
+    );
+  }
+
   private handleError<T>(result?: T) {
     return (error: any): Observable<T> => {
       console.error(error);

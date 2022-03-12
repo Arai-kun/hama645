@@ -193,10 +193,42 @@ router.get('/screenName/:id/:sub_id', async (req, res, next) => {
 		res.json({text: response.screen_name});
 	}
 	catch(error){
-
+		next(error);
 	}
+});
 
-})
+router.get('/isFriend/:id/:sub_id', (req, res, next) => {
+	Twitter.findOne({email: req.user['email'], screen_name: req.params.id}, (error, twitter) => {
+		if(error) next(error);
+		if(twitter.friendIds.includes(req.params.sub_id)){
+			res.json(true);
+		}
+		else{
+			res.json(false);
+		}
+	});
+});
+
+router.get('/follow/:id/:sub_id', (req, res, next) => {
+	try {
+		let twitter = await Twitter.findOne({email: req.user['email'], screen_name: req.params.id}).exec();
+		const twitterClient = new TwitterClient({
+			apiKey: process.env.API_KEY,
+			apiSecret: process.env.API_SECRET,
+			accessToken: twitter.oauth_token,
+			accessTokenSecret: twitter.oauth_token_secret
+		});
+		await twitterClient.accountsAndUsers.friendshipsCreate({user_id: req.params.sub_id, follow: false});
+		res.json(true)
+	}
+	catch(error){
+		if(error.statusCode === 403){
+			res.json(false);
+			return;
+		}
+		next(error);
+	}
+});
 
 function subscribe(args = {}) {
 	const options = prepareUserContextRequest(args);

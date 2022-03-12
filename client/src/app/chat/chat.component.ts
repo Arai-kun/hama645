@@ -4,7 +4,7 @@ import { Location } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ChatService } from '../chat.service';
 import { message } from '../models/message';
-import { Subject, interval, Observable, Subscription } from 'rxjs';
+import { Subject, interval, Observable, Subscription, of } from 'rxjs';
 import { mergeMap, takeWhile } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
@@ -28,6 +28,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   subscription: Subscription = new Subscription();
   text: string = '';
+  isFriend: boolean = false;
 
   //@ViewChild('scroll', {read: ElementRef}) scroll!: ElementRef;
 
@@ -134,6 +135,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     .subscribe(screen_name => this.opposite.name = screen_name.text);
   }
 
+  getIsFriend(): void {
+    this.chatService.getIsFriend(this.screen_name, this.opposite.id)
+    .subscribe(result => this.isFriend = result);
+  }
+
   polling(): Observable<message[]> {
     return interval(1000)
     .pipe(
@@ -145,6 +151,19 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   failed(): void{
     this.snackBar.open('エラーが発生しました', '閉じる', {duration: 7000});
     this.onExit();
+  }
+
+  onFollow(): void {
+    this.chatService.follow(this.screen_name, this.opposite.id)
+    .subscribe(result => {
+      if(result){
+        this.snackBar.open('フォローしました', '閉じる', {duration: 4000});
+        this.getIsFriend();
+      }
+      else{
+        this.snackBar.open('フォローできませんでした', '閉じる', {duration: 6000});
+      }
+    });
   }
 
   onExit(): void {
