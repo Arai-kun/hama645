@@ -653,12 +653,13 @@ class ChatComponent {
             .subscribe(result => {
             if (result) {
                 console.log('Deleted');
-                this.router.navigate(['/home']);
+                this.router.navigate(['home']);
             }
         });
     }
     ngOnDestroy() {
         if (!this.subject.closed) {
+            console.log('Subject');
             this.subject.complete();
         }
         this.chatService.delete(this.screen_name)
@@ -667,6 +668,7 @@ class ChatComponent {
                 console.log('Deleted');
             }
             else {
+                console.log('Already closed');
             }
         });
     }
