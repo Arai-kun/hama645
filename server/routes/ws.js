@@ -1,73 +1,14 @@
 let express = require('express');
 let router = express.Router();
-//let twitterWebhooks = require('twitter-webhooks');
 let Twitter = require('../models/twitter');
-//let app = express();
 const { TwitterClient } = require('twitter-api-client');
 let Dm = require('../models/dm');
+let Subscription = require('../models/subscription');
 
 const request = require('request');
 const TWITTER_API_URI = 'https://api.twitter.com/1.1/';
 const ENVIRONMENT = process.env.ENVIRONMENT;
 let twitterServerTimeOffset = 0;
-
-/*
-const userActivityWebhook = twitterWebhooks.userActivity({
-  serverUrl: process.env.SERVER_URL,
-  route: '/webhook',
-  consumerKey: process.env.API_KEY,
-  consumerSecret: process.env.API_SECRET,
-  accessToken: process.env.ACCESS_TOKEN,
-  accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
-  environment: 'dev',
-});*/
-//userActivityWebhook.register();
-
-router.ws('/:id', async (ws, req) => {
-	/* Connected */
-	console.log('connected');
-	let tw = {
-		user_id: '',
-		oauth_token: '',
-		oauth_token_secret: ''
-	}
-	try {
-		let twitter = await Twitter.findOne({email: req.user['email'], screen_name: req.params.id}).exec();
-		tw.user_id = twitter.user_id;
-		tw.oauth_token = twitter.oauth_token;
-		tw.oauth_token_secret = twitter.oauth_token_secret;
-	}
-	catch(error) {
-		next(error);
-	}
-	
-	subscribe({
-		userId: tw.user_id,
-		accessToken: tw.oauth_token,
-		accessTokenSecret: tw.oauth_token_secret
-	})
-	.then(res => console.log(res))
-	.catch(error => console.log(error));
-
-	ws.on('message', (msg) => {
-		console.log('message');
-		if(msg.text === 'pplling'){
-			ws.send({text: 'update', timestamp: 'date'});
-		}
-		//ws.send(msg);
-	});
-
-	ws.on('close', async () => {
-		console.log('close');
-		unsubscribe({
-			userId: tw.user_id,
-			accessToken: tw.oauth_token,
-			accessTokenSecret: tw.oauth_token_secret
-		})
-		.then(res => console.log(res))
-		.catch(error => console.log(error));
-	});
-});
 
 router.get('/update/:id/:sub_id', (req, res, next) => {
 	Dm.find({email: req.user['email'], screen_name: req.params.id}, (error, dms) => {
@@ -113,6 +54,7 @@ router.post('/send/:id/:sub_id', async (req, res, next) => {
 			accessTokenSecret: twitter.oauth_token_secret
 		});
 		console.log(req.body);
+		/* Rate limit 1000 per 24h (user) */
 		await twitterClient.directMessages.eventsNew({
 			event: {
 				type: 'message_create',
@@ -142,9 +84,12 @@ router.delete('/delete/:id', (req, res, next) => {
 			accessToken: twitter.oauth_token,
 			accessTokenSecret: twitter.oauth_token_secret
 		})
-		.then(response => {
-			//console.log(response);
-			res.json(true);
+		.then(() => {
+			console.log(`[${req.user['email']}] Subscription deleted: ${twitter.screen_name}`);
+			Twitter.updateOne({email: req.user['email'], screen_name: twitter.screen_name}, {$set: {sunsc: false}},error => {
+				if(error) next(error);
+				res.json(true);
+			});
 		})
 		.catch(error => {
 			next(error);
@@ -161,9 +106,12 @@ router.get('/create/:id', (req, res, next) => {
 			accessToken: twitter.oauth_token,
 			accessTokenSecret: twitter.oauth_token_secret
 		})
-		.then(response => {
-			//console.log(response);
-			res.json(true);
+		.then(() => {
+			console.log(`[${req.user['email']}] Subscription created: ${twitter.screen_name}`);
+			Twitter.updateOne({email: req.user['email'], screen_name: twitter.screen_name}, {$set: {subsc: true}}, error => {
+				if(error) next(error);
+				res.json(true);
+			});
 		})
 		.catch(error => {
 			next(error);
@@ -171,11 +119,49 @@ router.get('/create/:id', (req, res, next) => {
 	});
 });
 
-router.get('/dmUserList/:id', (req, res, next) => {
-	let dmUserList = [];
+router.get('/dmUserList/:id', async (req, res, next) => {
+	try {
+		let data = [];
+		let dms = await Dm.find({email: req.user['email'], screen_name: req.params.id}).exec();
+		let twitter = await Twitter.findOne({email: req.user['email'], screen_name: req.params.id}).exec();
+		let dmUserIds = [];
+		dms.forEach(dm => {
+			if(!dmUserIds.includes(dm.sender_id)){
+				dmUserIds.push(dm.sender_id);
+			}
+			if(!dmUserIds.includes(dm.recipient_id)){
+				dmUserIds.push(dm.recipient_id);
+			}
+		});
+		dmUserIds = dmUserIds.filter(el => el !== twitter.user_id);
+
+		const twitterClient = new TwitterClient({
+			apiKey: process.env.API_KEY,
+			apiSecret: process.env.API_SECRET,
+			accessToken: twitter.oauth_token,
+			accessTokenSecret: twitter.oauth_token_secret
+		});
+
+		for(let userId of dmUserIds){
+			/* Rate limit 900 per 15 min (user) */
+			let response = await twitterClient.accountsAndUsers.usersShow({user_id: userId});
+			data.push({
+				userId: response.id_str,
+				screenName: response.screen_name
+			});
+		}
+		res.json(data);
+	}
+	catch(error){
+		next(error);
+	}
+
+	/*
 	Dm.find({email: req.user['email'], screen_name: req.params.id}, (error, dms) => {
 		if(error) next(error);
 		Twitter.findOne({email: req.user['email'], screen_name: req.params.id}, (error, twitter) => {
+			if(error) next(error);
+			let dmUserList = [];
 			dms.forEach(dm => {
 				if(!dmUserList.includes(dm.sender_id)){
 					dmUserList.push(dm.sender_id);
@@ -187,8 +173,27 @@ router.get('/dmUserList/:id', (req, res, next) => {
 			dmUserList = dmUserList.filter(el => el !== twitter.user_id);
 			res.json(dmUserList);
 		});
-	});
+	});*/
 });
+
+router.get('/screenName/:id/:sub_id', async (req, res, next) => {
+	try {
+		let twitter = await Twitter.findOne({email: req.user['email'], screen_name: req.params.id}).exec();
+		const twitterClient = new TwitterClient({
+			apiKey: process.env.API_KEY,
+			apiSecret: process.env.API_SECRET,
+			accessToken: twitter.oauth_token,
+			accessTokenSecret: twitter.oauth_token_secret
+		});
+		/* Rate limit 900 per 15 min (user) */
+		let response = await twitterClient.accountsAndUsers.usersShow({user_id: req.params.sub_id});
+		res.json(response.screen_name);
+	}
+	catch(error){
+
+	}
+
+})
 
 function subscribe(args = {}) {
 	const options = prepareUserContextRequest(args);

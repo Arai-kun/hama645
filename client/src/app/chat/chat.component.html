@@ -41,7 +41,7 @@
 
 <div class="chat-inner-container">
     <mat-toolbar class="toolbar">
-        <span class="mat-title">{{opposite_name}}</span>
+        <span class="mat-title">{{opposite.name}}</span>
         <span fxLayout="row" fxFlexOffset="auto">
             <button mat-raised-button color="warn" (click)="onExit()">終了</button>
         </span>
@@ -68,7 +68,7 @@
             </div>
             <div class="chat-respond" fxLayout="row" fxLayoutAlign="start center">
                 <div fxFlex>
-                    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5" [(ngModel)]="text" placeholder="メッセージ"></textarea>
+                    <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5" [(ngModel)]="text" placeholder="メッセージを入力"></textarea>
                 </div>
                 <button mat-icon-button color="accent" type="button" (click)="sendMsg()"><mat-icon>send</mat-icon></button>
             </div>

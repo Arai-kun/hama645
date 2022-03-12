@@ -14,7 +14,13 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     /* Initial display */
-    this.router.navigate(['/home/account']);
+    let initial = '/home/account';
+    if(this.router.routerState.snapshot.url !== '/home'){
+      this.router.navigate([this.router.routerState.snapshot.url]);
+    }
+    else{
+      this.router.navigate([initial]);
+    }
   }
 
 }

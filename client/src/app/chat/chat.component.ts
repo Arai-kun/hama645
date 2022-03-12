@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked, AfterViewInit, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -7,18 +7,25 @@ import { message } from '../models/message';
 import { Subject, interval, Observable, Subscription } from 'rxjs';
 import { mergeMap, takeWhile } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { DOCUMENT } from '@angular/common';
+
+export interface opposite {
+  name: string,
+  id: string
+}
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, AfterViewInit {
+export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   messages: message[] = [];
   private subject: Subject<message[]> = new Subject();
   screen_name: string = '';
-  opposite_name: string = '';
+  opposite: opposite = {
+    name: '',
+    id: ''
+  }
   subscription: Subscription = new Subscription();
   text: string = '';
 
@@ -30,8 +37,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
     private location: Location,
     private chatService: ChatService,
     private router: Router,
-    private elementRef: ElementRef,
-    //@Inject(DOCUMENT) private document: Document
   ) { }
 
   ngOnInit(): void {
@@ -40,31 +45,31 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
     }
     else{
       this.screen_name = this.route.snapshot.paramMap.get('id')!;
-      this.opposite_name = this.route.snapshot.paramMap.get('dmUser')!;
+      this.opposite.id = this.route.snapshot.paramMap.get('dmUser')!;
       this.chatService.create(this.screen_name)
       .subscribe(result => {
         if(result){
           this.initMsg();
+          this.getScreenName();
           this.recieveMsg();
           this.subscription = this.polling().subscribe(data => {
             this.subject.next(data);
           });
+        }
+        else{
+          // Already created, means it haven't deleted correctly
+          this.snackBar.open('エラーが発生しました。やり直してください', '閉じる', {duration: 8000});
+          this.onExit();
         }
       });
     }
   }
 
   ngAfterViewInit(): void {
-    //this.scrollToBottom();
-    setTimeout(this.scrollToBottom, 500);
-  }
-
-  ngAfterViewChecked(): void {
-    //this.scrollToBottom();
+    setTimeout(this.scrollToBottom, 100);
   }
 
   scrollToBottom(): void {
-
     console.log(document.querySelector('mat-sidenav-content')!.scrollTop);
     console.log(document.querySelector('mat-sidenav-content')!.scrollHeight);
   
@@ -84,7 +89,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
               text: msg.text,
               timestamp: `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${('0' + date.getMinutes()).slice(-2)}`
             });
-            setTimeout(this.scrollToBottom, 500);
+            setTimeout(this.scrollToBottom, 100);
           }
         }
       },
@@ -97,7 +102,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
   }
 
   sendMsg(): void {
-    this.chatService.send(this.screen_name, this.text, this.opposite_name)
+    this.chatService.send(this.screen_name, this.text, this.opposite.id)
     .subscribe(result => {
       if(!result){
         this.snackBar.open('送信できませんでした', '閉じる', {duration: 5000});
@@ -109,7 +114,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
   }
 
   initMsg(): void {
-    this.chatService.update(this.screen_name, this.opposite_name)
+    this.chatService.update(this.screen_name, this.opposite.id)
     .subscribe(messages => {
       messages.forEach(msg => {
         let date = new Date(Number(msg.timestamp));
@@ -124,21 +129,26 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
     });
   }
 
+  getScreenName(): void {
+    this.chatService.getScreenName(this.screen_name, this.opposite.id)
+    .subscribe(screen_name => this.opposite.name = screen_name);
+  }
+
   polling(): Observable<message[]> {
     return interval(1000)
     .pipe(
-      mergeMap(() => this.chatService.update(this.screen_name, this.opposite_name)),
+      mergeMap(() => this.chatService.update(this.screen_name, this.opposite.id)),
       takeWhile(() => true)
     );
   }
 
   failed(): void{
     this.snackBar.open('エラーが発生しました', '閉じる', {duration: 7000});
-    this.location.back();
+    this.onExit();
   }
 
   onExit(): void {
-    this.router.navigate(['/home/account']);
+    this.router.navigate(['/home']);
   }
 
   ngOnDestroy(): void {

@@ -69,6 +69,7 @@ router.post('/exchangeToken', async (req, res, next) => {
       accessToken: twitter.oauth_token,
       accessTokenSecret: twitter.oauth_token_secret
     });
+    /* Rate limit 900 per 15 min (user) */
     response = await twitterClient.accountsAndUsers.usersShow({screen_name: req.body['screen_name']});
     if(twitter.user_id !== response.id_str){
       res.json(false);

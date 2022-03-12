@@ -81,6 +81,7 @@ router.post('/special', async (req, res, next) => {
   });
 
   try {
+    /* Rate limit 900 per 15 min (app) */
     let response = await twitterClient.accountsAndUsers.usersShow({screen_name: req.body['screen_name']});
     await Special.create({
       email: req.user['email'],
@@ -121,12 +122,14 @@ router.get('/summary', async (req, res, next) => {
   try {
     let twitters = await Twitter.find({email: req.user['email'], authorized: true}).exec();
     for(let twitter of twitters){
-      let logs = await Log.find({email: req.user['email'], screen_name: twitter.screen_name}).exec();
+      let dms = await Dm.find({email: req.user['email'], screen_name: twitter.screen_name}).exec();
+      dms = dms.filter(dm => dm.sender_id !== twitter.user_id);
+
       let count_date = new Array(5);
       for(let i = 0; i < count_date.length; i++){
-        count_date[i] = logs.filter(log => new Date(Number(log.timestamp)).getMonth() === date[i].getMonth() && new Date(Number(log.timestamp)).getDate() === date[i].getDate()).length;
+        count_date[i] = dms.filter(dm => new Date(Number(dm.created_timestamp)).getMonth() === date[i].getMonth() && new Date(Number(dm.created_timestamp)).getDate() === date[i].getDate()).length;
       }
-      let count_sum = logs.filter(log => new Date(Number(log.timestamp)).getMonth() === date[0].getMonth()).length;
+      let count_sum = dms.filter(dm => new Date(Number(dm.created_timestamp)).getMonth() === date[0].getMonth()).length;
       summary.push({
         screen_name: twitter.screen_name,
         date: count_date,

@@ -4,5 +4,6 @@ export interface twitter {
     user_id?: string,
     oauth_token?: string,
     oauth_token_secret?: string,
-    authorized: boolean
+    authorized: boolean,
+    subsc: boolean
 }

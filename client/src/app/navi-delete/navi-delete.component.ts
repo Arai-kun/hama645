@@ -36,7 +36,7 @@ export class NaviDeleteComponent implements OnInit {
       if(result){
         this.spinnerService.detach();
         this.snackBar.open('削除しました', '閉じる', {duration: 5000});
-        this.router.navigate(['/']);
+        this.router.navigate(['/home']);
         this.dialogRef.close();
       }
       else{

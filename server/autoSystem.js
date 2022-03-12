@@ -96,6 +96,7 @@ async function detectDMRequest(){
 				let ids = [];
 				let cursor = -1;
 				do {
+					/* Rate limit 15 per 15 min (user). Danger more than 5000 follows*/
 					let response = await twitterClient.accountsAndUsers.friendsIds({cursor: cursor});
 					response['ids'].forEach(id => {
 							ids.push(id);
@@ -105,6 +106,7 @@ async function detectDMRequest(){
 				while(cursor !== 0);
 				//console.log(ids);
 
+				/* Rate limit automatically cleared */
 				let response = await twitterClient.directMessages.eventsList();
 				if(response.events.length !== 0){
 					/*let data;
@@ -160,7 +162,7 @@ async function detectDMRequest(){
 											to: user.email,
 											from: 'noreply@enginestarter.nl',
 											subject: '【通知】DM管理ツール',
-											html: `<p>@${twitter.screen_name} にDMリクエストが届きました</p>`
+											html: `<p>@${twitter.screen_name} にDMリクエストにて問い合わせが来ましたのでご対応よろしくお願いします。</p><br><p>問い合わせは以下のリンクから開いて対応してください。</p><br><p>${process.env.SERVER_URL}/home/chat/${twitter.screen_name}/${data['message_create']['sender_id']}</p>`
 										});
 									}
 									else{
@@ -187,7 +189,7 @@ async function detectDMRequest(){
 												to: user.email,
 												from: 'noreply@enginestarter.nl',
 												subject: '【特殊通知】DM管理ツール',
-												html: `<p>@${special.screen_name} から@${twitter.screen_name} にDMが届きました</p>`
+												html: `<p>@${twitter.screen_name} に被り案件として通知されました。</p><br><p>問い合わせは以下のリンクから開いて対応してください。</p><br><p>${process.env.SERVER_URL}/home/log</p>`
 											});
 										}
 									}
@@ -231,6 +233,7 @@ async function detectDMRequest(){
 			log(error);
 	}
 }
+
 
 function log(str) {
 	const now = new Date();
