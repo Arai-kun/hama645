@@ -32,7 +32,6 @@ export class SummaryComponent implements OnInit, AfterViewInit{
   ];
   dataSource = new MatTableDataSource<displayData>();
   date: Array<string> = new Array(5);
-  disableAnimation: boolean = true;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -55,7 +54,6 @@ export class SummaryComponent implements OnInit, AfterViewInit{
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    setTimeout(() => this.disableAnimation = false);
   }
 
   getSummary(): void {
