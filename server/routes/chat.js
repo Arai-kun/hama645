@@ -200,9 +200,6 @@ router.get('/screenName/:id/:sub_id', async (req, res, next) => {
 router.get('/isFriend/:id/:sub_id', (req, res, next) => {
 	Twitter.findOne({email: req.user['email'], screen_name: req.params.id}, (error, twitter) => {
 		if(error) next(error);
-		console.log(twitter);
-		console.log(twitter.friendIds);
-		console.log(req.params.sub_id);
 		if(twitter.friendIds.includes(req.params.sub_id)){
 			res.json(true);
 		}
@@ -222,9 +219,6 @@ router.get('/follow/:id/:sub_id', async (req, res, next) => {
 			accessTokenSecret: twitter.oauth_token_secret
 		});
 		let response = await twitterClient.accountsAndUsers.friendshipsCreate({user_id: req.params.sub_id});
-		console.log(response);
-		console.log('******');
-		console.log(twitter);
 		twitter.friendIds.push(response.id_str);
 		await twitter.save();
 		res.json(true)
