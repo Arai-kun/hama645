@@ -58,7 +58,6 @@
         </span>
     </mat-toolbar>-->
     <div class="chat-content" fxLayout="column" fxLayoutAlign="end stretch">
-        <div class="scroll-area" #scrollArea>
             <div class="messages-container">
                 <div class="chat-message" *ngFor="let msg of messages" fxLayout="column" fxLayoutAlign="end start">
                     <div class="partner" *ngIf="msg.self; else elseBlock" fxFlexAlign="start" fxLayout="row" fxLayoutAlign="start start">
@@ -85,10 +84,9 @@
                 </div>
                 <button mat-icon-button color="accent" type="button" (click)="sendMsg()"><mat-icon>send</mat-icon></button>
             </div>-->
-        </div>
     </div>
 
- <!--
+ 
 
     <div class="chat-respond" fxLayout="row" fxLayoutAlign="start center">
         <div fxFlex>
@@ -96,11 +94,13 @@
         </div>
         <button mat-icon-button color="accent" type="button" (click)="sendMsg()"><mat-icon>send</mat-icon></button>
     </div>
-    -->
+    
 </div>
+<!--
 <div class="chat-respond" fxLayout="row" fxLayoutAlign="start center">
     <div fxFlex>
         <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5" [(ngModel)]="text" placeholder="メッセージを入力"></textarea>
     </div>
     <button mat-icon-button color="accent" type="button" (click)="sendMsg()"><mat-icon>send</mat-icon></button>
 </div>
+-->
