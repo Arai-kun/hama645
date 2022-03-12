@@ -16,13 +16,9 @@ table {
 
 .refresh-btn {
     z-index: 2;
-    position: fixed;
+    position: absolute;
     bottom: 64px;
     right: 24px;
-}
-
-.container {
-    height: calc(100vh - 121px);
 }
 
 
