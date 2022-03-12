@@ -93,7 +93,7 @@ async function detectDMRequest(){
 					accessTokenSecret: twitter.oauth_token_secret
 				});
 
-				let ids = new Array('');
+				let ids = [];
 				let cursor = -1;
 				do {
 					/* Rate limit 15 per 15 min (user). Danger more than 5000 follows*/
