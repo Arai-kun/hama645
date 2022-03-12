@@ -648,7 +648,7 @@ class ChatComponent {
         this.onExit();
     }
     onExit() {
-        this.ngOnDestroy();
+        this.router.navigate(['/home/account']);
     }
     ngOnDestroy() {
         this.subject.complete();
@@ -656,7 +656,6 @@ class ChatComponent {
             .subscribe(result => {
             if (result) {
                 console.log('Deleted');
-                this.router.navigate(['/home']);
             }
         });
     }

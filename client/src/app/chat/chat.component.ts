@@ -148,7 +148,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onExit(): void {
-    this.ngOnDestroy();
+    this.router.navigate(['/home/account']);
   }
 
   ngOnDestroy(): void {
@@ -157,7 +157,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     .subscribe(result => {
       if(result){
         console.log('Deleted');
-        this.router.navigate(['/home']);
       }
     });
   }
