@@ -222,7 +222,9 @@ router.get('/follow/:id/:sub_id', async (req, res, next) => {
 			accessTokenSecret: twitter.oauth_token_secret
 		});
 		let response = await twitterClient.accountsAndUsers.friendshipsCreate({user_id: req.params.sub_id});
-		console.log(response)
+		console.log(response);
+		console.log('******');
+		console.log(twitter);
 		twitter.friendIds.push(response.id_str);
 		await twitter.save();
 		res.json(true)
