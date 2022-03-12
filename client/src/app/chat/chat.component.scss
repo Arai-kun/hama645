@@ -27,9 +27,13 @@
     color: rgba(0,0,0,.54);
 }
 
+.chat-container {
+    height: calc(100% - 64px);
+}
+
 /*********/
 .chat-inner-container {
-    //height: 100%;
+    height: 100%;
   
     .chat-content {
         position: relative;
