@@ -1,0 +1,137 @@
+.toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.mat-title {
+    margin: 0;
+}
+
+.mat-small-partner {
+    margin-left: 12px;
+    margin-top: 1px;
+    font-size: 0.5rem;
+    color: rgba(0,0,0,.54);
+}
+
+.mat-small-me {
+    margin-right: 12px;
+    margin-top: 1px;
+    font-size: 0.5rem;
+    color: rgba(0,0,0,.54);
+}
+
+.mat-small {
+    margin-top: 8px;
+    margin-left: 8px;
+    color: rgba(0,0,0,.54);
+}
+
+/*********/
+
+.chat-inner-container {
+    //height: 100%;
+  
+    .chat-content {
+        position: relative;
+        //height: 100%;
+        min-height: 83vh;
+
+        .messages-container {
+        padding: 24px;
+
+        .chat-message {
+            margin: 24px 0;
+
+            .message {
+            padding: 8px 12px;
+            position: relative;
+            box-shadow: 0 0px 0px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+            border-radius: 4px;
+            white-space: pre-wrap;
+            }
+
+            .partner {
+            .message {
+                background: white;
+                margin-left: 12px;
+
+                &:after {
+                position: absolute;
+                content: "";
+                width: 0;
+                height: 0;
+                border-style: solid;
+                border-width: 0px 10px 10px 0;
+                border-color: transparent #fff transparent transparent;
+                top: 2px;
+                left: -10px;
+                }
+            }
+            }
+
+            .me {
+            .message {
+                background: #8bdeff;
+                margin-right: 12px;
+
+                &:after {
+                position: absolute;
+                content: "";
+                width: 0;
+                height: 0;
+                border-style: solid;
+                border-width: 0px 0 10px 10px;
+                border-color: transparent transparent transparent #8bdeff;
+                top: 2px;
+                right: -10px;
+                }
+            }
+            }
+        }
+        }
+        
+        
+        .chat-respond {
+        background: white;
+        width: 100%;
+        //position: absolute;
+        bottom: 0;
+        left: 0;
+        padding: 6px 18px;
+        border-top: 1px solid #EEE;
+        position: sticky;
+
+        textarea {
+            resize: none;
+        }
+
+        button {
+            margin-left: 24px;
+            margin-top: auto;
+        }
+        }
+    }
+}
+
+/*
+.chat-respond {
+    background: white;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 6px 18px;
+    border-top: 1px solid #EEE;
+    //position: sticky;
+
+    textarea {
+        resize: none;
+    }
+
+    button {
+        margin-left: 24px;
+        margin-top: auto;
+    }
+    }*/

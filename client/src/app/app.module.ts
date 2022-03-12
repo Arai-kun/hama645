@@ -7,6 +7,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PortalModule } from '@angular/cdk/portal';
+import { TextFieldModule } from '@angular/cdk/text-field';
 
 /* Material */
 import { MatButtonModule } from '@angular/material/button';
@@ -47,6 +48,8 @@ import { NaviDeleteComponent } from './navi-delete/navi-delete.component';
 
 /* Class */
 import { MatPaginatorIntlJa } from './mat-paginator-jp';
+import { ChatComponent } from './chat/chat.component';
+import { DmListComponent } from './dm-list/dm-list.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +66,9 @@ import { MatPaginatorIntlJa } from './mat-paginator-jp';
     DmtoolRegisterSpComponent,
     DmtoolDeleteSpComponent,
     SummaryComponent,
-    NaviDeleteComponent
+    NaviDeleteComponent,
+    ChatComponent,
+    DmListComponent,
   ],
   imports: [
     BrowserModule,
@@ -93,7 +98,8 @@ import { MatPaginatorIntlJa } from './mat-paginator-jp';
     MatTabsModule,
     MatProgressSpinnerModule,
     OverlayModule,
-    PortalModule
+    PortalModule,
+    TextFieldModule
   ],
   entryComponents: [
     MatSpinner

@@ -8,23 +8,34 @@
             </div>
             <div *ngFor="let twitter of twitters">
                 <mat-card>
-                    <mat-card-title>@{{twitter.screen_name}}</mat-card-title>
+                    <mat-card-title>
+                        @{{twitter.screen_name}}
+                    </mat-card-title>
                     <mat-card-content>
-                        <div *ngIf="twitter.authorized; else elseBlock">
-                            <span>連携済み</span>
-                        </div>
-                        <ng-template #elseBlock>
-                            <span class="warn">未連携</span>
-                        </ng-template>
+                        <span fxLayout="column" fxLayoutGap="8px">
+                            <div></div>
+
+                            <div *ngIf="twitter.subsc">
+                                <button mat-icon-button type="button" color="warn" (click)="onDestroy(twitter.screen_name)"><mat-icon>warning</mat-icon></button>
+                                <span class="warning">DMが正常に終了できていません! 左のアイコンを触ってください</span>
+                            </div>
+
+                            <div *ngIf="twitter.authorized; else elseBlock">
+                                <span>連携済み</span>
+                            </div>
+                            <ng-template #elseBlock>
+                                <span class="warn">未連携</span>
+                            </ng-template>
+                        </span>
                     </mat-card-content>
                     <mat-divider inset></mat-divider>
                     <mat-card-actions>
                         <button mat-button (click)="onDelete(twitter.screen_name)">削除</button>
                         <span fxlayout="row" fxFlexOffset="auto" fxLayoutGap="8px">
-                            <!--<span *ngIf="!twitter.authorized">-->
-                                <button *ngIf="!twitter.authorized" mat-raised-button color="accent" (click)="onOAuth(twitter.screen_name)">連携</button>
-                            <!--</span>-->
-                            <button mat-raised-button color="primary" (click)="onDM()">DM</button>
+                            <button *ngIf="!twitter.authorized; else elseBlock2" mat-raised-button color="accent" (click)="onOAuth(twitter.screen_name)">連携</button>
+                            <ng-template #elseBlock2>
+                                <button mat-raised-button color="primary" (click)="onDM(twitter.screen_name)" [disabled]="twitter.subsc">DM</button>
+                            </ng-template>
                         </span>
                     </mat-card-actions>
                 </mat-card>

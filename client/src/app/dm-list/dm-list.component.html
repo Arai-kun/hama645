@@ -1,0 +1,13 @@
+<h2 mat-dialog-title>DMを開始するユーザーを選択します</h2>
+<div mat-dialog-content>
+    <div fxLayout="column">
+        <div *ngFor="let dmUser of dmUserList">
+            <a (click)="onDM(dmUser.userId)">
+                <mat-card>{{dmUser.screenName}}</mat-card>
+            </a>
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions class="dialog-buttons">
+    <button mat-button class="cancel-btn" (click)="onCancel()">キャンセル</button>
+</div>

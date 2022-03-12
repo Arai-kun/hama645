@@ -12,7 +12,7 @@ require('dotenv').config();
 sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 
 mongoose.connect(
-    'mongodb://localhost:27017/hama645?authSource=admin',
+    `mongodb://localhost:27017/${process.env.DB_NAME}?authSource=admin`,
     {
         useNewUrlParser: true,
         user: 'admin',
@@ -96,101 +96,135 @@ async function detectDMRequest(){
 				let ids = [];
 				let cursor = -1;
 				do {
-					let response = await twitterClient.accountsAndUsers.friendsIds({cursor: cursor});
+					/* Rate limit 15 per 15 min (user). Danger more than 5000 follows*/
+					let response = await twitterClient.accountsAndUsers.friendsIds({cursor: cursor, stringify_ids: true});
 					response['ids'].forEach(id => {
 							ids.push(id);
 					});
 					cursor = response['next_cursor'];
 				}
 				while(cursor !== 0);
-				//console.log(ids);
+				
+				/* Update friends */
+				await Twitter.updateOne({email: twitter.email, screen_name: twitter.screen_name}, {$set: {friendIds: ids}}).exec();
 
+				/* Rate limit automatically cleared */
 				let response = await twitterClient.directMessages.eventsList();
 				if(response.events.length !== 0){
-					let data;
+					/*let data;
 					for(let i = 0; i < response.events.length; i++){
 						data = response.events[i];
 						if(data['type'] === 'message_create'){
 							log(`Found message_create index: ${i}`);
 							break;
 						}
-					}
+					}*/
 
-					let dm = await Dm.findOne({email: user.email, screen_name: twitter.screen_name}).exec();
-					if(!dm){
-						/* Initial */
-						await Dm.create({
-							email: user.email, 
-							screen_name: twitter.screen_name,
-							id: data['id'],
-							created_timestamp: data['created_timestamp'],
-						});
+					let dms = await Dm.find({email: user.email, screen_name: twitter.screen_name}).exec();
+					if(dms.length === 0){
+						/* Initial => All save */
+						for(let data of response.events){
+							await Dm.create({
+								email: user.email, 
+								screen_name: twitter.screen_name,
+								id: data['id'],
+								created_timestamp: data['created_timestamp'],
+								sender_id: data['message_create']['sender_id'],
+								recipient_id: data['message_create']['target']['recipient_id'],
+								text: data['message_create']['message_data']['text'],
+							});
+						}
 					}
 					else{
 						/* If sender, ignore. Then data updates only */
-						if(twitter.user_id !== data['message_create']['sender_id']){
-							if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
-								if(ids.find(id => id === Number(data['message_create']['sender_id'])) === undefined){
-									/* DM Request */
-									log('***** Detect Request DM! *****');
-									await Log.create({
-										email: user.email,
-										timestamp: `${Date.now()}`,
-										screen_name: twitter.screen_name,
-										event: 1
-									});
-									await sendgrid.send({
-										to: user.email,
-										from: 'noreply@enginestarter.nl',
-										subject: '【通知】DM管理ツール',
-										html: `<p>@${twitter.screen_name} にDMリクエストが届きました</p>`
-									});
-								}
-								else{
-									/* New DM */
-									let special = await Special.findOne({user_id: data['message_create']['sender_id']}).exec();
-									if(!special){
-										log('Get new DM');
+						/* Extract the newest data from DB */
+						let dm = dms.find(dm => Math.max.apply(null, dms.map(dm => Number(dm.created_timestamp))) === Number(dm.created_timestamp));
+						console.log(dm);
+						/* Extract data which there is not in DB */
+						let new_data = response.events.filter(dm => !(dms.map(dm => dm.id)).includes(dm['id']));
+						console.log(new_data);
+						/* Extract the newest data from new data */
+						//let data = new_data.filter(dm => Math.max(new_data.map(dm => Number(dm['created_timestamp']))) === Number(dm['created_timestamp']));
+						if(new_data.length !== 0){
+							/* Extract the newest data from new data */
+							let data = new_data[0];
+							console.log(data);
+							if(twitter.user_id !== data['message_create']['sender_id']){
+								if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
+									if(ids.find(id => id === data['message_create']['sender_id']) === undefined){
+										/* DM Request */
+										log('***** Detect Request DM! *****');
 										await Log.create({
 											email: user.email,
 											timestamp: `${Date.now()}`,
 											screen_name: twitter.screen_name,
-											event: 2
-										});
-									}
-									else{
-										log('Get new special DM');
-										await Log.create({
-											email: user.email,
-											timestamp: `${Date.now()}`,
-											screen_name: twitter.screen_name,
-											event: 3
+											event: 1
 										});
 										await sendgrid.send({
 											to: user.email,
 											from: 'noreply@enginestarter.nl',
-											subject: '【特殊通知】DM管理ツール',
-											html: `<p>@${special.screen_name} から@${twitter.screen_name} にDMが届きました</p>`
+											subject: '【通知】DM管理ツール',
+											html: `<p>@${twitter.screen_name} にDMリクエストにて問い合わせが来ましたのでご対応よろしくお願いします。</p><p>問い合わせは以下のリンクから開いて対応してください。</p><p>${process.env.SERVER_URL}/home/dm/${twitter.screen_name}/${data['message_create']['sender_id']}</p>`
 										});
+									}
+									else{
+										/* New DM */
+										let special = await Special.findOne({user_id: data['message_create']['sender_id']}).exec();
+										if(!special){
+											log('Get new DM');
+											await Log.create({
+												email: user.email,
+												timestamp: `${Date.now()}`,
+												screen_name: twitter.screen_name,
+												event: 2
+											});
+										}
+										else{
+											log('Get new special DM');
+											await Log.create({
+												email: user.email,
+												timestamp: `${Date.now()}`,
+												screen_name: twitter.screen_name,
+												event: 3
+											});
+											await sendgrid.send({
+												to: user.email,
+												from: 'noreply@enginestarter.nl',
+												subject: '【特殊通知】DM管理ツール',
+												html: `<p>@${twitter.screen_name} に被り案件として通知されました。</p><p>問い合わせは以下のリンクから開いて対応してください。</p><p>${process.env.SERVER_URL}/home/log</p>`
+											});
+										}
 									}
 								}
 							}
+							for(let data of new_data){
+								await Dm.create({
+									email: user.email, 
+									screen_name: twitter.screen_name,
+									id: data['id'],
+									created_timestamp: data['created_timestamp'],
+									sender_id: data['message_create']['sender_id'],
+									recipient_id: data['message_create']['target']['recipient_id'],
+									text: data['message_create']['message_data']['text']
+								});
+							}
 						}
-						dm.id = data['id'];
-						dm.created_timestamp = data['created_timestamp'];
-						await dm.save();
+						await Dm.findOneAndDelete({email: user.email, screen_name: twitter.screen_name, id: '0'}).exec();
 					}
 				}
 				else{
 					/* Case that the account receives DM for the first time or spent for 30 days */
 					log('Detect events null account');
-					let dm = await Dm.findOne({email: user.email, screen_name: twitter.screen_name}).exec();
-					if(!dm){
+					let dms = await Dm.find({email: user.email, screen_name: twitter.screen_name}).exec();
+					if(dms.length === 0){
 						await Dm.create({
 							email: user.email, 
 							screen_name: twitter.screen_name,
 							id: '0',
 							created_timestamp: `${Date.now()}`,
+							send_id: '',
+							recipient_id: '',
+							text: ''
 						});
 					}
 				}
@@ -201,6 +235,7 @@ async function detectDMRequest(){
 			log(error);
 	}
 }
+
 
 function log(str) {
 	const now = new Date();

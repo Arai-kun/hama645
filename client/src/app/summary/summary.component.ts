@@ -57,7 +57,7 @@ export class SummaryComponent implements OnInit, AfterViewInit{
   }
 
   getSummary(): void {
-    //this.spinnerService.attach();
+    this.spinnerService.attach();
     this.dbService.getAll<summary>('summary')
     .subscribe(summary => {
       if(summary.length === 0){
@@ -66,15 +66,27 @@ export class SummaryComponent implements OnInit, AfterViewInit{
         return;
       }
       let displaylogs: displayData[] = [];
+      let sum_date: Array<number> = new Array(5);
+      sum_date.fill(0);
+      let sum_month: number = 0;
       summary.forEach(el => {
+        for(let i = 0; i < el.date.length; i++){
+          sum_date[i] += el.date[i];
+        }
+        sum_month += el.sum;
         displaylogs.push({
           screen_name: el.screen_name,
           date: el.date,
           sum: el.sum
         });
       });
+      displaylogs.unshift({
+        screen_name: '全アカウント',
+        date: sum_date,
+        sum: sum_month
+      });
       this.dataSource.data = displaylogs;
-      //this.spinnerService.detach();
+      this.spinnerService.detach();
     });
   }
 

@@ -6,7 +6,9 @@ let mongoose = require("mongoose"),
     oauth_token: String,
     oauth_token_secret: String,
     authorized: Boolean,
-    latest_request_time: String
+    latest_request_time: String,
+    subsc: Boolean,
+    friendIds: [String]
 });
 
 module.exports = mongoose.model("Twitter", twitterSchema, 'twitter');

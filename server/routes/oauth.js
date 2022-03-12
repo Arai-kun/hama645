@@ -13,7 +13,7 @@ router.get('/requestToken/:screen_name', async (req, res, next) => {
   });
 
   try{
-    let response = await twitterClient.basics.oauthRequestToken({oauth_callback: `https://enginestarter.nl/oauth?screen_name=${req.params.screen_name}`});
+    let response = await twitterClient.basics.oauthRequestToken({oauth_callback: `${process.env.SERVER_URL}/oauth?screen_name=${req.params.screen_name}`});
     let twitter = await Twitter.findOne({email:req.user['email'], screen_name: req.params.screen_name}).exec();
     twitter.oauth_token = response.oauth_token;
     twitter.oauth_token_secret = response.oauth_token_secret;
@@ -69,6 +69,7 @@ router.post('/exchangeToken', async (req, res, next) => {
       accessToken: twitter.oauth_token,
       accessTokenSecret: twitter.oauth_token_secret
     });
+    /* Rate limit 900 per 15 min (user) */
     response = await twitterClient.accountsAndUsers.usersShow({screen_name: req.body['screen_name']});
     if(twitter.user_id !== response.id_str){
       res.json(false);

@@ -11,7 +11,7 @@ if(process.env.MODE === 'LOCAL'){
 }
 else if(process.env.MODE === 'REMOTE'){
   mongoose.connect(
-    'mongodb://localhost:27017/hama645?authSource=admin',
+    `mongodb://localhost:27017/${process.env.DB_NAME}?authSource=admin`,
     {
         useNewUrlParser: true,
         user: 'admin',
@@ -33,9 +33,11 @@ let User = require('./models/user');
 
 let oauthRouter = require('./routes/oauth');
 let userRouter = require('./routes/user');
-let dbRouter = require('./routes/db')
+let dbRouter = require('./routes/db');
+let chatRouter = require('./routes/chat');
+let webhookRouter = require('./routes/webhook');
 
-var app = express();
+let app = express();
 
 app.use(compression());
 app.enable('trust proxy');
@@ -95,10 +97,29 @@ function passwordValidator(reqPassword, dbPassword) {
   return bcrypt.compareSync(reqPassword, dbPassword);
 }
 
+/* twitter webhook */
+/*
+const userActivityWebhook = twitterWebhooks.userActivity({
+  serverUrl: process.env.SERVER_URL,
+  route: '/webhook',
+  consumerKey: process.env.API_KEY,
+  consumerSecret: process.env.API_SECRET,
+  accessToken: process.env.ACCESS_TOKEN,
+  accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
+  environment: 'dev',
+  app: app
+});
+//userActivityWebhook.register();
+userActivityWebhook.getWebhooks()
+.then(res => console.log(JSON.stringify(res)));*/
+
+
+
 app.use('/oauth', oauthRouter);
 app.use('/user', userRouter);
 app.use('/db', dbRouter);
-
+app.use('/chat', chatRouter);
+app.use('/webhook', webhookRouter);
 
 app.use(express.static(path.join(__dirname, '../client/dist/client')));
 app.use('/*', express.static(path.join(__dirname, '../client/dist/client/index.html')));

@@ -4,10 +4,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { DmtoolRegisterComponent } from '../dmtool-register/dmtool-register.component';
 import { DbService } from '../db.service';
 import { twitter } from '../models/twitter';
-import { special } from '../models/special'
+import { special } from '../models/special';
 import { DmtoolDeleteComponent } from '../dmtool-delete/dmtool-delete.component';
 import { DmtoolRegisterSpComponent } from '../dmtool-register-sp/dmtool-register-sp.component';
 import { DmtoolDeleteSpComponent } from '../dmtool-delete-sp/dmtool-delete-sp.component';
+import { DmListComponent } from '../dm-list/dm-list.component';
+import { ChatService } from '../chat.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-dmtool',
@@ -21,7 +24,9 @@ export class DmtoolComponent implements OnInit {
   constructor(
     private router: Router,
     public dialog: MatDialog,
-    private dbService: DbService
+    private dbService: DbService,
+    private chatService: ChatService,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -29,7 +34,15 @@ export class DmtoolComponent implements OnInit {
     this.getSpecials();
   }
 
-  onDM(): void { }
+  onDM(screen_name: string): void {
+    let dialogRef = this.dialog.open(DmListComponent, {
+      width: '400px',
+      data: screen_name
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.ngOnInit();
+    });
+  }
 
   onOAuth(screen_name: string): void {
     this.router.navigate(['/oauth'], {queryParams: {screen_name: screen_name}});
@@ -43,6 +56,19 @@ export class DmtoolComponent implements OnInit {
     dialogRef.afterClosed().subscribe(() => {
       this.ngOnInit();
     });
+  }
+
+  onDestroy(screen_name: string): void {
+    this.chatService.delete(screen_name)
+    .subscribe(result => {
+      if(result){
+        this.snackBar.open('正常に終了できました', '閉じる', {duration: 5000});
+        this.ngOnInit();
+      }
+      else{
+        this.snackBar.open('エラーが発生しました', '閉じる', {duration: 7000});
+      }
+    })
   }
 
   onRegister(): void {

@@ -34,7 +34,8 @@ export class DmtoolRegisterComponent implements OnInit {
   onSubmit(): void {
     let twitter: twitter = {
       screen_name: this.form.get('screenName')?.value,
-      authorized: false
+      authorized: false,
+      subsc: false
     }
     this.dbService.get<twitter>('twitter', twitter.screen_name)
     .subscribe(exist => {
