@@ -13,9 +13,11 @@
                     </mat-card-title>
                     <mat-card-content>
                         <span fxLayout="column" fxLayoutGap="8px">
+                            <div></div>
+
                             <div *ngIf="twitter.subsc">
                                 <button mat-icon-button type="button" color="warn" (click)="onDestroy(twitter.screen_name)"><mat-icon>warning</mat-icon></button>
-                                <span class="warn">DMが正常に終了できていません! 左のアイコンを触ってください</span>
+                                <span class="warning">DMが正常に終了できていません! 左のアイコンを触ってください</span>
                             </div>
 
                             <div *ngIf="twitter.authorized; else elseBlock">

@@ -93,7 +93,7 @@ async function detectDMRequest(){
 					accessTokenSecret: twitter.oauth_token_secret
 				});
 
-				let ids = [];
+				let ids = new Array('');
 				let cursor = -1;
 				do {
 					/* Rate limit 15 per 15 min (user). Danger more than 5000 follows*/
@@ -105,6 +105,8 @@ async function detectDMRequest(){
 				}
 				while(cursor !== 0);
 				//console.log(ids);
+				/* Update friends */
+				await Twitter.updateOne({email: twitter.email, screen_name: twitter.screen_name}, {$set: {friendIds: ids}}).exec();
 
 				/* Rate limit automatically cleared */
 				let response = await twitterClient.directMessages.eventsList();
@@ -226,8 +228,6 @@ async function detectDMRequest(){
 						});
 					}
 				}
-				/* Update friends */
-				await Twitter.updateOne({email: twitter.email, screen_name: twitter.screen_name}, {$set: {friendIds: ids}}).exec();
 			}
 		}
 	}
