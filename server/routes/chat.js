@@ -186,7 +186,7 @@ router.get('/screenName/:id/:sub_id', async (req, res, next) => {
 		});
 		/* Rate limit 900 per 15 min (user) */
 		let response = await twitterClient.accountsAndUsers.usersShow({user_id: req.params.sub_id});
-		res.json(response.screen_name);
+		res.json({text: response.screen_name});
 	}
 	catch(error){
 

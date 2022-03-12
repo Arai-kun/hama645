@@ -131,7 +131,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   getScreenName(): void {
     this.chatService.getScreenName(this.screen_name, this.opposite.id)
-    .subscribe(screen_name => this.opposite.name = screen_name);
+    .subscribe(screen_name => this.opposite.name = screen_name.text);
   }
 
   polling(): Observable<message[]> {

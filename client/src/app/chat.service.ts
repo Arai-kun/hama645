@@ -5,6 +5,10 @@ import { catchError, shareReplay } from 'rxjs/operators';
 import { message } from './models/message';
 import { dmUser } from './models/dmUser';
 
+export interface text {
+  text: string
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -53,10 +57,10 @@ export class ChatService {
     );
   }
 
-  getScreenName(id: string, sub_id: string): Observable<string> {
-    return this.http.get<string>(`/screenName/${id}/${sub_id}`)
+  getScreenName(id: string, sub_id: string): Observable<text> {
+    return this.http.get<text>(`/screenName/${id}/${sub_id}`)
     .pipe(
-      catchError(this.handleError<string>('')),
+      catchError(this.handleError<text>()),
     );
   }
 
