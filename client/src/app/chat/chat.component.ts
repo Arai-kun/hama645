@@ -52,6 +52,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
         if(result){
           this.initMsg();
           this.getScreenName();
+          this.getIsFriend();
           this.recieveMsg();
           this.subscription = this.polling().subscribe(data => {
             this.subject.next(data);
