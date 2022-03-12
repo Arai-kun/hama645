@@ -38,8 +38,17 @@
     </div>
 </div>
 -->
+<mat-toolbar class="toolbar">
+    <span class="mat-title">{{opposite.name}}</span>
+    <button mat-icon-button *ngIf="!isFriend" color="accent" (click)="onFollow()"><mat-icon>add</mat-icon></button>
+    <span class="mat-small" *ngIf="isFriend">フォロー中</span>
+    <span fxLayout="row" fxFlexOffset="auto">
+        <button mat-raised-button color="warn" (click)="onExit()">終了</button>
+    </span>
+</mat-toolbar>
 
 <div class="chat-inner-container">
+    <!--
     <mat-toolbar class="toolbar">
         <span class="mat-title">{{opposite.name}}</span>
         <button mat-icon-button *ngIf="!isFriend" color="accent" (click)="onFollow()"><mat-icon>add</mat-icon></button>
@@ -47,7 +56,7 @@
         <span fxLayout="row" fxFlexOffset="auto">
             <button mat-raised-button color="warn" (click)="onExit()">終了</button>
         </span>
-    </mat-toolbar>
+    </mat-toolbar>-->
     <div class="chat-content" fxLayout="column" fxLayoutAlign="end stretch">
         <div class="scroll-area" #scrollArea>
             <div class="messages-container">
@@ -68,15 +77,14 @@
                     </ng-template>
                 </div>
             </div>
-
-            <div fxFill></div>
             
+            <!--
             <div class="chat-respond" fxLayout="row" fxLayoutAlign="start center">
                 <div fxFlex>
                     <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5" [(ngModel)]="text" placeholder="メッセージを入力"></textarea>
                 </div>
                 <button mat-icon-button color="accent" type="button" (click)="sendMsg()"><mat-icon>send</mat-icon></button>
-            </div>
+            </div>-->
         </div>
     </div>
 
@@ -89,4 +97,10 @@
         <button mat-icon-button color="accent" type="button" (click)="sendMsg()"><mat-icon>send</mat-icon></button>
     </div>
     -->
+</div>
+<div class="chat-respond" fxLayout="row" fxLayoutAlign="start center">
+    <div fxFlex>
+        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5" [(ngModel)]="text" placeholder="メッセージを入力"></textarea>
+    </div>
+    <button mat-icon-button color="accent" type="button" (click)="sendMsg()"><mat-icon>send</mat-icon></button>
 </div>
