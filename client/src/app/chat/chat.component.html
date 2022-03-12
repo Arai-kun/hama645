@@ -1,44 +1,5 @@
-<!--<div fxLayout="column" #scroll>
-    <span class="mat-title">{{opposite_name}}</span>
-    <div *ngFor="let msg of messages">
-        <div *ngIf="msg.self; else elseBlock">
-            <mat-card>
-                <mat-card-content>
-                    {{msg.text}}
-                </mat-card-content>
-                <mat-card-footer>
-                    {{msg.timestamp}}
-                </mat-card-footer>
-            </mat-card>
-        </div>
-        <ng-template #elseBlock>
-            <span fxLayout="row" fxFlexOffset="auto">
-                <mat-card>
-                    <mat-card-content>
-                        {{msg.text}}
-                    </mat-card-content>
-                    <mat-card-footer>
-                        {{msg.timestamp}}
-                    </mat-card-footer>
-                </mat-card>
-            </span>
-        </ng-template>
-    </div>
 
 
-    <div class="footer">
-        <span fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="16px">
-            <mat-form-field class="full-with">
-                <textarea matInput [(ngModel)]="text"></textarea>
-            </mat-form-field>
-            <span fxLayout="row" fxFlexOffset="auto">
-                <button mat-raised-button color="accent" type="button" (click)="sendMsg()">送信</button>
-            </span>
-        </span>
-    </div>
-</div>
--->
-<div class="cont">
     <mat-toolbar class="toolbar">
         <span class="mat-title">{{opposite.name}}</span>
         <button mat-icon-button *ngIf="!isFriend" color="accent" (click)="onFollow()"><mat-icon>add</mat-icon></button>
@@ -49,15 +10,6 @@
     </mat-toolbar>
 
     <div class="chat-inner-container">
-        <!--
-        <mat-toolbar class="toolbar">
-            <span class="mat-title">{{opposite.name}}</span>
-            <button mat-icon-button *ngIf="!isFriend" color="accent" (click)="onFollow()"><mat-icon>add</mat-icon></button>
-            <span class="mat-small" *ngIf="isFriend">フォロー中</span>
-            <span fxLayout="row" fxFlexOffset="auto">
-                <button mat-raised-button color="warn" (click)="onExit()">終了</button>
-            </span>
-        </mat-toolbar>-->
         <div class="chat-content" fxLayout="column" fxLayoutAlign="end stretch">
                 <div class="messages-container">
                     <div class="chat-message" *ngFor="let msg of messages" fxLayout="column" fxLayoutAlign="end start">
@@ -78,23 +30,23 @@
                     </div>
                 </div>
                 
-                <!--
+                
                 <div class="chat-respond" fxLayout="row" fxLayoutAlign="start center">
                     <div fxFlex>
                         <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5" [(ngModel)]="text" placeholder="メッセージを入力"></textarea>
                     </div>
                     <button mat-icon-button color="accent" type="button" (click)="sendMsg()"><mat-icon>send</mat-icon></button>
-                </div>-->
+                </div>
         </div>
 
     
-        
+        <!--
         <div class="chat-respond" fxLayout="row" fxLayoutAlign="start center">
             <div fxFlex>
                 <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5" [(ngModel)]="text" placeholder="メッセージを入力"></textarea>
             </div>
             <button mat-icon-button color="accent" type="button" (click)="sendMsg()"><mat-icon>send</mat-icon></button>
-        </div>
+        </div>-->
         
     </div>
     <!--
@@ -104,7 +56,7 @@
         </div>
         <button mat-icon-button color="accent" type="button" (click)="sendMsg()"><mat-icon>send</mat-icon></button>
     </div>-->
-</div>
+
 
     
 
