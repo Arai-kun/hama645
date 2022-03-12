@@ -14,11 +14,13 @@ table {
     margin-top: 8px;
 }
 
-.refresh-btn {
+.sidenav-container .refresh-btn {
     z-index: 2;
-    position: absolute;
+    position: fixed;
     bottom: 64px;
     right: 24px;
 }
+
+
 
 
