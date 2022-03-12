@@ -209,7 +209,7 @@ router.get('/isFriend/:id/:sub_id', (req, res, next) => {
 	});
 });
 
-router.get('/follow/:id/:sub_id', (req, res, next) => {
+router.get('/follow/:id/:sub_id', async (req, res, next) => {
 	try {
 		let twitter = await Twitter.findOne({email: req.user['email'], screen_name: req.params.id}).exec();
 		const twitterClient = new TwitterClient({
