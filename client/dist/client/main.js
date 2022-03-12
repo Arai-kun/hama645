@@ -648,14 +648,25 @@ class ChatComponent {
         this.onExit();
     }
     onExit() {
-        this.router.navigate(['/home/account']);
-    }
-    ngOnDestroy() {
         this.subject.complete();
         this.chatService.delete(this.screen_name)
             .subscribe(result => {
             if (result) {
                 console.log('Deleted');
+                this.router.navigate(['/home']);
+            }
+        });
+    }
+    ngOnDestroy() {
+        if (!this.subject.closed) {
+            this.subject.complete();
+        }
+        this.chatService.delete(this.screen_name)
+            .subscribe(result => {
+            if (result) {
+                console.log('Deleted');
+            }
+            else {
             }
         });
     }

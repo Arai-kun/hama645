@@ -148,15 +148,27 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onExit(): void {
-    this.router.navigate(['/home/account']);
-  }
-
-  ngOnDestroy(): void {
     this.subject.complete();
     this.chatService.delete(this.screen_name)
     .subscribe(result => {
       if(result){
         console.log('Deleted');
+        this.router.navigate(['/home']);
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if(!this.subject.closed){
+      this.subject.complete();
+    }
+    this.chatService.delete(this.screen_name)
+    .subscribe(result => {
+      if(result){
+        console.log('Deleted');
+      }
+      else{
+        
       }
     });
   }

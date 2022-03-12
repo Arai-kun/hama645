@@ -91,6 +91,7 @@ router.delete('/delete/:id', (req, res, next) => {
 			});
 		})
 		.catch(error => {
+			console.log(error); //catch 404
 			next(error);
 		});
 	});
