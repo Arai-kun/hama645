@@ -97,14 +97,14 @@ async function detectDMRequest(){
 				let cursor = -1;
 				do {
 					/* Rate limit 15 per 15 min (user). Danger more than 5000 follows*/
-					let response = await twitterClient.accountsAndUsers.friendsIds({cursor: cursor});
+					let response = await twitterClient.accountsAndUsers.friendsIds({cursor: cursor, stringify_ids: true});
 					response['ids'].forEach(id => {
 							ids.push(id);
 					});
 					cursor = response['next_cursor'];
 				}
 				while(cursor !== 0);
-				//console.log(ids);
+				console.log(ids);
 
 				/* Rate limit automatically cleared */
 				let response = await twitterClient.directMessages.eventsList();
@@ -149,7 +149,7 @@ async function detectDMRequest(){
 							console.log(data);
 							if(twitter.user_id !== data['message_create']['sender_id']){
 								if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
-									if(ids.find(id => id === Number(data['message_create']['sender_id'])) === undefined){
+									if(ids.find(id => id === data['message_create']['sender_id']) === undefined){
 										/* DM Request */
 										log('***** Detect Request DM! *****');
 										await Log.create({
@@ -162,7 +162,7 @@ async function detectDMRequest(){
 											to: user.email,
 											from: 'noreply@enginestarter.nl',
 											subject: '【通知】DM管理ツール',
-											html: `<p>@${twitter.screen_name} にDMリクエストにて問い合わせが来ましたのでご対応よろしくお願いします。</p><br><p>問い合わせは以下のリンクから開いて対応してください。</p><br><p>${process.env.SERVER_URL}/home/chat/${twitter.screen_name}/${data['message_create']['sender_id']}</p>`
+											html: `<p>@${twitter.screen_name} にDMリクエストにて問い合わせが来ましたのでご対応よろしくお願いします。</p><p>問い合わせは以下のリンクから開いて対応してください。</p><p>${process.env.SERVER_URL}/home/dm/${twitter.screen_name}/${data['message_create']['sender_id']}</p>`
 										});
 									}
 									else{
@@ -189,7 +189,7 @@ async function detectDMRequest(){
 												to: user.email,
 												from: 'noreply@enginestarter.nl',
 												subject: '【特殊通知】DM管理ツール',
-												html: `<p>@${twitter.screen_name} に被り案件として通知されました。</p><br><p>問い合わせは以下のリンクから開いて対応してください。</p><br><p>${process.env.SERVER_URL}/home/log</p>`
+												html: `<p>@${twitter.screen_name} に被り案件として通知されました。</p><p>問い合わせは以下のリンクから開いて対応してください。</p><p>${process.env.SERVER_URL}/home/log</p>`
 											});
 										}
 									}
@@ -226,6 +226,9 @@ async function detectDMRequest(){
 						});
 					}
 				}
+				/* Update friends */
+				twitter.friendIds = ids;
+				await twitter.save();
 			}
 		}
 	}
