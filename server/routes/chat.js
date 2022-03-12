@@ -222,6 +222,7 @@ router.get('/follow/:id/:sub_id', async (req, res, next) => {
 		res.json(true)
 	}
 	catch(error){
+		console.log(error);
 		if(error.statusCode === 403){
 			res.json(false);
 			return;
