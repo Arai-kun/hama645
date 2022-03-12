@@ -28,6 +28,10 @@ mat-card {
   background: #f5f5f5;
 }
 
+.mat-paginator.marginless-paginator-range-label .mat-paginator-range-label {
+  margin: 0 24px 0 16px;
+}
+
 .mat-badge-content {
   font-weight: 600;
   font-size: 12px;

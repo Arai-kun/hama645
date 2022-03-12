@@ -66,7 +66,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(this.scrollToBottom, 100);
+    setTimeout(this.scrollToBottom, 500);
   }
 
   scrollToBottom(): void {
@@ -89,7 +89,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
               text: msg.text,
               timestamp: `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${('0' + date.getMinutes()).slice(-2)}`
             });
-            setTimeout(this.scrollToBottom, 100);
+            setTimeout(this.scrollToBottom, 500);
           }
         }
       },
@@ -148,7 +148,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onExit(): void {
-    this.router.navigate(['/home']);
+    this.router.navigate(['/']);
   }
 
   ngOnDestroy(): void {
