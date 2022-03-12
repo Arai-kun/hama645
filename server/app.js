@@ -4,7 +4,6 @@ let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 let mongoose = require('mongoose');
 let compression = require('compression');
-let twitterWebhooks = require('twitter-webhooks');
 require('dotenv').config();
 
 if(process.env.MODE === 'LOCAL'){
@@ -35,13 +34,10 @@ let User = require('./models/user');
 let oauthRouter = require('./routes/oauth');
 let userRouter = require('./routes/user');
 let dbRouter = require('./routes/db');
+let chatRouter = require('./routes/chat');
 let webhookRouter = require('./routes/webhook');
 
 let app = express();
-
-/* Websocket */
-let expressWs = require('express-ws')(app);
-let wsRouter = require('./routes/ws');
 
 app.use(compression());
 app.enable('trust proxy');
@@ -122,7 +118,7 @@ userActivityWebhook.getWebhooks()
 app.use('/oauth', oauthRouter);
 app.use('/user', userRouter);
 app.use('/db', dbRouter);
-app.use('/chat', wsRouter);
+app.use('/chat', chatRouter);
 app.use('/webhook', webhookRouter);
 
 app.use(express.static(path.join(__dirname, '../client/dist/client')));

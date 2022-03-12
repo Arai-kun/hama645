@@ -2,6 +2,9 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ChatService } from '../chat.service';
+import { dmUser } from '../models/dmUser';
+
+
 
 @Component({
   selector: 'app-dm-list',
@@ -9,7 +12,7 @@ import { ChatService } from '../chat.service';
   styleUrls: ['./dm-list.component.scss']
 })
 export class DmListComponent implements OnInit {
-  dmUserList: string[] = [];
+  dmUserList: dmUser[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<DmListComponent>,

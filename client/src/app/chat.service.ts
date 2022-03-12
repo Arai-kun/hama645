@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError, map, shareReplay } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { WebsocketService } from './websocket.service';
+import { catchError, shareReplay } from 'rxjs/operators';
 import { message } from './models/message';
-import { webSocket } from "rxjs/webSocket";
+import { dmUser } from './models/dmUser';
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +14,7 @@ export class ChatService {
   };
 
   constructor(
-    private http: HttpClient,
-    private ws: WebsocketService
+    private http: HttpClient
   ) { }
 
   create(id: string): Observable<boolean> {
@@ -49,10 +46,10 @@ export class ChatService {
     );
   }
 
-  getdmUserList(id: string): Observable<string[]> {
-    return this.http.get<string[]>(`/chat/dmUserList/${id}`, this.httpOptions)
+  getdmUserList(id: string): Observable<dmUser[]> {
+    return this.http.get<dmUser[]>(`/chat/dmUserList/${id}`, this.httpOptions)
     .pipe(
-      catchError(this.handleError<string[]>([])),
+      catchError(this.handleError<dmUser[]>([])),
     );
   }
 
