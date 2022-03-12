@@ -93,6 +93,7 @@ router.delete('/delete/:id', (req, res, next) => {
 		.catch(error => {
 			if(error.statusCode === 404){
 				res.json(false);
+				return;
 			}
 			next(error);
 		});
