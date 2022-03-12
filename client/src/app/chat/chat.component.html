@@ -38,7 +38,7 @@
     </div>
 </div>
 -->
-<div class="chat-container">
+
     <mat-toolbar class="toolbar">
         <span class="mat-title">{{opposite.name}}</span>
         <button mat-icon-button *ngIf="!isFriend" color="accent" (click)="onFollow()"><mat-icon>add</mat-icon></button>
@@ -78,13 +78,13 @@
                     </div>
                 </div>
                 
-                <!--
+                
                 <div class="chat-respond" fxLayout="row" fxLayoutAlign="start center">
                     <div fxFlex>
                         <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5" [(ngModel)]="text" placeholder="メッセージを入力"></textarea>
                     </div>
                     <button mat-icon-button color="accent" type="button" (click)="sendMsg()"><mat-icon>send</mat-icon></button>
-                </div>-->
+                </div>
         </div>
 
     
@@ -99,11 +99,5 @@
     </div>
 
     
-</div>
-<div class="chat-respond" fxLayout="row" fxLayoutAlign="start center">
-    <div fxFlex>
-        <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5" [(ngModel)]="text" placeholder="メッセージを入力"></textarea>
-    </div>
-    <button mat-icon-button color="accent" type="button" (click)="sendMsg()"><mat-icon>send</mat-icon></button>
-</div>
+
 
