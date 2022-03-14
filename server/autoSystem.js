@@ -233,7 +233,7 @@ async function detectDMRequest(){
 		}
 	}
 	catch(error){
-			log(error);
+			log(JSON.stringify(error));
 	}
 }
 
