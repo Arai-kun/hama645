@@ -39,166 +39,93 @@ async function detectDMRequest(){
 	try {
 		let users = await User.find({}).exec();
 		for(let user of users){
-			let twitters = await Twitter.find({email: user.email, authorized: true}).exec();
-			log(`[${user.email}] ` + twitters.map(twitter => twitter.screen_name));
-			for(let twitter of twitters){
-				log(`Start ${twitter.screen_name}`);
-				let rate = await Rate.findOne({screen_name: twitter.screen_name}).exec();
-				if(!rate){
-					await Rate.create({
-						screen_name: twitter.screen_name,
-						latest_request_time: `${Date.now()}`
-					});
-				}
-				else{
-					let diff = Date.now() - Number(rate.latest_request_time);
-					const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-					if( 0 <= diff && diff < (60 * 1000)){
-						log(`Wait ${(60 * 1000) - diff} ms ...`);
-						await _sleep((60 * 1000) - diff);
-					}
-					else if(diff < 0){
-						log(`Wait ${(60 * 1000)} ms ...`);
-						await _sleep((60 * 1000));
+			try {
+				let twitters = await Twitter.find({email: user.email, authorized: true}).exec();
+				log(`[${user.email}] ` + twitters.map(twitter => twitter.screen_name));
+				for(let twitter of twitters){
+					log(`Start ${twitter.screen_name}`);
+					let rate = await Rate.findOne({screen_name: twitter.screen_name}).exec();
+					if(!rate){
+						await Rate.create({
+							screen_name: twitter.screen_name,
+							latest_request_time: `${Date.now()}`
+						});
 					}
 					else{
-						// No wait
+						let diff = Date.now() - Number(rate.latest_request_time);
+						const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+						if( 0 <= diff && diff < (60 * 1000)){
+							log(`Wait ${(60 * 1000) - diff} ms ...`);
+							await _sleep((60 * 1000) - diff);
+						}
+						else if(diff < 0){
+							log(`Wait ${(60 * 1000)} ms ...`);
+							await _sleep((60 * 1000));
+						}
+						else{
+							// No wait
+						}
+						rate.latest_request_time = `${Date.now()}`;
+						await rate.save();
+					}
+					/*
+					if(rate.latest_request_time){
+						//let diff = (Date.now() - (new Date().getTimezoneOffset() * 60 * 1000)) - Number(twitter.latest_request_time);
+						let diff = Date.now() - Number(rate.latest_request_time);
+						const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+						if( 0 <= diff && diff < (60 * 1000)){
+							log(`Wait ${(60 * 1000) - diff} ms ...`);
+							await _sleep((60 * 1000) - diff);
+						}
+						else if(diff < 0){
+							log(`Wait ${(60 * 1000)} ms ...`);
+							await _sleep((60 * 1000));
+						}
+						else{
+							// No wait
+						}
 					}
 					rate.latest_request_time = `${Date.now()}`;
-					await rate.save();
-				}
-				/*
-				if(rate.latest_request_time){
-					//let diff = (Date.now() - (new Date().getTimezoneOffset() * 60 * 1000)) - Number(twitter.latest_request_time);
-					let diff = Date.now() - Number(rate.latest_request_time);
-					const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-					if( 0 <= diff && diff < (60 * 1000)){
-						log(`Wait ${(60 * 1000) - diff} ms ...`);
-						await _sleep((60 * 1000) - diff);
-					}
-					else if(diff < 0){
-						log(`Wait ${(60 * 1000)} ms ...`);
-						await _sleep((60 * 1000));
-					}
-					else{
-						// No wait
-					}
-				}
-				rate.latest_request_time = `${Date.now()}`;
-				await rate.save();*/
+					await rate.save();*/
 
-				const twitterClient = new TwitterClient({
-					apiKey: process.env.API_KEY,
-					apiSecret: process.env.API_SECRET,
-					accessToken: twitter.oauth_token,
-					accessTokenSecret: twitter.oauth_token_secret
-				});
-
-				let ids = [];
-				let cursor = -1;
-				do {
-					/* Rate limit 15 per 15 min (user). Danger more than 5000 follows*/
-					let response = await twitterClient.accountsAndUsers.friendsIds({cursor: cursor, stringify_ids: true});
-					response['ids'].forEach(id => {
-							ids.push(id);
+					const twitterClient = new TwitterClient({
+						apiKey: process.env.API_KEY,
+						apiSecret: process.env.API_SECRET,
+						accessToken: twitter.oauth_token,
+						accessTokenSecret: twitter.oauth_token_secret
 					});
-					cursor = response['next_cursor'];
-				}
-				while(cursor !== 0);
-				
-				/* Update friends */
-				await Twitter.updateOne({email: twitter.email, screen_name: twitter.screen_name}, {$set: {friendIds: ids}}).exec();
 
-				/* Rate limit automatically cleared */
-				let response = await twitterClient.directMessages.eventsList();
-				if(response.events.length !== 0){
-					/*let data;
-					for(let i = 0; i < response.events.length; i++){
-						data = response.events[i];
-						if(data['type'] === 'message_create'){
-							log(`Found message_create index: ${i}`);
-							break;
-						}
-					}*/
-
-					let dms = await Dm.find({email: user.email, screen_name: twitter.screen_name}).exec();
-					if(dms.length === 0){
-						/* Initial => All save */
-						for(let data of response.events){
-							await Dm.create({
-								email: user.email, 
-								screen_name: twitter.screen_name,
-								id: data['id'],
-								created_timestamp: data['created_timestamp'],
-								sender_id: data['message_create']['sender_id'],
-								recipient_id: data['message_create']['target']['recipient_id'],
-								text: data['message_create']['message_data']['text'],
-							});
-						}
+					let ids = [];
+					let cursor = -1;
+					do {
+						/* Rate limit 15 per 15 min (user). Danger more than 5000 follows*/
+						let response = await twitterClient.accountsAndUsers.friendsIds({cursor: cursor, stringify_ids: true});
+						response['ids'].forEach(id => {
+								ids.push(id);
+						});
+						cursor = response['next_cursor'];
 					}
-					else{
-						/* If sender, ignore. Then data updates only */
-						/* Extract the newest data from DB */
-						let dm = dms.find(dm => Math.max.apply(null, dms.map(dm => Number(dm.created_timestamp))) === Number(dm.created_timestamp));
-						console.log(dm);
-						/* Extract data which there is not in DB */
-						let new_data = response.events.filter(dm => !(dms.map(dm => dm.id)).includes(dm['id']));
-						console.log(new_data);
-						/* Extract the newest data from new data */
-						//let data = new_data.filter(dm => Math.max(new_data.map(dm => Number(dm['created_timestamp']))) === Number(dm['created_timestamp']));
-						if(new_data.length !== 0){
-							/* Extract the newest data from new data */
-							let data = new_data[0];
-							console.log(data);
-							if(twitter.user_id !== data['message_create']['sender_id']){
-								if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
-									if(ids.find(id => id === data['message_create']['sender_id']) === undefined){
-										/* DM Request */
-										log('***** Detect Request DM! *****');
-										await Log.create({
-											email: user.email,
-											timestamp: `${Date.now()}`,
-											screen_name: twitter.screen_name,
-											event: 1
-										});
-										await sendgrid.send({
-											to: user.email,
-											from: 'noreply@enginestarter.nl',
-											subject: '【通知】DM管理ツール',
-											html: `<p>@${twitter.screen_name} にDMリクエストにて問い合わせが来ましたのでご対応よろしくお願いします。</p><p>問い合わせは以下のリンクから開いて対応してください。</p><p>${process.env.SERVER_URL}/home/dm/${twitter.screen_name}/${data['message_create']['sender_id']}</p>`
-										});
-									}
-									else{
-										/* New DM */
-										let special = await Special.findOne({user_id: data['message_create']['sender_id']}).exec();
-										if(!special){
-											log('Get new DM');
-											await Log.create({
-												email: user.email,
-												timestamp: `${Date.now()}`,
-												screen_name: twitter.screen_name,
-												event: 2
-											});
-										}
-										else{
-											log('Get new special DM');
-											await Log.create({
-												email: user.email,
-												timestamp: `${Date.now()}`,
-												screen_name: twitter.screen_name,
-												event: 3
-											});
-											await sendgrid.send({
-												to: user.email,
-												from: 'noreply@enginestarter.nl',
-												subject: '【特殊通知】DM管理ツール',
-												html: `<p>@${twitter.screen_name} に被り案件として通知されました。</p><p>問い合わせは以下のリンクから開いて対応してください。</p><p>${process.env.SERVER_URL}/home/log</p>`
-											});
-										}
-									}
-								}
+					while(cursor !== 0);
+					
+					/* Update friends */
+					await Twitter.updateOne({email: twitter.email, screen_name: twitter.screen_name}, {$set: {friendIds: ids}}).exec();
+
+					/* Rate limit automatically cleared */
+					let response = await twitterClient.directMessages.eventsList();
+					if(response.events.length !== 0){
+						/*let data;
+						for(let i = 0; i < response.events.length; i++){
+							data = response.events[i];
+							if(data['type'] === 'message_create'){
+								log(`Found message_create index: ${i}`);
+								break;
 							}
-							for(let data of new_data){
+						}*/
+
+						let dms = await Dm.find({email: user.email, screen_name: twitter.screen_name}).exec();
+						if(dms.length === 0){
+							/* Initial => All save */
+							for(let data of response.events){
 								await Dm.create({
 									email: user.email, 
 									screen_name: twitter.screen_name,
@@ -206,34 +133,113 @@ async function detectDMRequest(){
 									created_timestamp: data['created_timestamp'],
 									sender_id: data['message_create']['sender_id'],
 									recipient_id: data['message_create']['target']['recipient_id'],
-									text: data['message_create']['message_data']['text']
+									text: data['message_create']['message_data']['text'],
 								});
 							}
 						}
-						await Dm.findOneAndDelete({email: user.email, screen_name: twitter.screen_name, id: '0'}).exec();
+						else{
+							/* If sender, ignore. Then data updates only */
+							/* Extract the newest data from DB */
+							let dm = dms.find(dm => Math.max.apply(null, dms.map(dm => Number(dm.created_timestamp))) === Number(dm.created_timestamp));
+							console.log(dm);
+							/* Extract data which there is not in DB */
+							let new_data = response.events.filter(dm => !(dms.map(dm => dm.id)).includes(dm['id']));
+							console.log(new_data);
+							/* Extract the newest data from new data */
+							//let data = new_data.filter(dm => Math.max(new_data.map(dm => Number(dm['created_timestamp']))) === Number(dm['created_timestamp']));
+							if(new_data.length !== 0){
+								/* Extract the newest data from new data */
+								let data = new_data[0];
+								console.log(data);
+								if(twitter.user_id !== data['message_create']['sender_id']){
+									if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
+										if(ids.find(id => id === data['message_create']['sender_id']) === undefined){
+											/* DM Request */
+											log('***** Detect Request DM! *****');
+											await Log.create({
+												email: user.email,
+												timestamp: `${Date.now()}`,
+												screen_name: twitter.screen_name,
+												event: 1
+											});
+											await sendgrid.send({
+												to: user.email,
+												from: 'noreply@enginestarter.nl',
+												subject: '【通知】DM管理ツール',
+												html: `<p>@${twitter.screen_name} にDMリクエストにて問い合わせが来ましたのでご対応よろしくお願いします。</p><p>問い合わせは以下のリンクから開いて対応してください。</p><p>${process.env.SERVER_URL}/home/dm/${twitter.screen_name}/${data['message_create']['sender_id']}</p>`
+											});
+										}
+										else{
+											/* New DM */
+											let special = await Special.findOne({user_id: data['message_create']['sender_id']}).exec();
+											if(!special){
+												log('Get new DM');
+												await Log.create({
+													email: user.email,
+													timestamp: `${Date.now()}`,
+													screen_name: twitter.screen_name,
+													event: 2
+												});
+											}
+											else{
+												log('Get new special DM');
+												await Log.create({
+													email: user.email,
+													timestamp: `${Date.now()}`,
+													screen_name: twitter.screen_name,
+													event: 3
+												});
+												await sendgrid.send({
+													to: user.email,
+													from: 'noreply@enginestarter.nl',
+													subject: '【特殊通知】DM管理ツール',
+													html: `<p>@${twitter.screen_name} に被り案件として通知されました。</p><p>問い合わせは以下のリンクから開いて対応してください。</p><p>${process.env.SERVER_URL}/home/log</p>`
+												});
+											}
+										}
+									}
+								}
+								for(let data of new_data){
+									await Dm.create({
+										email: user.email, 
+										screen_name: twitter.screen_name,
+										id: data['id'],
+										created_timestamp: data['created_timestamp'],
+										sender_id: data['message_create']['sender_id'],
+										recipient_id: data['message_create']['target']['recipient_id'],
+										text: data['message_create']['message_data']['text']
+									});
+								}
+							}
+							await Dm.findOneAndDelete({email: user.email, screen_name: twitter.screen_name, id: '0'}).exec();
+						}
+					}
+					else{
+						/* Case that the account receives DM for the first time or spent for 30 days */
+						log('Detect events null account');
+						let dms = await Dm.find({email: user.email, screen_name: twitter.screen_name}).exec();
+						if(dms.length === 0){
+							await Dm.create({
+								email: user.email, 
+								screen_name: twitter.screen_name,
+								id: '0',
+								created_timestamp: `${Date.now()}`,
+								send_id: '',
+								recipient_id: '',
+								text: ''
+							});
+						}
 					}
 				}
-				else{
-					/* Case that the account receives DM for the first time or spent for 30 days */
-					log('Detect events null account');
-					let dms = await Dm.find({email: user.email, screen_name: twitter.screen_name}).exec();
-					if(dms.length === 0){
-						await Dm.create({
-							email: user.email, 
-							screen_name: twitter.screen_name,
-							id: '0',
-							created_timestamp: `${Date.now()}`,
-							send_id: '',
-							recipient_id: '',
-							text: ''
-						});
-					}
-				}
+			}
+			catch(error){
+				log(JSON.stringify(error));
 			}
 		}
 	}
 	catch(error){
-			log(JSON.stringify(error));
+		log('Critical Error!');
+		return;
 	}
 }
 
