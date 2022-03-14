@@ -39,10 +39,10 @@ async function detectDMRequest(){
 	try {
 		let users = await User.find({}).exec();
 		for(let user of users){
-			try {
-				let twitters = await Twitter.find({email: user.email, authorized: true}).exec();
-				log(`[${user.email}] ` + twitters.map(twitter => twitter.screen_name));
-				for(let twitter of twitters){
+			let twitters = await Twitter.find({email: user.email, authorized: true}).exec();
+			//log(`[${user.email}] ` + twitters.map(twitter => twitter.screen_name));
+			for(let twitter of twitters){
+				try {
 					log(`Start ${twitter.screen_name}`);
 					let rate = await Rate.findOne({screen_name: twitter.screen_name}).exec();
 					if(!rate){
@@ -231,9 +231,9 @@ async function detectDMRequest(){
 						}
 					}
 				}
-			}
-			catch(error){
-				log(JSON.stringify(error));
+				catch(error){
+					log(JSON.stringify(error));
+				}
 			}
 		}
 	}
