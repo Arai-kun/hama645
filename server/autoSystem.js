@@ -40,6 +40,7 @@ async function detectDMRequest(){
 		let users = await User.find({}).exec();
 		for(let user of users){
 			let twitters = await Twitter.find({email: user.email, authorized: true}).exec();
+			log(`[${user.email}] ` + twitters.map(twitter => twitter.screen_name));
 			for(let twitter of twitters){
 				log(`Start ${twitter.screen_name}`);
 				let rate = await Rate.findOne({screen_name: twitter.screen_name}).exec();
