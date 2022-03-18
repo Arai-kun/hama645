@@ -8,7 +8,8 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { AuthGuard } from './auth.guard';
 import { ChatComponent } from './chat/chat.component';
-import { DmListComponent } from './dm-list/dm-list.component';
+import { FollowComponent } from './follow/follow.component';
+
 
 const routes: Routes = [
   { path: 'oauth', component: OauthComponent },
@@ -20,8 +21,8 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: 'account', component: DmtoolComponent },
-      { path: 'log', component: LogComponent },
-      //{ path: 'dm/:id', component: DmListComponent },
+      { path: 'follow', component: FollowComponent },
+      { path: 'log', component: LogComponent }, 
       { path: 'dm/:id/:dmUser', component: ChatComponent }
     ]
   },

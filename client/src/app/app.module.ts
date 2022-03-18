@@ -29,6 +29,10 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatProgressSpinnerModule, MatSpinner } from '@angular/material/progress-spinner';
+import { MatExpansionModule } from '@angular/material/expansion';
+
+/* Class */
+import { MatPaginatorIntlJa } from './mat-paginator-jp';
 
 /* Component */
 import { AppComponent } from './app.component';
@@ -45,11 +49,9 @@ import { DmtoolRegisterSpComponent } from './dmtool-register-sp/dmtool-register-
 import { DmtoolDeleteSpComponent } from './dmtool-delete-sp/dmtool-delete-sp.component';
 import { SummaryComponent } from './summary/summary.component';
 import { NaviDeleteComponent } from './navi-delete/navi-delete.component';
-
-/* Class */
-import { MatPaginatorIntlJa } from './mat-paginator-jp';
 import { ChatComponent } from './chat/chat.component';
 import { DmListComponent } from './dm-list/dm-list.component';
+import { FollowComponent } from './follow/follow.component';
 
 @NgModule({
   declarations: [
@@ -69,6 +71,7 @@ import { DmListComponent } from './dm-list/dm-list.component';
     NaviDeleteComponent,
     ChatComponent,
     DmListComponent,
+    FollowComponent,
   ],
   imports: [
     BrowserModule,
@@ -99,7 +102,8 @@ import { DmListComponent } from './dm-list/dm-list.component';
     MatProgressSpinnerModule,
     OverlayModule,
     PortalModule,
-    TextFieldModule
+    TextFieldModule,
+    MatExpansionModule
   ],
   entryComponents: [
     MatSpinner

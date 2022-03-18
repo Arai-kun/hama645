@@ -4,7 +4,8 @@ let Twitter = require('../models/twitter');
 let Log = require('../models/log');
 let Special = require('../models/special');
 let User = require('../models/user');
-let Dm = require('../models/dm')
+let Dm = require('../models/dm');
+let Follow = require('../models/follow');
 const { TwitterClient } = require('twitter-api-client');
 
 /* GET db/twitter/:screen_name */
@@ -161,6 +162,14 @@ router.delete('/user/:email', async (req, res, next) => {
   catch(error){
     next(error);
   }
-})
+});
+
+/* GET db/follows */
+router.get('/follows', (req, res, next) => {
+  Follow.find({email: req.user['email']}, (error, follows) => {
+    if(error) next(error);
+    res.json(follows);
+  });
+});
 
 module.exports = router;

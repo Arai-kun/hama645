@@ -1,0 +1,50 @@
+<div fxLayout="column">
+    <div>
+        <button mat-raised-button class="all-btn" color="accent" type="button" (click)="onAll()">一括</button>
+        <span fxLayout="row" fxFlexAlign="center center" fxFlexOffset="auto">
+            <button mat-mini-fab color="primary" (click)="onRefresh()"><mat-icon>refresh</mat-icon></button>
+        </span>
+    </div>
+    <div *ngFor="let follow of follows">
+        <mat-accordion>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        @{{follow.screen_name}}
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        <span *ngIf="follow.status === 0">待機中</span>
+                        <span  class="excute" *ngIf="follow.status === 1">実行中</span>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <div fxLayout="row wrap" fxLayoutGap="10px">
+                    <span>
+                        <mat-label>キーワード</mat-label>
+                        <input matInput type="text" [(ngModel)]="follow.keyword">
+                    </span>
+                    <span>
+                        <mat-label>最小待機時間(分)</mat-label>
+                        <input matInput type="number" [(ngModel)]="follow.range_min">
+                    </span>
+                    <span>
+                        <mat-label>最大待機時間(分)</mat-label>
+                        <input matInput type="number" [(ngModel)]="follow.range_max">
+                    </span>
+                    <span>
+                        <mat-label>最大フォロー数(1日)</mat-label>
+                        <input matInput type="number" [(ngModel)]="follow.count_max">
+                    </span>
+                </div>
+                <mat-action-row>
+                    <span fxLayout="row" fxLayoutGap="16px">
+                        <div *ngIf="follow.status !== 0">
+                            <button mat-raised-button color="warn" (click)="onStop()">中止</button>
+                        </div>
+                        <button mat-raised-button color="primary" (click)="onStart()">スタート</button>
+                    </span>
+                </mat-action-row>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </div>
+
+</div>
