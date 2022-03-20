@@ -23,7 +23,6 @@ export class DbService {
       catchError(this.handleError<T>())
     );
   }
-
   
   getAll<T>(kind: string): Observable<T[]> {
     const url = `db/${kind}`;
@@ -36,6 +35,14 @@ export class DbService {
   add<T>(kind: string, data: T): Observable<boolean> {
     const url = `db/${kind}`;
     return this.http.post<boolean>(url, data, this.httpOptions)
+    .pipe(
+      catchError(this.handleError<boolean>(false))
+    );
+  }
+
+  update<T>(kind: string, data: T): Observable<boolean> {
+    const url = `db/${kind}`;
+    return this.http.put<boolean>(url, data, this.httpOptions)
     .pipe(
       catchError(this.handleError<boolean>(false))
     );

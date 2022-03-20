@@ -52,6 +52,7 @@ import { NaviDeleteComponent } from './navi-delete/navi-delete.component';
 import { ChatComponent } from './chat/chat.component';
 import { DmListComponent } from './dm-list/dm-list.component';
 import { FollowComponent } from './follow/follow.component';
+import { AllDialogComponent } from './all-dialog/all-dialog.component';
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import { FollowComponent } from './follow/follow.component';
     ChatComponent,
     DmListComponent,
     FollowComponent,
+    AllDialogComponent,
   ],
   imports: [
     BrowserModule,

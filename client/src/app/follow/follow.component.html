@@ -16,10 +16,10 @@
                         <div *ngIf="follow.status_now !== follow.status; else elseBlock">
                             ステータス変更中
                         </div>
-                        <ng-templete #elseBlock>
+                        <ng-template #elseBlock>
                             <span *ngIf="follow.status_now === 0">待機中</span>
                             <span  class="excute" *ngIf="follow.status_now !== 0">実行中</span>
-                        </ng-templete>
+                        </ng-template>
                     </mat-panel-description>
                 </mat-expansion-panel-header>
                 <div fxLayout="row wrap" fxLayoutGap="10px">
@@ -50,12 +50,13 @@
 
                 </div>
                 <mat-action-row>
+                    <!--
                     <span fxLayout="row" fxLayoutGap="16px">
                         <div *ngIf="follow.status !== 0">
-                            <button mat-raised-button color="warn" (click)="onStop()">中止</button>
-                        </div>
-                        <button mat-raised-button color="primary" (click)="onStart()">スタート</button>
-                    </span>
+                            <button mat-raised-button color="warn" (click)="onStop(follow.screen_name)">中止</button>
+                        </div>-->
+                        <button mat-raised-button color="primary" (click)="onStart(follow.screen_name)">更新</button>
+                    <!--</span>-->
                 </mat-action-row>
             </mat-expansion-panel>
         </mat-accordion>
