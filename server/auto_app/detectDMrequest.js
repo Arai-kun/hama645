@@ -57,11 +57,11 @@ async function detectDMRequest(){
 						let diff = Date.now() - Number(rate.latest_request_time);
 						const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 						if( 0 <= diff && diff < (60 * 1000)){
-							console.log(`Wait ${(60 * 1000) - diff} ms ...`);
+							console.log(`Wait ${(60 * 1000) - diff} ms (friendsIds)...`);
 							await _sleep((60 * 1000) - diff);
 						}
 						else if(diff < 0){
-							console.log(`Wait ${(60 * 1000)} ms ...`);
+							console.log(`Wait ${(60 * 1000)} ms (friendsIds)...`);
 							await _sleep((60 * 1000));
 						}
 						else{
