@@ -73,6 +73,11 @@ async function autoFollow(){
 							searched_users = searched_users.filter(el => !twitter.friendIds.includes(el.user_id));
 
 							for(let searched of searched_users){
+								let status_check = await Follow.findOne({email: user.email, screen_name: follow.screen_name}).exec();
+								if(status_check.status !== follow.status_now){
+									console.log('Changed status');
+									break;
+								}
 								/* e.g. min:2 max: 15 */
 								let wait = Math.floor(Math.random() * (follow.range_max - follow.range_min) + follow.range_min);
 								console.log(`Wait ${wait} min ....`);
@@ -103,14 +108,17 @@ async function autoFollow(){
 									console.log(JSON.stringify(error));
 								}
 							}
-
-
-
+							follow.status = 0;
+							follow.status_now = follow.status;
+							follow.save();
 							break;
 						}
 						case 2: {
-							/* Follow my followers */
-							console.log('Start follow my followers')
+							/* Follow arbitary account's followers */
+							console.log('Start follow arbitary account followers');
+							let response3 = await twitterClient.accountsAndUsers.usersShow({screen_name: follow.keyword});
+							const specified_user_id = response3.id_str;
+
 							let ids = [];
 							let cursor = -1;
 							let rate = await Rate.findOne({screen_name: follow.screen_name, kind: 'followersIds'}).exec();
@@ -141,7 +149,7 @@ async function autoFollow(){
 
 							do {
 								/* Rate limit 15 per 15 min (user). Danger more than 5000 follows */
-								let response = await twitterClient.accountsAndUsers.followersIds({cursor: cursor, stringify_ids: true});
+								let response = await twitterClient.accountsAndUsers.followersIds({user_id: specified_user_id, cursor: cursor, stringify_ids: true});
 								response.ids.forEach(id => {
 									ids.push(id);
 								});
@@ -150,6 +158,11 @@ async function autoFollow(){
 							while(cursor !== 0);
 							ids = ids.filter(id => !twitter.friendIds.includes(id));
 							for(let id of ids){
+								let status_check = await Follow.findOne({email: user.email, screen_name: follow.screen_name}).exec();
+								if(status_check.status !== follow.status_now){
+									console.log('Changed status');
+									break;
+								}
 								/* e.g. min:2 max: 15 */
 								let wait = Math.floor(Math.random() * (follow.range_max - follow.range_min) + follow.range_min);
 								console.log(`Wait ${wait} min ....`);
@@ -180,6 +193,9 @@ async function autoFollow(){
 									console.log(JSON.stringify(error));
 								}
 							}
+							follow.status = 0;
+							follow.status_now = follow.status;
+							follow.save();
 
 							break;
 						}
@@ -267,6 +283,7 @@ async function autoFollow(){
 						default:
 							break;
 					}
+
 				}
 			}));
 		}));

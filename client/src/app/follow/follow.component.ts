@@ -22,7 +22,7 @@ export class FollowComponent implements OnInit {
     {view: '待機', value: 0},
     {view: '検索フォロー', value: 1},
     {view: 'フォロワーフォロー', value: 2},
-    {view: '検索&フォロワーフォロー', value: 3}
+    //{view: '検索&フォロワーフォロー', value: 3}
   ];
 
   constructor(
@@ -105,7 +105,7 @@ export class FollowComponent implements OnInit {
       this.onRefresh();
     }
     else{
-      if(follow.keyword === '' && (follow.status === 1 || follow.status === 3)){
+      if(follow.keyword === ''){
         this.snackBar.open('キーワードを入力してください', '閉じる', {duration: 7000});
         return;
       }
