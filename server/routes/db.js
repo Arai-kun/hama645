@@ -196,7 +196,7 @@ router.post('/follow', async (req, res, next) => {
 });
 
 /* POST db/follows */
-router.post('/follows', (req, res, next) => {
+router.post('/follows', async (req, res, next) => {
   try{
     for(let body of req.body){
       body['email'] = req.user['email'];
