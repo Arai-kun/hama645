@@ -4,6 +4,7 @@ let User = require('../models/user');
 let Log = require('../models/log');
 let Follow = require('../models/follow');
 let Followed = require('../models/followed');
+let Rate = require('../models/rate');
 const { TwitterClient } = require('twitter-api-client');
 require('dotenv').config();
 
@@ -38,7 +39,7 @@ async function autoFollow(){
 		await Promise.all(users.map(async user => {
 			console.log(`${user.email} 's turn`);
 			let follows = await Follow.find({email: user.email}).exec();
-			for(let follow of follows){
+			await Promise.all(follows.map(async follow => {
 				let followeds = await Followed.find({email: user.email, screen_name: follow.screen_name}).exec();
 				const now = new Date();
 				const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -64,6 +65,7 @@ async function autoFollow(){
 						case 1: {
 							/* Search and follow */
 							console.log('Start searching and follow')
+							/* Rate 1 req per 5 sec */
 							let response = await twitterClient.tweets.search({q: follow.keyword, count: 100});
 							let searched_users = response.statuses.map(searched_user => {
 								return {user_id: searched_user.user.id_str, screen_name: searched_user.user.screen_name};
@@ -111,8 +113,33 @@ async function autoFollow(){
 							console.log('Start follow my followers')
 							let ids = [];
 							let cursor = -1;
+							let rate = await Rate.findOne({screen_name: follow.screen_name}).exec();
+							if(!rate){
+								await Rate.create({
+									screen_name: follow.screen_name,
+									latest_request_time: `${Date.now()}`
+								});
+							}
+							else{
+								let diff = Date.now() - Number(rate.latest_request_time);
+								const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+								if( 0 <= diff && diff < (60 * 1000)){
+									console.log(`Wait ${(60 * 1000) - diff} ms ...`);
+									await _sleep((60 * 1000) - diff);
+								}
+								else if(diff < 0){
+									console.log(`Wait ${(60 * 1000)} ms ...`);
+									await _sleep((60 * 1000));
+								}
+								else{
+									// No wait
+								}
+								rate.latest_request_time = `${Date.now()}`;
+								await rate.save();
+							}
+
 							do {
-								/* Rate limit 15 per 15 min (user). Danger more than 5000 follows*/
+								/* Rate limit 15 per 15 min (user). Danger more than 5000 follows */
 								let response = await twitterClient.accountsAndUsers.followersIds({cursor: cursor, stringify_ids: true});
 								response.ids.forEach(id => {
 									ids.push(id);
@@ -158,8 +185,33 @@ async function autoFollow(){
 						case 3: {
 							/* Both */
 							console.log('Start Both');
+							/* Rate 1 req per 5 sec */
 							let response = await twitterClient.tweets.search({q: follow.keyword, count: 100});
 							let ids = response.statuses.map(searched_user => searched_user.user.id_str);
+							let rate = await Rate.findOne({screen_name: follow.screen_name}).exec();
+							if(!rate){
+								await Rate.create({
+									screen_name: follow.screen_name,
+									latest_request_time: `${Date.now()}`
+								});
+							}
+							else{
+								let diff = Date.now() - Number(rate.latest_request_time);
+								const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+								if( 0 <= diff && diff < (60 * 1000)){
+									console.log(`Wait ${(60 * 1000) - diff} ms ...`);
+									await _sleep((60 * 1000) - diff);
+								}
+								else if(diff < 0){
+									console.log(`Wait ${(60 * 1000)} ms ...`);
+									await _sleep((60 * 1000));
+								}
+								else{
+									// No wait
+								}
+								rate.latest_request_time = `${Date.now()}`;
+								await rate.save();
+							}
 
 							let cursor = -1;
 							do {
@@ -197,7 +249,7 @@ async function autoFollow(){
 										email: follow.email,
 										timestamp: `${Date.now()}`,
 										screen_name: follow.screen_name,
-										event: 5,
+										event: 6,
 										partner_screen_name: response3.screen_name
 									});
 
@@ -214,12 +266,12 @@ async function autoFollow(){
 							break;
 					}
 				}
-			}
+			}));
 		}));
 		console.log('Auto Follow complete!');
 	}
 	catch(error){
-		console.log('Critical Error!');
+		console.log('**Critical Error! Content: ' + JSON.stringify(error));
 		return;
 	}
 }

@@ -55,7 +55,7 @@ export class AllDialogComponent implements OnInit {
 
   onStart(): void {
     this.spinnerService.attach();
-    if(this.input_data.keyword === ''){
+    if(this.input_data.keyword === '' && (this.input_data.status === 1 || this.input_data.status === 3)){
       this.snackBar.open('キーワードを入力してください', '閉じる', {duration: 7000});
       this.spinnerService.detach();
       return;

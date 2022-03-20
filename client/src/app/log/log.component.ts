@@ -72,10 +72,13 @@ export class LogComponent implements OnInit, AfterViewInit{
             event = '特殊DM受信';
             break;
           case 4:
-            event = '検索フォロー';
+            event = '検索F';
             break;
           case 5:
-            event = 'フォロワーフォロー';
+            event = 'フォロワーF';
+            break;
+          case 6:
+            event = '検索&フォロワーF';
             break;
           default:
             break;

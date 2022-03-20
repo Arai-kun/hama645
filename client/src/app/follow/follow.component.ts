@@ -105,7 +105,7 @@ export class FollowComponent implements OnInit {
       this.onRefresh();
     }
     else{
-      if(follow.keyword === ''){
+      if(follow.keyword === '' && (follow.status === 1 || follow.status === 3)){
         this.snackBar.open('キーワードを入力してください', '閉じる', {duration: 7000});
         return;
       }
