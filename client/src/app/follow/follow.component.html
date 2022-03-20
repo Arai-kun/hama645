@@ -13,27 +13,41 @@
                         @{{follow.screen_name}}
                     </mat-panel-title>
                     <mat-panel-description>
-                        <span *ngIf="follow.status === 0">待機中</span>
-                        <span  class="excute" *ngIf="follow.status === 1">実行中</span>
+                        <div *ngIf="follow.status_now !== follow.status; else elseBlock">
+                            ステータス変更中
+                        </div>
+                        <ng-templete #elseBlock>
+                            <span *ngIf="follow.status_now === 0">待機中</span>
+                            <span  class="excute" *ngIf="follow.status_now !== 0">実行中</span>
+                        </ng-templete>
                     </mat-panel-description>
                 </mat-expansion-panel-header>
                 <div fxLayout="row wrap" fxLayoutGap="10px">
-                    <span>
+                    <mat-form-field>
                         <mat-label>キーワード</mat-label>
                         <input matInput type="text" [(ngModel)]="follow.keyword">
-                    </span>
-                    <span>
+                    </mat-form-field>
+                    <mat-form-field>
                         <mat-label>最小待機時間(分)</mat-label>
                         <input matInput type="number" [(ngModel)]="follow.range_min">
-                    </span>
-                    <span>
+                    </mat-form-field>
+                    <mat-form-field>
                         <mat-label>最大待機時間(分)</mat-label>
                         <input matInput type="number" [(ngModel)]="follow.range_max">
-                    </span>
-                    <span>
+                    </mat-form-field>
+                    <mat-form-field>
                         <mat-label>最大フォロー数(1日)</mat-label>
                         <input matInput type="number" [(ngModel)]="follow.count_max">
-                    </span>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>ステータス</mat-label>
+                        <mat-select [(ngModel)]="follow.status">
+                            <mat-option *ngFor="let status of statusOptions" [value]="status.value">
+                                {{status.view}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
                 </div>
                 <mat-action-row>
                     <span fxLayout="row" fxLayoutGap="16px">

@@ -3,6 +3,11 @@ import { follow } from '../models/follow';
 import { DbService } from '../db.service';
 import { twitter } from '../models/twitter';
 
+export interface statusOption {
+  view: string,
+  value: number
+}
+
 @Component({
   selector: 'app-follow',
   templateUrl: './follow.component.html',
@@ -10,6 +15,12 @@ import { twitter } from '../models/twitter';
 })
 export class FollowComponent implements OnInit {
   follows: follow[] = [];
+  statusOptions: statusOption[] = [
+    {view: '待機', value: 0},
+    {view: '検索フォロー', value: 1},
+    {view: 'フォロワーフォロー', value: 2},
+    {view: '検索&フォロワーフォロー', value: 3}
+  ];
 
   constructor(
     private dbService: DbService
@@ -35,11 +46,12 @@ export class FollowComponent implements OnInit {
               range_min: 3,
               range_max: 20,
               count_max: 100,
-              status: 0  // stop
+              status: 0,  // stop,
+              status_now: 0
             });
           }
-        })
-      })
+        });
+      });
     });
   }
 

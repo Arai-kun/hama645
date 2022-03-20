@@ -7,6 +7,7 @@ let logSchema = new Schema({
     timestamp: String,
     screen_name: String,
     event: Number,
+    partner_screen_name: String
 });
 
 logSchema.plugin(autoIncrement, {id:'counter_per_email', inc_field: 'no', reference_fields: ['email']});

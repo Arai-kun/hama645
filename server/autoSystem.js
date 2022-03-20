@@ -5,6 +5,8 @@ let Dm = require('./models/dm');
 let Log = require('./models/log');
 let Special = require('./models/special');
 let Rate = require('./models/rate');
+let Follow = require('./models/follow');
+let Followed = require('./models/followed');
 const { TwitterClient } = require('twitter-api-client');
 const sendgrid = require('@sendgrid/mail');
 require('dotenv').config();
@@ -37,6 +39,7 @@ async function main(){
 
 async function detectDMRequest(){
 	try {
+		console.log('Detect DM request start!');
 		let users = await User.find({}).exec();
 		for(let user of users){
 			let twitters = await Twitter.find({email: user.email, authorized: true}).exec();
@@ -236,9 +239,187 @@ async function detectDMRequest(){
 				}
 			}
 		}
+		console.log('Detect DM request complete!');
 	}
 	catch(error){
 		log('Critical Error!');
+		return;
+	}
+}
+
+async function autoFollow(){
+	try{
+		console.log('Auto Follow start!');
+		let users = await User.find({}).exec();
+		await Promise.all(users.map(async user => {
+			console.log(`${user.email} 's turn`);
+			let follows = await Follow.find({email: user.email}).exec();
+			for(let follow of follows){
+				let twitter = await Twitter.findOne({email: user.email, screen_name: follow.screen_name}).exec();
+				console.log(`${twitter.screen_name} in ${twitter.email} start`);
+				const twitterClient = new TwitterClient({
+					apiKey: process.env.API_KEY,
+					apiSecret: process.env.API_SECRET,
+					accessToken: twitter.oauth_token,
+					accessTokenSecret: twitter.oauth_token_secret
+				});
+				follow.status_now = follow.status;
+				await follow.save();
+				switch(follow.status_now){
+					case 0:
+						break;
+					case 1:
+						/* Search and follow */
+						console.log('Start searching and follow')
+						let response = await twitterClient.tweets.search({q: follow.keyword, count: 100});
+						let searched_users = response.statuses.map(searched_user => {
+							return {user_id: searched_user.user.id_str, screen_name: searched_user.user.screen_name};
+						});
+						searched_users = searched_users.filter(el => !twitter.friendIds.includes(el.user_id));
+
+						for(let searched of searched_users){
+							/* e.g. min:2 max: 15 */
+							let wait = Math.floor(Math.random() * (follow.range_max - follow.range_min) + follow.range_min);
+							console.log(`Wait ${wait} min ....`);
+							const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+							await _sleep(wait * 60 * 1000);
+
+							try {
+								let response2 = await twitterClient.accountsAndUsers.friendshipsCreate({user_id: searched.user_id});
+								twitter.friendIds.push(response2.id_str);
+								console.log(`Success that ${follow.screen_name} follows ${response2.screen_name}`);
+								await Followed.create({
+									email: follow.email,
+									screen_name: follow.screen_name,
+									timestamp: `${Date.now()}`,
+									followed_user_id: response2.id_str
+								});
+								await Log.create({
+									email: follow.email,
+									timestamp: `${Date.now()}`,
+									screen_name: follow.screen_name,
+									event: 4,
+									partner_screen_name: response2.screen_name
+								});
+
+							}
+							catch(error){
+								console.log(JSON.stringify(error));
+							}
+						}
+
+
+
+						break;
+					case 2:
+						/* Follow my followers */
+						console.log('Start follow my followers')
+						let ids = [];
+						let cursor = -1;
+						do {
+							/* Rate limit 15 per 15 min (user). Danger more than 5000 follows*/
+							let response = await twitterClient.accountsAndUsers.followersIds({cursor: cursor, stringify_ids: true});
+							response.ids.forEach(id => {
+								ids.push(id);
+							});
+							cursor = response.next_cursor;
+						}
+						while(cursor !== 0);
+						ids = ids.filter(id => !twitter.friendIds.includes(id));
+						for(let id of ids){
+							/* e.g. min:2 max: 15 */
+							let wait = Math.floor(Math.random() * (follow.range_max - follow.range_min) + follow.range_min);
+							console.log(`Wait ${wait} min ....`);
+							const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+							await _sleep(wait * 60 * 1000);
+
+							try {
+								let response2 = await twitterClient.accountsAndUsers.friendshipsCreate({user_id: id});
+								twitter.friendIds.push(response2.id_str);
+								console.log(`Success that ${follow.screen_name} follows ${response2.screen_name}`);
+								await Followed.create({
+									email: follow.email,
+									screen_name: follow.screen_name,
+									timestamp: `${Date.now()}`,
+									followed_user_id: response2.id_str
+								});
+								await Log.create({
+									email: follow.email,
+									timestamp: `${Date.now()}`,
+									screen_name: follow.screen_name,
+									event: 5,
+									partner_screen_name: response2.screen_name
+								});
+
+							}
+							catch(error){
+								console.log(JSON.stringify(error));
+							}
+						}
+
+						break;
+					case 3:
+						/* Both */
+						console.log('Start Both');
+						let response = await twitterClient.tweets.search({q: follow.keyword, count: 100});
+						let ids = response.statuses.map(searched_user => searched_user.user.id_str);
+
+						let cursor = -1;
+						do {
+							/* Rate limit 15 per 15 min (user). Danger more than 5000 follows*/
+							let response2 = await twitterClient.accountsAndUsers.followersIds({cursor: cursor, stringify_ids: true});
+							response2.ids.forEach(id => {
+								if(!ids.includes(id)){
+									ids.push(id);
+								}
+							});
+							cursor = response2.next_cursor;
+						}
+						while(cursor !== 0);
+						ids = ids.filter(id => !twitter.friendIds.includes(id));
+
+						for(let id of ids){
+							/* e.g. min:2 max: 15 */
+							let wait = Math.floor(Math.random() * (follow.range_max - follow.range_min) + follow.range_min);
+							console.log(`Wait ${wait} min ....`);
+							const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+							await _sleep(wait * 60 * 1000);
+
+							try {
+								let response3 = await twitterClient.accountsAndUsers.friendshipsCreate({user_id: id});
+								twitter.friendIds.push(response3.id_str);
+								console.log(`Success that ${follow.screen_name} follows ${response3.screen_name}`);
+								await Followed.create({
+									email: follow.email,
+									screen_name: follow.screen_name,
+									timestamp: `${Date.now()}`,
+									followed_user_id: response3.id_str
+								});
+								await Log.create({
+									email: follow.email,
+									timestamp: `${Date.now()}`,
+									screen_name: follow.screen_name,
+									event: 5,
+									partner_screen_name: response3.screen_name
+								});
+
+							}
+							catch(error){
+								console.log(JSON.stringify(error));
+							}
+						}
+						
+
+						break;
+					default:
+						break;
+				}
+			}
+		}));
+		console.log('Auto Follow complete!');
+	}
+	catch(error){
+		console.log('Critical Error!');
 		return;
 	}
 }
