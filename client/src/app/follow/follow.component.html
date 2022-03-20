@@ -39,14 +39,14 @@
                         <mat-label>最大フォロー数(1日)</mat-label>
                         <input matInput type="number" [(ngModel)]="follow.count_max">
                     </mat-form-field>
-                    <mat-form-field>
+
                         <mat-label>ステータス</mat-label>
                         <mat-select [(ngModel)]="follow.status">
                             <mat-option *ngFor="let status of statusOptions" [value]="status.value">
                                 {{status.view}}
                             </mat-option>
                         </mat-select>
-                    </mat-form-field>
+
 
                 </div>
                 <mat-action-row>
