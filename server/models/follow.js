@@ -8,7 +8,7 @@ let mongoose = require("mongoose"),
     range_max: Number,
     count_max: Number,
     status: Number,
-    since_id: String
+    status_now: Number,
 });
 
 module.exports = mongoose.model("Follow", followSchema, 'follow');

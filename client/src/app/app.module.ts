@@ -30,6 +30,7 @@ import { MatPaginatorModule, MatPaginatorIntl } from '@angular/material/paginato
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatProgressSpinnerModule, MatSpinner } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSelectModule } from '@angular/material/select';
 
 /* Class */
 import { MatPaginatorIntlJa } from './mat-paginator-jp';
@@ -52,6 +53,7 @@ import { NaviDeleteComponent } from './navi-delete/navi-delete.component';
 import { ChatComponent } from './chat/chat.component';
 import { DmListComponent } from './dm-list/dm-list.component';
 import { FollowComponent } from './follow/follow.component';
+import { AllDialogComponent } from './all-dialog/all-dialog.component';
 
 @NgModule({
   declarations: [
@@ -72,6 +74,7 @@ import { FollowComponent } from './follow/follow.component';
     ChatComponent,
     DmListComponent,
     FollowComponent,
+    AllDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -103,7 +106,8 @@ import { FollowComponent } from './follow/follow.component';
     OverlayModule,
     PortalModule,
     TextFieldModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatSelectModule
   ],
   entryComponents: [
     MatSpinner

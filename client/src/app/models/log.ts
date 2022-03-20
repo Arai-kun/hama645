@@ -4,4 +4,5 @@ export interface log {
     timestamp: string,
     screen_name: string,
     event: number,
+    partner_screen_name: string
 }

@@ -1,10 +1,10 @@
 let mongoose = require('mongoose');
-let Twitter = require('./models/twitter');
-let User = require('./models/user');
-let Dm = require('./models/dm');
-let Log = require('./models/log');
-let Special = require('./models/special');
-let Rate = require('./models/rate');
+let Twitter = require('../models/twitter');
+let User = require('../models/user');
+let Dm = require('../models/dm');
+let Log = require('../models/log');
+let Special = require('../models/special');
+let Rate = require('../models/rate');
 const { TwitterClient } = require('twitter-api-client');
 const sendgrid = require('@sendgrid/mail');
 require('dotenv').config();
@@ -27,7 +27,7 @@ db.once('open', () => {
 
 async function main(){
     while(1){
-        console.log('Active loop');
+        console.log('Active loop detectDMrequest');
         const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
         await _sleep(1000 * 5);
 
@@ -37,29 +37,31 @@ async function main(){
 
 async function detectDMRequest(){
 	try {
+		console.log('Detect DM request start!');
 		let users = await User.find({}).exec();
 		for(let user of users){
 			let twitters = await Twitter.find({email: user.email, authorized: true}).exec();
 			//log(`[${user.email}] ` + twitters.map(twitter => twitter.screen_name));
 			for(let twitter of twitters){
 				try {
-					log(`Start ${twitter.screen_name}`);
-					let rate = await Rate.findOne({screen_name: twitter.screen_name}).exec();
+					console.log(`Start ${twitter.screen_name}`);
+					let rate = await Rate.findOne({screen_name: twitter.screen_name, kind: 'friendsIds'}).exec();
 					if(!rate){
 						await Rate.create({
 							screen_name: twitter.screen_name,
-							latest_request_time: `${Date.now()}`
+							latest_request_time: `${Date.now()}`,
+							kind: 'friendsIds'
 						});
 					}
 					else{
 						let diff = Date.now() - Number(rate.latest_request_time);
 						const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 						if( 0 <= diff && diff < (60 * 1000)){
-							log(`Wait ${(60 * 1000) - diff} ms ...`);
+							console.log(`Wait ${(60 * 1000) - diff} ms (friendsIds)...`);
 							await _sleep((60 * 1000) - diff);
 						}
 						else if(diff < 0){
-							log(`Wait ${(60 * 1000)} ms ...`);
+							console.log(`Wait ${(60 * 1000)} ms (friendsIds)...`);
 							await _sleep((60 * 1000));
 						}
 						else{
@@ -141,21 +143,21 @@ async function detectDMRequest(){
 							/* If sender, ignore. Then data updates only */
 							/* Extract the newest data from DB */
 							let dm = dms.find(dm => Math.max.apply(null, dms.map(dm => Number(dm.created_timestamp))) === Number(dm.created_timestamp));
-							console.log(dm);
+							//console.log(dm);
 							/* Extract data which there is not in DB */
 							let new_data = response.events.filter(dm => !(dms.map(dm => dm.id)).includes(dm['id']));
-							console.log(new_data);
+							//console.log(new_data);
 							/* Extract the newest data from new data */
 							//let data = new_data.filter(dm => Math.max(new_data.map(dm => Number(dm['created_timestamp']))) === Number(dm['created_timestamp']));
 							if(new_data.length !== 0){
 								/* Extract the newest data from new data */
 								let data = new_data[0];
-								console.log(data);
+								//console.log(data);
 								if(twitter.user_id !== data['message_create']['sender_id']){
 									if(dm.id !== data['id'] && Number(dm.created_timestamp) < Number(data['created_timestamp'])){
 										if(ids.find(id => id === data['message_create']['sender_id']) === undefined){
 											/* DM Request */
-											log('***** Detect Request DM! *****');
+											console.log('***** Detect Request DM! *****');
 											await Log.create({
 												email: user.email,
 												timestamp: `${Date.now()}`,
@@ -173,7 +175,7 @@ async function detectDMRequest(){
 											/* New DM */
 											let special = await Special.findOne({user_id: data['message_create']['sender_id']}).exec();
 											if(!special){
-												log('Get new DM');
+												console.log('Get new DM');
 												await Log.create({
 													email: user.email,
 													timestamp: `${Date.now()}`,
@@ -182,7 +184,7 @@ async function detectDMRequest(){
 												});
 											}
 											else{
-												log('Get new special DM');
+												console.log('Get new special DM');
 												await Log.create({
 													email: user.email,
 													timestamp: `${Date.now()}`,
@@ -216,7 +218,7 @@ async function detectDMRequest(){
 					}
 					else{
 						/* Case that the account receives DM for the first time or spent for 30 days */
-						log('Detect events null account');
+						console.log('Detect events null account');
 						let dms = await Dm.find({email: user.email, screen_name: twitter.screen_name}).exec();
 						if(dms.length === 0){
 							await Dm.create({
@@ -232,20 +234,14 @@ async function detectDMRequest(){
 					}
 				}
 				catch(error){
-					log(JSON.stringify(error));
+					console.log(JSON.stringify(error));
 				}
 			}
 		}
+		console.log('Detect DM request complete!');
 	}
 	catch(error){
-		log('Critical Error!');
+		console.log('Critical Error!');
 		return;
 	}
 }
-
-
-function log(str) {
-	const now = new Date();
-	console.log(`${now.toString()}: ` + str);
-}
-

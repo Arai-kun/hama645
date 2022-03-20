@@ -2,6 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { follow } from '../models/follow';
 import { DbService } from '../db.service';
 import { twitter } from '../models/twitter';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { AllDialogComponent } from '../all-dialog/all-dialog.component';
+
+export interface statusOption {
+  view: string,
+  value: number
+}
 
 @Component({
   selector: 'app-follow',
@@ -10,9 +18,17 @@ import { twitter } from '../models/twitter';
 })
 export class FollowComponent implements OnInit {
   follows: follow[] = [];
+  statusOptions: statusOption[] = [
+    {view: '待機', value: 0},
+    {view: '検索フォロー', value: 1},
+    {view: 'フォロワーフォロー', value: 2},
+    {view: '検索&フォロワーフォロー', value: 3}
+  ];
 
   constructor(
-    private dbService: DbService
+    private dbService: DbService,
+    private snackBar: MatSnackBar,
+    public dialog: MatDialog, 
   ) { }
 
   ngOnInit(): void {
@@ -35,11 +51,12 @@ export class FollowComponent implements OnInit {
               range_min: 3,
               range_max: 20,
               count_max: 100,
-              status: 0  // stop
+              status: 0,  // stop,
+              status_now: 0
             });
           }
-        })
-      })
+        });
+      });
     });
   }
 
@@ -48,15 +65,65 @@ export class FollowComponent implements OnInit {
   }
 
   onAll(): void {
-
+    let dialogRef = this.dialog.open(AllDialogComponent, {
+      width: '400px',
+      data: {
+        follows: this.follows
+      }
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.onRefresh();
+    });
   }
 
-  onStop(): void {
+  /*
+  onStop(screen_name: string): void {
+    let follow = this.follows.find(el => el.screen_name === screen_name);
+    if(!follow){
+      this.snackBar.open('エラーが発生しました', '閉じる', {duration: 5000});
+      this.onRefresh();
+    }
+    else{
+      follow.status = 0;
+      this.dbService.update<follow>('follow', follow)
+      .subscribe(result => {
+        if(result){
+          this.snackBar.open('中止しました', '閉じる', {duration: 5000});
+          this.onRefresh();
+        }
+        else{
+          this.snackBar.open('エラーが発生しました', '閉じる', {duration: 5000});
+        }
+      });
+    }
+  }*/
 
-  }
-
-  onStart(): void {
-    console.log(this.follows);
+  onStart(screen_name: string): void {
+    let follow = this.follows.find(el => el.screen_name === screen_name);
+    if(!follow){
+      this.snackBar.open('エラーが発生しました', '閉じる', {duration: 5000});
+      this.onRefresh();
+    }
+    else{
+      if(follow.keyword === '' && (follow.status === 1 || follow.status === 3)){
+        this.snackBar.open('キーワードを入力してください', '閉じる', {duration: 7000});
+        return;
+      }
+      if(follow.range_min > follow.range_max){
+        this.snackBar.open('最小待機時間が最大待機時間を超えることはできません', '閉じる', {duration: 7000});
+        return;
+      }
+      this.dbService.add<follow>('follow', follow)
+      .subscribe(result => {
+        if(result){
+          this.snackBar.open('更新しました', '閉じる', {duration: 5000});
+          this.onRefresh();
+        }
+        else{
+          this.snackBar.open('エラーが発生しました', '閉じる', {duration: 5000});
+        }
+      });
+    }
   }
 
 }

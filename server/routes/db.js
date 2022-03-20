@@ -6,6 +6,7 @@ let Special = require('../models/special');
 let User = require('../models/user');
 let Dm = require('../models/dm');
 let Follow = require('../models/follow');
+let Followed = require('../models/followed')
 const { TwitterClient } = require('twitter-api-client');
 
 /* GET db/twitter/:screen_name */
@@ -40,7 +41,9 @@ router.post('/twitter', (req, res, next) => {
 router.delete('/twitter/:screen_name', async (req, res, next) => {
   try {
     await Twitter.deleteOne({email: req.user['email'], screen_name: req.params.screen_name}).exec();
-    await Dm.deleteOne({email: req.user['email'], screen_name: req.params.screen_name}).exec();
+    await Dm.deleteMany({email: req.user['email'], screen_name: req.params.screen_name}).exec();
+    await Follow.deleteOne({email: req.user['email'], screen_name: req.params.screen_name}).exec();
+    await Followed.deleteMany({email: req.user['email'], screen_name: req.params.screen_name}).exec();
     res.json(true);
   }
   catch(error){
@@ -157,6 +160,8 @@ router.delete('/user/:email', async (req, res, next) => {
     await Special.deleteMany({email: req.params.email}).exec();
     await Log.deleteMany({email: req.params.email}).exec();
     await Dm.deleteMany({email: req.params.email}).exec();
+    await Follow.deleteMany({email: req.params.email}).exec();
+    await Followed.deleteMany({email: req.params.email}).exec();
     res.json(true);
   }
   catch(error){
@@ -171,5 +176,53 @@ router.get('/follows', (req, res, next) => {
     res.json(follows);
   });
 });
+
+/* POST db/follow */
+router.post('/follow', async (req, res, next) => {
+  try {
+    req.body['email'] = req.user['email'];
+    let follow = await Follow.findOne({email: req.body['email'], screen_name: req.body['screen_name']}).exec();
+    if(follow){
+      follow.keyword = req.body['keyword'];
+      follow.range_min = req.body['range_min'];
+      follow.range_max = req.body['range_max'];
+      follow.count_max = req.body['count_max'];
+      follow.status = req.body['status'];
+      await follow.save();
+    }
+    else{
+      await Follow.create(req.body);
+    }
+    res.json(true);
+  }
+  catch(error){
+    next(error);
+  }
+});
+
+/* POST db/follows */
+router.post('/follows', async (req, res, next) => {
+  try{
+    for(let body of req.body){
+      body['email'] = req.user['email'];
+      let follow = await Follow.findOne({email: body['email'], screen_name: body['screen_name']}).exec();
+      if(follow){
+        follow.keyword = body['keyword'];
+        follow.range_min = body['range_min'];
+        follow.range_max = body['range_max'];
+        follow.count_max = body['count_max'];
+        follow.status = body['status'];
+        await follow.save();
+      }
+      else{
+        await Follow.create(body);
+      }
+    }
+    res.json(true);
+  }
+  catch(error){
+    next(error);
+  }
+})
 
 module.exports = router;

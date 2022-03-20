@@ -11,7 +11,8 @@ export interface displayData {
   no: number,
   date: string,
   screen_name: string,
-  event: string
+  event: string,
+  partner_screen_name: string
 }
 
 @Component({
@@ -24,7 +25,8 @@ export class LogComponent implements OnInit, AfterViewInit{
     'no',
     'date',
     'screen_name',
-    'event'
+    'event',
+    'partner'
   ];
   dataSource = new MatTableDataSource<displayData>();
 
@@ -69,6 +71,15 @@ export class LogComponent implements OnInit, AfterViewInit{
           case 3:
             event = '特殊DM受信';
             break;
+          case 4:
+            event = '検索F';
+            break;
+          case 5:
+            event = 'フォロワーF';
+            break;
+          case 6:
+            event = '検索&フォロワーF';
+            break;
           default:
             break;
         }
@@ -77,7 +88,8 @@ export class LogComponent implements OnInit, AfterViewInit{
           date: `${time.getFullYear()}/${this.pad(time.getMonth() + 1)}/${this.pad(time.getDate())}`,
           //time: `${this.pad(time.getHours())}:${this.pad(time.getMinutes())}:${this.pad(time.getSeconds())}`,
           screen_name: log.screen_name,
-          event: event
+          event: event,
+          partner_screen_name: log.partner_screen_name
         });
       });
       this.dataSource.data = displaylogs;

@@ -1,9 +1,11 @@
-<div fxLayout="column">
+<div class="container" fxLayout="column">
     <div>
-        <button mat-raised-button class="all-btn" color="accent" type="button" (click)="onAll()">一括</button>
-        <span fxLayout="row" fxFlexAlign="center center" fxFlexOffset="auto">
-            <button mat-mini-fab color="primary" (click)="onRefresh()"><mat-icon>refresh</mat-icon></button>
-        </span>
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+            <button mat-raised-button class="all-btn" color="accent" type="button" (click)="onAll()">一括</button>
+            <span fxLayout="row" fxFlexAlign="center center" fxFlexOffset="auto">
+                <button mat-mini-fab color="primary" (click)="onRefresh()"><mat-icon>refresh</mat-icon></button>
+            </span>
+        </div>
     </div>
     <div *ngFor="let follow of follows">
         <mat-accordion>
@@ -13,35 +15,50 @@
                         @{{follow.screen_name}}
                     </mat-panel-title>
                     <mat-panel-description>
-                        <span *ngIf="follow.status === 0">待機中</span>
-                        <span  class="excute" *ngIf="follow.status === 1">実行中</span>
+                        <div *ngIf="follow.status_now !== follow.status; else elseBlock">
+                            ステータス変更中
+                        </div>
+                        <ng-template #elseBlock>
+                            <span *ngIf="follow.status_now === 0">待機中</span>
+                            <span  class="excute" *ngIf="follow.status_now !== 0">実行中</span>
+                        </ng-template>
                     </mat-panel-description>
                 </mat-expansion-panel-header>
                 <div fxLayout="row wrap" fxLayoutGap="10px">
-                    <span>
+                    <mat-form-field class="keyword-width">
                         <mat-label>キーワード</mat-label>
                         <input matInput type="text" [(ngModel)]="follow.keyword">
-                    </span>
-                    <span>
+                    </mat-form-field>
+                    <mat-form-field class="small-width">
                         <mat-label>最小待機時間(分)</mat-label>
                         <input matInput type="number" [(ngModel)]="follow.range_min">
-                    </span>
-                    <span>
+                    </mat-form-field>
+                    <mat-form-field class="small-width">
                         <mat-label>最大待機時間(分)</mat-label>
                         <input matInput type="number" [(ngModel)]="follow.range_max">
-                    </span>
-                    <span>
+                    </mat-form-field>
+                    <mat-form-field class="small-width">
                         <mat-label>最大フォロー数(1日)</mat-label>
                         <input matInput type="number" [(ngModel)]="follow.count_max">
-                    </span>
+                    </mat-form-field>
+                    <mat-form-field class="status-width">
+                        <mat-label>ステータス</mat-label>
+                        <mat-select [(ngModel)]="follow.status">
+                            <mat-option *ngFor="let status of statusOptions" [value]="status.value">
+                                {{status.view}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
                 </div>
                 <mat-action-row>
+                    <!--
                     <span fxLayout="row" fxLayoutGap="16px">
                         <div *ngIf="follow.status !== 0">
-                            <button mat-raised-button color="warn" (click)="onStop()">中止</button>
-                        </div>
-                        <button mat-raised-button color="primary" (click)="onStart()">スタート</button>
-                    </span>
+                            <button mat-raised-button color="warn" (click)="onStop(follow.screen_name)">中止</button>
+                        </div>-->
+                        <button mat-raised-button color="primary" (click)="onStart(follow.screen_name)">更新</button>
+                    <!--</span>-->
                 </mat-action-row>
             </mat-expansion-panel>
         </mat-accordion>
