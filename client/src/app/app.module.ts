@@ -30,6 +30,7 @@ import { MatPaginatorModule, MatPaginatorIntl } from '@angular/material/paginato
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatProgressSpinnerModule, MatSpinner } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSelectModule } from '@angular/material/select';
 
 /* Class */
 import { MatPaginatorIntlJa } from './mat-paginator-jp';
@@ -105,7 +106,8 @@ import { AllDialogComponent } from './all-dialog/all-dialog.component';
     OverlayModule,
     PortalModule,
     TextFieldModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatSelectModule
   ],
   entryComponents: [
     MatSpinner
