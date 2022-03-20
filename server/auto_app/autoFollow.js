@@ -68,9 +68,7 @@ async function autoFollow(){
 							let searched_users = response.statuses.map(searched_user => {
 								return {user_id: searched_user.user.id_str, screen_name: searched_user.user.screen_name};
 							});
-							console.log('1*******' + searched_users);
 							searched_users = searched_users.filter(el => !twitter.friendIds.includes(el.user_id));
-							console.log('2*******' + searched_users);
 
 							for(let searched of searched_users){
 								/* e.g. min:2 max: 15 */
@@ -82,6 +80,7 @@ async function autoFollow(){
 								try {
 									let response2 = await twitterClient.accountsAndUsers.friendshipsCreate({user_id: searched.user_id});
 									twitter.friendIds.push(response2.id_str);
+									await twitter.save();
 									console.log(`Success that ${follow.screen_name} follows ${response2.screen_name}`);
 									await Followed.create({
 										email: follow.email,
@@ -132,6 +131,7 @@ async function autoFollow(){
 								try {
 									let response2 = await twitterClient.accountsAndUsers.friendshipsCreate({user_id: id});
 									twitter.friendIds.push(response2.id_str);
+									await twitter.save();
 									console.log(`Success that ${follow.screen_name} follows ${response2.screen_name}`);
 									await Followed.create({
 										email: follow.email,
@@ -185,6 +185,7 @@ async function autoFollow(){
 								try {
 									let response3 = await twitterClient.accountsAndUsers.friendshipsCreate({user_id: id});
 									twitter.friendIds.push(response3.id_str);
+									await twitter.save();
 									console.log(`Success that ${follow.screen_name} follows ${response3.screen_name}`);
 									await Followed.create({
 										email: follow.email,
