@@ -1,4 +1,4 @@
-<div fxLayout="column">
+<div class="container" fxLayout="column">
     <div>
         <div fxLayout="row" fxLayoutAlign="space-between center">
             <button mat-raised-button class="all-btn" color="accent" type="button" (click)="onAll()">一括</button>
@@ -25,23 +25,23 @@
                     </mat-panel-description>
                 </mat-expansion-panel-header>
                 <div fxLayout="row wrap" fxLayoutGap="10px">
-                    <mat-form-field>
+                    <mat-form-field class="keyword-width">
                         <mat-label>キーワード</mat-label>
                         <input matInput type="text" [(ngModel)]="follow.keyword">
                     </mat-form-field>
-                    <mat-form-field>
+                    <mat-form-field class="small-width">
                         <mat-label>最小待機時間(分)</mat-label>
                         <input matInput type="number" [(ngModel)]="follow.range_min">
                     </mat-form-field>
-                    <mat-form-field>
+                    <mat-form-field class="small-width">
                         <mat-label>最大待機時間(分)</mat-label>
                         <input matInput type="number" [(ngModel)]="follow.range_max">
                     </mat-form-field>
-                    <mat-form-field>
+                    <mat-form-field class="small-width">
                         <mat-label>最大フォロー数(1日)</mat-label>
                         <input matInput type="number" [(ngModel)]="follow.count_max">
                     </mat-form-field>
-                    <mat-form-field>
+                    <mat-form-field class="status-width">
                         <mat-label>ステータス</mat-label>
                         <mat-select [(ngModel)]="follow.status">
                             <mat-option *ngFor="let status of statusOptions" [value]="status.value">
