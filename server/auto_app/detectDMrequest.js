@@ -45,11 +45,12 @@ async function detectDMRequest(){
 			for(let twitter of twitters){
 				try {
 					console.log(`Start ${twitter.screen_name}`);
-					let rate = await Rate.findOne({screen_name: twitter.screen_name}).exec();
+					let rate = await Rate.findOne({screen_name: twitter.screen_name, kind: 'friendsIds'}).exec();
 					if(!rate){
 						await Rate.create({
 							screen_name: twitter.screen_name,
-							latest_request_time: `${Date.now()}`
+							latest_request_time: `${Date.now()}`,
+							kind: 'friendsIds'
 						});
 					}
 					else{

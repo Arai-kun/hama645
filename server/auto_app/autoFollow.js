@@ -113,11 +113,12 @@ async function autoFollow(){
 							console.log('Start follow my followers')
 							let ids = [];
 							let cursor = -1;
-							let rate = await Rate.findOne({screen_name: follow.screen_name}).exec();
+							let rate = await Rate.findOne({screen_name: follow.screen_name, kind: 'followersIds'}).exec();
 							if(!rate){
 								await Rate.create({
 									screen_name: follow.screen_name,
-									latest_request_time: `${Date.now()}`
+									latest_request_time: `${Date.now()}`,
+									kind: 'followersIds'
 								});
 							}
 							else{
@@ -188,11 +189,12 @@ async function autoFollow(){
 							/* Rate 1 req per 5 sec */
 							let response = await twitterClient.tweets.search({q: follow.keyword, count: 100});
 							let ids = response.statuses.map(searched_user => searched_user.user.id_str);
-							let rate = await Rate.findOne({screen_name: follow.screen_name}).exec();
+							let rate = await Rate.findOne({screen_name: follow.screen_name, kind: 'followersIds'}).exec();
 							if(!rate){
 								await Rate.create({
 									screen_name: follow.screen_name,
-									latest_request_time: `${Date.now()}`
+									latest_request_time: `${Date.now()}`,
+									kind: 'followersIds'
 								});
 							}
 							else{
