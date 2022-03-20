@@ -162,7 +162,7 @@ async function autoFollow(){
 									cursor = response.next_cursor;
 								}
 								while(cursor !== 0);
-								ids = ids.filter(id => !twitter.friendIds.includes(id));
+								ids = ids.filter(id => !twitter.friendIds.includes(id) && id !== follow.user_id);
 								for(let id of ids){
 									let status_check = await Follow.findOne({email: user.email, screen_name: follow.screen_name}).exec();
 									if(status_check.status !== follow.status_now){
@@ -296,9 +296,8 @@ async function autoFollow(){
 				
 				});
 			}
-			console.log(`Queue length: ${queue.getQueueLength()}`);
 		}
-		console.log('Auto Follow complete!');
+		console.log(`Auto Follow complete! Queue length: ${queue.getQueueLength()}`);
 	}
 	catch(error){
 		console.log('**Critical Error! Content: ' + JSON.stringify(error));
