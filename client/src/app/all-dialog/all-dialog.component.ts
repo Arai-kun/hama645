@@ -32,7 +32,7 @@ export class AllDialogComponent implements OnInit {
     {view: '待機', value: 0},
     {view: '検索フォロー', value: 1},
     {view: 'フォロワーフォロー', value: 2},
-    {view: '検索&フォロワーフォロー', value: 3}
+    //{view: '検索&フォロワーフォロー', value: 3}
   ];
   input_data: input_data = {
     keyword: '',
@@ -55,7 +55,7 @@ export class AllDialogComponent implements OnInit {
 
   onStart(): void {
     this.spinnerService.attach();
-    if(this.input_data.keyword === '' && (this.input_data.status === 1 || this.input_data.status === 3)){
+    if(this.input_data.keyword === ''){
       this.snackBar.open('キーワードを入力してください', '閉じる', {duration: 7000});
       this.spinnerService.detach();
       return;
