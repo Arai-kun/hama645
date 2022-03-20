@@ -22,14 +22,14 @@
             <input matInput type="number" [(ngModel)]="input_data.count_max">
         </mat-form-field>
 
-        <div class="full-width">
+        <mat-form-field class="full-width">
             <mat-label>ステータス</mat-label>
             <mat-select [(ngModel)]="input_data.status">
                 <mat-option *ngFor="let status of statusOptions" [value]="status.value">
                     {{status.view}}
                 </mat-option>
             </mat-select>
-        </div>
+        </mat-form-field>
         
     </div>
 
