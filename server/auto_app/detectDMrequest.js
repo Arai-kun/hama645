@@ -238,7 +238,7 @@ async function detectDMRequest(){
 				}
 			}
 		}
-		console.log('Detect DM request complete!');
+		console.log('Detect DM request completed!');
 	}
 	catch(error){
 		console.log('Critical Error!');
