@@ -13,8 +13,11 @@ require('dotenv').config();
 
 process.on('SIGINT', () => { 
     schedule.gracefulShutdown().then(() => {
-        console.log('\nExit');
-        process.exit(0);
+        console.log('Schedule shutdown');
+		Follow.updateMany({}, {$set: {status_now: 0}}, error => {
+			console.log('All status_now reset');
+			process.exit(error ? 1 : 0);
+		});
     });
 });
 
@@ -35,8 +38,8 @@ db.once('open', () => {
 async function main(){
 
 	/* Enable per 15 min */
-	schedule.scheduleJob('*/15 * * * *', async () => {
-        await checkFollowed();
+	schedule.scheduleJob('*/15 * * * *', () => {
+        checkFollowed();
     });
 
     while(1){
@@ -63,7 +66,7 @@ async function autoFollow(){
 					const now = new Date();
 					const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 					followeds = followeds.filter(followed => today.getTime() <= Number(followed.timestamp) && Number(followed.timestamp) < (today.getTime() + 24 * 60 * 60 * 1000));
-					if(followeds.length > follow.count_max){
+					if(followeds.length >= follow.count_max){
 						console.log('[AF] Exceed set count_max: ' + follow.count_max);
 					}
 					else{
@@ -83,7 +86,7 @@ async function autoFollow(){
 								break;
 							case 1: {
 								/* Search and follow */
-								console.log('[AF] Start searching and follow')
+								console.log('[AF] Start searching and follow');
 								/* Rate 1 req per 5 sec */
 								let response = await twitterClient.tweets.search({q: follow.keyword, count: 100});
 								let searched_users = response.statuses.map(searched_user => {
@@ -92,13 +95,30 @@ async function autoFollow(){
 								searched_users = searched_users.filter(el => !twitter.friendIds.includes(el.user_id));
 
 								for(let searched of searched_users){
-									let status_check = await Follow.findOne({email: user.email, screen_name: follow.screen_name}).exec();
-									if(status_check.status !== follow.status_now){
-										console.log('[AF] Changed status');
-										follow.status_now = 0;
-										follow.save();
-										return;
+
+									let count = 0;
+									do{
+										let status_check = await Follow.findOne({email: user.email, screen_name: follow.screen_name}).exec();
+										if(status_check.status !== follow.status_now){
+											console.log('[AF] Changed status');
+											follow.status_now = 0;
+											follow.save();
+											return;
+										}
+										let followeds = await Followed.find({email: user.email, screen_name: follow.screen_name}).exec();
+										const now = new Date();
+										const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+										followeds = followeds.filter(followed => today.getTime() <= Number(followed.timestamp) && Number(followed.timestamp) < (today.getTime() + 24 * 60 * 60 * 1000));
+										count = followeds.length;
+										if(count >= follow.count_max){
+											console.log('[AF] Exceed set count_max: ' + follow.count_max + ' Wait 5 sec ....');
+											const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+											await _sleep(5 * 1000);
+										}
+
 									}
+									while(count >= follow.count_max);
+
 									/* e.g. min:2 max: 15 */
 									let wait = Math.floor(Math.random() * (follow.range_max - follow.range_min) + follow.range_min);
 									if(wait > 0){
@@ -181,13 +201,30 @@ async function autoFollow(){
 								while(cursor !== 0);
 								ids = ids.filter(id => !twitter.friendIds.includes(id) && id !== follow.user_id);
 								for(let id of ids){
-									let status_check = await Follow.findOne({email: user.email, screen_name: follow.screen_name}).exec();
-									if(status_check.status !== follow.status_now){
-										console.log('[AF] Changed status');
-										follow.status_now = 0;
-										follow.save();
-										return;
+
+									let count = 0;
+									do{
+										let status_check = await Follow.findOne({email: user.email, screen_name: follow.screen_name}).exec();
+										if(status_check.status !== follow.status_now){
+											console.log('[AF] Changed status');
+											follow.status_now = 0;
+											follow.save();
+											return;
+										}
+										let followeds = await Followed.find({email: user.email, screen_name: follow.screen_name}).exec();
+										const now = new Date();
+										const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+										followeds = followeds.filter(followed => today.getTime() <= Number(followed.timestamp) && Number(followed.timestamp) < (today.getTime() + 24 * 60 * 60 * 1000));
+										count = followeds.length;
+										if(count >= follow.count_max){
+											console.log('[AF] Exceed set count_max: ' + follow.count_max + ' Wait 5 sec ....');
+											const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+											await _sleep(5 * 1000);
+										}
+
 									}
+									while(count >= follow.count_max);
+
 									/* e.g. min:2 max: 15 */
 									let wait = Math.floor(Math.random() * (follow.range_max - follow.range_min) + follow.range_min);
 									if(wait > 0){
