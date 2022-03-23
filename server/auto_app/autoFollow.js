@@ -329,12 +329,19 @@ async function autoFollow(){
 										twitter.friendIds.push(response3.id_str);
 										await twitter.save();
 										console.log(`Success that ${follow.screen_name} follows ${response3.screen_name}`);
-										await Followed.create({
-											email: follow.email,
-											screen_name: follow.screen_name,
-											timestamp: `${Date.now()}`,
-											followed_user_id: response3.id_str
-										});
+										let existFollowed = await Followed.findOne({email: follow.email, screen_name: follow.screen_name, followed_user_id: response3.id_str}).exec();
+										if(existFollowed){
+											existFollowed.timestamp = `${Date.now()}`;
+											await existFollowed.save();
+										}
+										else{
+											await Followed.create({
+												email: follow.email,
+												screen_name: follow.screen_name,
+												timestamp: `${Date.now()}`,
+												followed_user_id: response3.id_str
+											});
+										}
 										await Log.create({
 											email: follow.email,
 											timestamp: `${Date.now()}`,
