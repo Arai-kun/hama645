@@ -75,7 +75,7 @@ export class AllDialogComponent implements OnInit {
     this.dbService.add<follow[]>('follows', this.data.follows)
     .subscribe(result => {
       if(result){
-        this.snackBar.open('更新しました', '閉じる', {duration: 5000});
+        this.snackBar.open('スタートしました', '閉じる', {duration: 5000});
         this.spinnerService.detach();
         this.dialogRef.close();
       }

@@ -86,7 +86,7 @@ export class FollowComponent implements OnInit {
     }
     else{
       follow.status = 0;
-      this.dbService.update<follow>('follow', follow)
+      this.dbService.add<follow>('follow', follow)
       .subscribe(result => {
         if(result){
           this.snackBar.open('中止しています...', '閉じる', {duration: 5000});
@@ -117,7 +117,7 @@ export class FollowComponent implements OnInit {
       this.dbService.add<follow>('follow', follow)
       .subscribe(result => {
         if(result){
-          this.snackBar.open('更新しました', '閉じる', {duration: 5000});
+          this.snackBar.open('スタートしました', '閉じる', {duration: 5000});
           this.onRefresh();
         }
         else{
