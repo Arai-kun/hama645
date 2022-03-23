@@ -21,7 +21,7 @@
                         <ng-template #elseBlock>
                             <span *ngIf="follow.status_now === 0">待機中</span>
                             <span class="excute" *ngIf="follow.status_now !== 0 && !follow.maxed">実行中</span>
-                            <span color="warn" class="excute" *ngIf="follow.status_now !== 0 && follow.maxed">最大フォロー数制限中</span>
+                            <span color="warn" *ngIf="follow.status_now !== 0 && follow.maxed">最大フォロー数制限中</span>
                         </ng-template>
                     </mat-panel-description>
                 </mat-expansion-panel-header>
@@ -58,7 +58,8 @@
                         <div *ngIf="follow.status !== 0">
                             <button mat-raised-button color="warn" (click)="onStop(follow.screen_name)">中止</button>
                         </div>-->
-                        <button mat-raised-button color="primary" (click)="onStart(follow.screen_name)">更新</button>
+                        <button *ngIf="follow.status_now === 0" mat-raised-button color="primary" (click)="onStart(follow.screen_name)">スタート</button>
+                        <button *ngIf="follow.status_now !== 0" mat-raised-button color="warn" (click)="onStop(follow.screen_name)">中止</button>
                     <!--</span>-->
                 </mat-action-row>
             </mat-expansion-panel>

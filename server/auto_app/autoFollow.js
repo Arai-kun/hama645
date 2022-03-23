@@ -99,6 +99,7 @@ async function autoFollow(){
 											await follow.save();
 											return;
 										}
+
 										let followeds = await Followed.find({email: user.email, screen_name: follow.screen_name}).exec();
 										const now = new Date();
 										const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -211,6 +212,7 @@ async function autoFollow(){
 											await follow.save();
 											return;
 										}
+
 										let followeds = await Followed.find({email: user.email, screen_name: follow.screen_name}).exec();
 										const now = new Date();
 										const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -218,7 +220,7 @@ async function autoFollow(){
 										count = followeds.length;
 										if(count >= follow.count_max){
 											follow.maxed = true;
-											follow.save();
+											await follow.save();
 											console.log('[AF] Exceed set count_max: ' + follow.count_max + ' Wait 5 sec ....');
 											const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 											await _sleep(5 * 1000);

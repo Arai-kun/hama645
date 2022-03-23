@@ -69,7 +69,7 @@ export class FollowComponent implements OnInit {
     let dialogRef = this.dialog.open(AllDialogComponent, {
       width: '400px',
       data: {
-        follows: this.follows
+        follows: this.follows.filter(follow => follow.status_now === 0)
       }
     });
     dialogRef.afterClosed().subscribe(() => {
@@ -77,7 +77,7 @@ export class FollowComponent implements OnInit {
     });
   }
 
-  /*
+  
   onStop(screen_name: string): void {
     let follow = this.follows.find(el => el.screen_name === screen_name);
     if(!follow){
@@ -89,7 +89,7 @@ export class FollowComponent implements OnInit {
       this.dbService.update<follow>('follow', follow)
       .subscribe(result => {
         if(result){
-          this.snackBar.open('中止しました', '閉じる', {duration: 5000});
+          this.snackBar.open('中止しています...', '閉じる', {duration: 5000});
           this.onRefresh();
         }
         else{
@@ -97,7 +97,7 @@ export class FollowComponent implements OnInit {
         }
       });
     }
-  }*/
+  }
 
   onStart(screen_name: string): void {
     let follow = this.follows.find(el => el.screen_name === screen_name);
