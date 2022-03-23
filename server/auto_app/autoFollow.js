@@ -31,7 +31,7 @@ mongoose.connect(
 );
 let db = mongoose.connection;
 db.once('open', () => {
-  console.log('Successed connecting to DB');
+  console.log('[AF] Successed connecting to DB');
   main();
 });
 
