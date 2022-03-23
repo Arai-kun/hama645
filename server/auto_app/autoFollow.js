@@ -208,6 +208,8 @@ async function autoFollow(){
 										followeds = followeds.filter(followed => today.getTime() <= Number(followed.timestamp) && Number(followed.timestamp) < (today.getTime() + 24 * 60 * 60 * 1000));
 										count = followeds.length;
 										if(count >= follow.count_max){
+											follow.maxed = true;
+											follow.save();
 											console.log('[AF] Exceed set count_max: ' + follow.count_max + ' Wait 5 sec ....');
 											const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 											await _sleep(5 * 1000);
@@ -215,6 +217,10 @@ async function autoFollow(){
 
 									}
 									while(count >= follow.count_max);
+									if(follow.maxed){
+										follow.maxed = false;
+										follow.save();
+									}
 
 									/* e.g. min:2 max: 15 */
 									let wait = Math.floor(Math.random() * (follow.range_max - follow.range_min) + follow.range_min);

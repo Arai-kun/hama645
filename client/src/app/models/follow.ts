@@ -6,5 +6,6 @@ export interface follow {
     range_min: number,
     count_max: number,
     status: number,
-    status_now: number
+    status_now: number,
+    maxed: boolean
 }

@@ -20,7 +20,8 @@
                         </div>
                         <ng-template #elseBlock>
                             <span *ngIf="follow.status_now === 0">待機中</span>
-                            <span  class="excute" *ngIf="follow.status_now !== 0">実行中</span>
+                            <span class="excute" *ngIf="follow.status_now !== 0 && !follow.maxed">実行中</span>
+                            <span color="warn" class="excute" *ngIf="follow.status_now !== 0 && follow.maxed">最大フォロー数制限中</span>
                         </ng-template>
                     </mat-panel-description>
                 </mat-expansion-panel-header>

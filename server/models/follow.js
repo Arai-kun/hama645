@@ -9,6 +9,7 @@ let mongoose = require("mongoose"),
     count_max: Number,
     status: Number,
     status_now: Number,
+    maxed: Boolean
 });
 
 module.exports = mongoose.model("Follow", followSchema, 'follow');

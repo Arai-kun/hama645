@@ -52,7 +52,8 @@ export class FollowComponent implements OnInit {
               range_max: 20,
               count_max: 100,
               status: 0,  // stop,
-              status_now: 0
+              status_now: 0,
+              maxed: false
             });
           }
         });
