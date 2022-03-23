@@ -351,7 +351,7 @@ async function autoFollow(){
 						}
 					}
 					catch(error){
-						console.log(JSON.stringify(error));
+						console.log(`${follow.screen_name}` + JSON.stringify(error));
 					}
 				});
 			}
