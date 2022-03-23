@@ -80,6 +80,9 @@ export class LogComponent implements OnInit, AfterViewInit{
           case 6:
             event = '検索&フォロワーF';
             break;
+          case 7:
+            event = 'F解除';
+            break;
           default:
             break;
         }
