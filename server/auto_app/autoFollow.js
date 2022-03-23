@@ -44,7 +44,7 @@ async function main(){
     });
 
     while(1){
-        console.log('Active loop autoFollow');
+        console.log('[AF] Active loop autoFollow');
         const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
         await _sleep(1000 * 5);
 
@@ -96,7 +96,7 @@ async function autoFollow(){
 										if(status_check.status !== follow.status_now){
 											console.log('[AF] Changed status');
 											follow.status_now = 0;
-											follow.save();
+											await follow.save();
 											return;
 										}
 										let followeds = await Followed.find({email: user.email, screen_name: follow.screen_name}).exec();
@@ -105,6 +105,8 @@ async function autoFollow(){
 										followeds = followeds.filter(followed => today.getTime() <= Number(followed.timestamp) && Number(followed.timestamp) < (today.getTime() + 24 * 60 * 60 * 1000));
 										count = followeds.length;
 										if(count >= follow.count_max){
+											follow.maxed = true;
+											await follow.save();
 											console.log('[AF] Exceed set count_max: ' + follow.count_max + ' Wait 5 sec ....');
 											const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 											await _sleep(5 * 1000);
@@ -112,6 +114,10 @@ async function autoFollow(){
 
 									}
 									while(count >= follow.count_max);
+									if(follow.maxed){
+										follow.maxed = false;
+										await follow.save();
+									}
 
 									/* e.g. min:2 max: 15 */
 									let wait = Math.floor(Math.random() * (follow.range_max - follow.range_min) + follow.range_min);
@@ -155,7 +161,6 @@ async function autoFollow(){
 								console.log('[AF] Start follow arbitary account followers');
 								let response3 = await twitterClient.accountsAndUsers.usersShow({screen_name: follow.keyword});
 								const specified_user_id = response3.id_str;
-								console.log(1);
 
 								let ids = [];
 								let cursor = -1;
@@ -188,7 +193,6 @@ async function autoFollow(){
 								do {
 									/* Rate limit 15 per 15 min (user). Danger more than 5000 followers */
 									let response = await twitterClient.accountsAndUsers.followersIds({user_id: specified_user_id, cursor: cursor, stringify_ids: true});
-									console.log(2);
 									response.ids.forEach(id => {
 										ids.push(id);
 									});
@@ -204,7 +208,7 @@ async function autoFollow(){
 										if(status_check.status !== follow.status_now){
 											console.log('[AF] Changed status');
 											follow.status_now = 0;
-											follow.save();
+											await follow.save();
 											return;
 										}
 										let followeds = await Followed.find({email: user.email, screen_name: follow.screen_name}).exec();
@@ -224,7 +228,7 @@ async function autoFollow(){
 									while(count >= follow.count_max);
 									if(follow.maxed){
 										follow.maxed = false;
-										follow.save();
+										await follow.save();
 									}
 
 									/* e.g. min:2 max: 15 */
@@ -351,7 +355,10 @@ async function autoFollow(){
 						}
 					}
 					catch(error){
-						console.log(`${follow.screen_name}` + JSON.stringify(error));
+						follow.status = 0;
+						follow.status_now = follow.status;
+						await follow.save();
+						console.log(`[AF] ***${follow.screen_name}*** ` + JSON.stringify(error));
 					}
 				});
 			}
