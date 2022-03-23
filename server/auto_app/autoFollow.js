@@ -15,7 +15,10 @@ require('dotenv').config();
 process.on('SIGINT', () => { 
     schedule.gracefulShutdown().then(() => {
 		console.log('Schedule shutdown');
-		process.exit(error ? 1 : 0);
+		Follow.updateMany({}, {$set: {status_now: 0}}, error => {
+			console.log('All status_now reset');
+			process.exit(error ? 1 : 0);
+		});
     });
 });
 
@@ -152,6 +155,7 @@ async function autoFollow(){
 								console.log('[AF] Start follow arbitary account followers');
 								let response3 = await twitterClient.accountsAndUsers.usersShow({screen_name: follow.keyword});
 								const specified_user_id = response3.id_str;
+								console.log(1);
 
 								let ids = [];
 								let cursor = -1;
@@ -184,6 +188,7 @@ async function autoFollow(){
 								do {
 									/* Rate limit 15 per 15 min (user). Danger more than 5000 followers */
 									let response = await twitterClient.accountsAndUsers.followersIds({user_id: specified_user_id, cursor: cursor, stringify_ids: true});
+									console.log(2);
 									response.ids.forEach(id => {
 										ids.push(id);
 									});
