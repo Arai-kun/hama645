@@ -31,6 +31,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatProgressSpinnerModule, MatSpinner } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSelectModule } from '@angular/material/select';
+import { MatChipsModule } from '@angular/material/chips';
 
 /* Class */
 import { MatPaginatorIntlJa } from './mat-paginator-jp';
@@ -54,6 +55,8 @@ import { ChatComponent } from './chat/chat.component';
 import { DmListComponent } from './dm-list/dm-list.component';
 import { FollowComponent } from './follow/follow.component';
 import { AllDialogComponent } from './all-dialog/all-dialog.component';
+import { RetweetComponent } from './retweet/retweet.component';
+import { RetweetMultiregisterComponent } from './retweet-multiregister/retweet-multiregister.component';
 
 @NgModule({
   declarations: [
@@ -75,6 +78,8 @@ import { AllDialogComponent } from './all-dialog/all-dialog.component';
     DmListComponent,
     FollowComponent,
     AllDialogComponent,
+    RetweetComponent,
+    RetweetMultiregisterComponent,
   ],
   imports: [
     BrowserModule,
@@ -107,7 +112,8 @@ import { AllDialogComponent } from './all-dialog/all-dialog.component';
     PortalModule,
     TextFieldModule,
     MatExpansionModule,
-    MatSelectModule
+    MatSelectModule,
+    MatChipsModule
   ],
   entryComponents: [
     MatSpinner

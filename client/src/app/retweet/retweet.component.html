@@ -1,0 +1,93 @@
+<div class="container" fxLayout="column">
+    <div class="spacer">
+        <div fxLayout="row" fxLayoutAlign=" center">
+            <span fxLayout="row" fxFlexAlign="center center" fxFlexOffset="auto">
+                <button mat-mini-fab color="primary" (click)="onRefresh()"><mat-icon>refresh</mat-icon></button>
+            </span>
+        </div>
+    </div>
+    <div>
+        <mat-accordion>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        RTユーザーリスト
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div fxLayout="column" fxLayoutGap="8px">
+                    <div>
+                        <span fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+                            <mat-form-field>
+                                <input matInput type="text" [(ngModel)]="input_retweeted" placeholder="Twitter ID">
+                            </mat-form-field>
+                            <button mat-raised-button color="accent" type="button" (click)="onRegister()">登録</button>
+                            <button mat-raised-button type="button" (click)="onMultiregister()">複数</button>
+                        </span>
+                    </div>
+                    <mat-chip-list>
+                        <mat-chip *ngFor="let retweeted of retweeteds" (removed)="onRemove(retweeted.screen_name)">
+                            {{retweeted.screen_name}}
+                            <button matChipRemove>
+                                <mat-icon>cancel</mat-icon>
+                            </button>
+                        </mat-chip>
+                    </mat-chip-list>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+
+    </div>
+
+    <div *ngFor="let retweet of retweets">
+        <mat-card>
+            <mat-card-title>
+                <div fxLayout="row" fxLayoutAlign="space-between center">
+                    @{{retweet.screen_name}}
+                    <span class="mat-body">
+                        <div *ngIf="retweet.status_now !== retweet.status; else elseBlock">
+                            ステータス変更中
+                        </div>
+                        <ng-template #elseBlock>
+                            <span *ngIf="retweet.status_now === 0">待機中</span>
+                            <span class="excute" *ngIf="retweet.status_now !== 0 && !retweet.maxed">実行中</span>
+                            <span class="restricted" *ngIf="retweet.status_now !== 0 && retweet.maxed">最大RT数制限中</span>
+                        </ng-template>
+                    </span>
+                </div>
+            </mat-card-title>
+            <mat-divider inset></mat-divider>
+            <mat-card-content>
+                <div fxLayout="row wrap" fxLayoutGap="10px">
+                    <mat-form-field class="small-width">
+                        <mat-label>最小待機時間(分)</mat-label>
+                        <input matInput type="number" [(ngModel)]="retweet.range_min">
+                    </mat-form-field>
+                    <mat-form-field class="small-width">
+                        <mat-label>最大待機時間(分)</mat-label>
+                        <input matInput type="number" [(ngModel)]="retweet.range_max">
+                    </mat-form-field>
+                    <mat-form-field class="small-width">
+                        <mat-label>最大RT数(1日)</mat-label>
+                        <input matInput type="number" [(ngModel)]="retweet.count_max">
+                    </mat-form-field>
+                    <mat-form-field class="status-width">
+                        <mat-label>ステータス</mat-label>
+                        <mat-select [(ngModel)]="retweet.status">
+                            <mat-option *ngFor="let status of statusOptions" [value]="status.value">
+                                {{status.view}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <span fxLayout="row" fxLayoutAlign="center center" fxFlexOffset="auto">
+                    <button *ngIf="retweet.status_now === 0" mat-raised-button color="primary" (click)="onStart(retweet.screen_name)">スタート</button>
+                    <button *ngIf="retweet.status_now !== 0" mat-raised-button color="warn" (click)="onStop(retweet.screen_name)">中止</button>
+                </span>
+            </mat-card-actions>
+
+        </mat-card>
+    </div>
+
+</div>
