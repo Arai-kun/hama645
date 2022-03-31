@@ -9,7 +9,7 @@ import { RegisterComponent } from './register/register.component';
 import { AuthGuard } from './auth.guard';
 import { ChatComponent } from './chat/chat.component';
 import { FollowComponent } from './follow/follow.component';
-
+import { RetweetComponent } from './retweet/retweet.component';
 
 const routes: Routes = [
   { path: 'oauth', component: OauthComponent },
@@ -22,6 +22,7 @@ const routes: Routes = [
     children: [
       { path: 'account', component: DmtoolComponent },
       { path: 'follow', component: FollowComponent },
+      { path: 'retweet', component: RetweetComponent },
       { path: 'log', component: LogComponent }, 
       { path: 'dm/:id/:dmUser', component: ChatComponent }
     ]

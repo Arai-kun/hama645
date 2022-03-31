@@ -6,7 +6,9 @@ let Special = require('../models/special');
 let User = require('../models/user');
 let Dm = require('../models/dm');
 let Follow = require('../models/follow');
-let Followed = require('../models/followed')
+let Followed = require('../models/followed');
+let Retweet = require('../models/retweet');
+let Retweeted = require('../models/retweeted');
 const { TwitterClient } = require('twitter-api-client');
 
 /* GET db/twitter/:screen_name */
@@ -223,6 +225,133 @@ router.post('/follows', async (req, res, next) => {
   catch(error){
     next(error);
   }
-})
+});
+
+/* GET db/retweets */
+router.get('/retweets', (req, res, next) => {
+  Retweet.find({email: req.user['email']}, (error, retweets) => {
+    if(error) next(error);
+    res.json(retweets);
+  });
+});
+
+/* POST db/retweet */
+router.post('/retweet', async (req, res, next) => {
+  try {
+    req.body['email'] = req.user['email'];
+    let retweet = await Retweet.findOne({email: req.body['email'], screen_name: req.body['screen_name']}).exec();
+    if(retweet){
+      retweet.range_min = req.body['range_min'];
+      retweet.range_max = req.body['range_max'];
+      retweet.count_max = req.body['count_max'];
+      retweet.status = req.body['status'];
+      await retweet.save();
+    }
+    else{
+      await Retweet.create(req.body);
+    }
+    res.json(true);
+  }
+  catch(error){
+    next(error);
+  }
+});
+
+/* GET db/retweeteds */
+router.get('/retweeteds', (req, res, next) => {
+  Retweeted.find({email: req.user['email']}, (error, retweeteds) => {
+    if(error) next(error);
+    res.json(retweeteds);
+  });
+});
+
+/* POST db/retweeted */
+router.post('/retweeted', async (req, res, next) => {
+  const twitterClient = new TwitterClient({
+    apiKey: process.env.API_KEY,
+    apiSecret: process.env.API_SECRET,
+    accessToken: process.env.ACCESS_TOKEN,
+    accessTokenSecret: process.env.ACCESS_TOKEN_SECRET
+  });
+  try{
+    let retweeted = await Retweeted.findOne({email: req.user['email'], screen_name: req.body['screen_name']}).exec();
+    if(retweeted){
+      res.json(false);
+      return;
+    }
+    /* Rate limit 900 per 15 min (app) */
+    let response = await twitterClient.accountsAndUsers.usersShow({screen_name: req.body['screen_name']});
+    await Retweeted.create({
+      email: req.user['email'],
+      screen_name: req.body['screen_name'],
+      user_id: response.id_str
+    });
+    res.json(true);
+  }
+  catch(error){
+    /* User not found */
+    if('statusCode' in error){
+      if(error.statusCode === 404){
+        res.json(false);
+        return;
+      }
+    }
+
+    next(error);
+  }
+});
+
+/* POST db/retweeteds */
+router.post('/retweeteds', async (req, res, next) => {
+  const twitterClient = new TwitterClient({
+    apiKey: process.env.API_KEY,
+    apiSecret: process.env.API_SECRET,
+    accessToken: process.env.ACCESS_TOKEN,
+    accessTokenSecret: process.env.ACCESS_TOKEN_SECRET
+  });
+  for(let body of req.body){
+    try{
+      let retweeted = await Retweeted.findOne({email: req.user['email'], screen_name: body.screen_name}).exec();
+      if(!retweeted && body.screen_name !== ''){
+        /* Rate limit 900 per 15 min (app) */
+        let response = await twitterClient.accountsAndUsers.usersShow({screen_name: body.screen_name});
+        await Retweeted.create({
+          email: req.user['email'],
+          screen_name: body.screen_name,
+          user_id: response.id_str
+        });
+      }
+    }
+    catch(error){
+      if('statusCode' in error){
+        /* User not found */
+        if(error.statusCode === 404){
+          // Next
+        }
+        /* Late limit */
+        else if(error.statusCode === 403){
+          res.json(false);
+          return;
+        }
+        else{
+          next(error);
+        }
+      }
+      else{
+        next(error);
+      }
+    }
+  }
+  res.json(true);
+});
+
+/* DELETE db/retweeted/:screen_name */
+router.delete('/retweeted/:screen_name', (req, res, next) => {
+  Retweeted.deleteOne({email: req.user['email'], screen_name: req.params.screen_name}, error => {
+    if(error) next(error);
+    res.json(true);
+  });
+});
+
 
 module.exports = router;

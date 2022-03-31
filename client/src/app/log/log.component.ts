@@ -83,6 +83,9 @@ export class LogComponent implements OnInit, AfterViewInit{
           case 7:
             event = 'F解除';
             break;
+          case 8:
+            event = 'RT';
+            break;
           default:
             break;
         }
