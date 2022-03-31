@@ -8,7 +8,8 @@ let mongoose = require("mongoose"),
     count_max: Number,
     status: Number,
     status_now: Number,
-    maxed: Boolean
+    maxed: Boolean,
+    retweeted_user_ids: [String]
 });
 
 module.exports = mongoose.model("Retweet", retweetSchema, 'retweet');
