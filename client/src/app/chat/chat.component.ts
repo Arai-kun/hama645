@@ -127,7 +127,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
           timestamp: `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${('0' + date.getMinutes()).slice(-2)}`
         });
       });
-      this.messages.sort((x, y) => Number(x.timestamp) - Number(y.timestamp));
+      this.messages.sort((x, y) => new Date(x.timestamp).getTime() - new Date(y.timestamp).getTime());
     });
   }
 

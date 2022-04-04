@@ -50,7 +50,6 @@ router.post('/exchangeToken', async (req, res, next) => {
       accessTokenSecret: twitter.oauth_token_secret
     });
     let response = await twitterClient.basics.oauthAccessToken({oauth_verifier: req.body['oauth_verifier']});
-    console.log(response);
 
     /* Check whether the oauth_token already exist */
     let exist = await Twitter.findOne({email:req.user['email'], oauth_token: response.oauth_token}).exec();
@@ -72,7 +71,6 @@ router.post('/exchangeToken', async (req, res, next) => {
     });
     /* Rate limit 900 per 15 min (user) */
     response = await twitterClient.accountsAndUsers.usersShow({screen_name: req.body['screen_name']});
-    console.log(response);
     if(twitter.user_id !== response.id_str){
       res.json(false);
       return;
