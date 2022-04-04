@@ -99,35 +99,43 @@ async function autoRetweet() {
                   console.log(response);
                   for(let rt of response){
                     try {
-                      /* e.g. min:2 max: 15 */
-                      let wait = Math.floor(Math.random() * (retweet.range_max - retweet.range_min) + retweet.range_min);
-                      if (wait > 0) {
-                        console.log(`[AR] Wait ${wait} min ....`);
-                        const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-                        await _sleep(wait * 60 * 1000);
-                      }
+                      if(!rtdones.map(rtdone => rtdone.retweeted_id).includes(rt.id_str)){
+                        /* e.g. min:2 max: 15 */
+                        let wait = Math.floor(Math.random() * (retweet.range_max - retweet.range_min) + retweet.range_min);
+                        if (wait > 0) {
+                          console.log(`[AR] Wait ${wait} min ....`);
+                          const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+                          await _sleep(wait * 60 * 1000);
+                        }
 
-                      /* Rate limit 5 request per 3 min, that is, more then 1 request per 1 min */
-                      await twitterClient.tweets.statusesRetweetById({id: rt.id_str});
-                      console.log(`[AR] Success that ${retweet.screen_name} retweets ${rt.id_str}`);
-                      await Rtdone.create({
-                        email: retweet.email,
-                        screen_name: retweet.screen_name,
-                        timestamp: `${Date.now()}`,
-                        retweeted_id: rt.id_str
-                      });
-                      await Log.create({
-                        email: retweet.email,
-                        timestamp: `${Date.now()}`,
-                        screen_name: retweet.screen_name,
-                        event: 8,
-                        partner_screen_name: ''
-                      });
+                        /* Rate limit 5 request per 3 min, that is, more then 1 request per 1 min */
+                        await twitterClient.tweets.statusesRetweetById({id: rt.id_str});
+                        console.log(`[AR] Success that ${retweet.screen_name} retweets ${rt.id_str}`);
+                        await Rtdone.create({
+                          email: retweet.email,
+                          screen_name: retweet.screen_name,
+                          timestamp: `${Date.now()}`,
+                          retweeted_id: rt.id_str
+                        });
+                        await Log.create({
+                          email: retweet.email,
+                          timestamp: `${Date.now()}`,
+                          screen_name: retweet.screen_name,
+                          event: 8,
+                          partner_screen_name: ''
+                        });
+                      }
+                      else{
+                        console.log(`[AR] Detect already retweeted id ${rt.id_str}`);
+                      }
                     }
                     catch(error){
                       console.log(JSON.stringify(error));
                     } 
                   }
+                  /* Wait for protecting status user timeline */
+                  const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+                  await _sleep(1000);
                 }
                 retweet.status = 0;
                 retweet.status_now = retweet.status;
