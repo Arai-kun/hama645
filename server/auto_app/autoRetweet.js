@@ -64,42 +64,43 @@ async function autoRetweet() {
               case 1: {
                 console.log('[AR] Start retweet');
                 for(let retweeted of retweeteds){
-                  let count = 0;
-                  let rtdones = await Rtdone.find({email: user.email, screen_name: retweet.screen_name}).exec();
-                  do {
-                    let status_check = await Retweet.findOne({email: user.email, screen_name: retweet.screen_name}).exec();
-                    if (status_check.status !== retweet.status_now) {
-                      console.log('[AR] Changed status');
-                      retweet.status_now = 0;
-                      await retweet.save();
-                      return;
-                    }
-
-                    const now = new Date();
-                    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                    count = rtdones.filter(rtdone => today.getTime() <= Number(rtdone.timestamp) && Number(rtdone.timestamp) < (today.getTime() + 24 * 60 * 60 * 1000)).length;
-                    if (count >= retweet.count_max) {
-                      retweet.maxed = true;
-                      await retweet.save();
-                      console.log('[AR] Exceed set count_max: ' + retweet.count_max + ' Wait 5 sec ....');
-                      const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-                      await _sleep(5 * 1000);
-                    }
-
-                  }
-                  while (count >= retweet.count_max);
-                  if(retweet.maxed) {
-                    retweet.maxed = false;
-                    await retweet.save();
-                  }
-                  
-                  
                   /* Rate limit 1 request per 1s */
                   let response = await twitterClient.tweets.statusesUserTimeline({user_id: retweeted.user_id, count: 2, trim_user: true, exclude_replies: true, include_rts: false});
                   console.log(response);
                   for(let rt of response){
                     try {
+                      let rtdones = await Rtdone.find({email: user.email, screen_name: retweet.screen_name}).exec();
                       if(!rtdones.map(rtdone => rtdone.retweeted_id).includes(rt.id_str)){
+
+                        let count = 0;
+                        do {
+                          let status_check = await Retweet.findOne({email: user.email, screen_name: retweet.screen_name}).exec();
+                          if (status_check.status !== retweet.status_now) {
+                            console.log('[AR] Changed status');
+                            retweet.status_now = 0;
+                            await retweet.save();
+                            return;
+                          }
+      
+                          const now = new Date();
+                          const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                          count = rtdones.filter(rtdone => today.getTime() <= Number(rtdone.timestamp) && Number(rtdone.timestamp) < (today.getTime() + 24 * 60 * 60 * 1000)).length;
+                          if (count >= retweet.count_max) {
+                            retweet.maxed = true;
+                            await retweet.save();
+                            console.log('[AR] Exceed set count_max: ' + retweet.count_max + ' Wait 5 sec ....');
+                            const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+                            await _sleep(5 * 1000);
+                          }
+      
+                        }
+                        while (count >= retweet.count_max);
+                        if(retweet.maxed) {
+                          retweet.maxed = false;
+                          await retweet.save();
+                        }
+
+
                         /* e.g. min:2 max: 15 */
                         let wait = Math.floor(Math.random() * (retweet.range_max - retweet.range_min) + retweet.range_min);
                         if (wait > 0) {
