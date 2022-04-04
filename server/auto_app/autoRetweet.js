@@ -47,7 +47,7 @@ async function autoRetweet() {
       for(let retweet of retweets){
         queue.add(async () => {
           try{
-            let twitter = await Twitter.findOne({ email: user.email, screen_name: follow.screen_name }).exec();
+            let twitter = await Twitter.findOne({ email: user.email, screen_name: retweet.screen_name }).exec();
             console.log(`[AR] ${twitter.screen_name} in ${twitter.email} start`);
             const twitterClient = new TwitterClient({
               apiKey: process.env.API_KEY,
