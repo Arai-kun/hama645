@@ -248,7 +248,20 @@ async function detectDMRequest(){
 										subject: '【Lock通知】Twitter ツール',
 										html: `<p>@${twitter.screen_name} が一時凍結されている恐れがあります。</p><p>解消していただくか、本アプリから削除していただくことを推奨します。</p>`
 									});
-									await Lock.create({email: twitter.email, screen_name: twitter.screen_name});
+									await Lock.create({email: twitter.email, screen_name: twitter.screen_name, timestamp: `${Date.now()}`});
+								}
+								else{
+									const now = Date.now();
+									if(now > (Number(lock.timestamp) + 24 * 60 * 60 * 1000)){
+										await sendgrid.send({
+											to: user.email,
+											from: 'noreply@eggraise100.de',
+											subject: '【Lock通知】Twitter ツール',
+											html: `<p>@${twitter.screen_name} が一時凍結されている恐れがあります。</p><p>解消していただくか、本アプリから削除していただくことを推奨します。</p>`
+										});
+										lock.timestamp = `${now}`;
+										await lock.save();
+									}
 								}
 							}
 							catch(e){
