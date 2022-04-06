@@ -243,10 +243,10 @@ async function detectDMRequest(){
 								let lock = await Lock.findOne({email: twitter.email, screen_name: twitter.screen_name}).exec();
 								if(!lock){
 									await sendgrid.send({
-										to: 'koki.alright@gmail.com',
+										to: user.email,
 										from: 'noreply@eggraise100.de',
 										subject: '【Lock通知】Twitter ツール',
-										html: `<p>@${twitter.screen_name} が一時凍結されている恐れがあります。</p><p>解消していただくか、本アプリから削除していただくことを推奨します</p>`
+										html: `<p>@${twitter.screen_name} が一時凍結されている恐れがあります。</p><p>解消していただくか、本アプリから削除していただくことを推奨します。</p>`
 									});
 									await Lock.create({email: twitter.email, screen_name: twitter.screen_name});
 								}
@@ -265,7 +265,6 @@ async function detectDMRequest(){
 	}
 	catch(error){
 		console.log('Critical Error!');
-		console.log(error);
 		return;
 	}
 }
