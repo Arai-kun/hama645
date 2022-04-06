@@ -236,8 +236,6 @@ async function detectDMRequest(){
 				}
 				catch(error){
 					/* Temporary lock may happen */
-					console.log(error.statusCode);
-					console.log(error.data.errors);
 					if(('statusCode' in error) && ('data' in error)){
 						if(error.statusCode === 403 && error.data.errors[0].code === 326){
 							try {
