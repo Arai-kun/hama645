@@ -237,7 +237,6 @@ async function detectDMRequest(){
 				catch(error){
 					/* Temporary lock may happen */
 					if(('statusCode' in error) && ('data' in error)){
-						error = JSON.parse(error);
 						console.log(error.data);
 						console.log(error.data.errors);
 						console.log((error.data.errors)[0]);
