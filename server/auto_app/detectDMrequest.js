@@ -237,12 +237,8 @@ async function detectDMRequest(){
 				catch(error){
 					/* Temporary lock may happen */
 					if(('statusCode' in error) && ('data' in error)){
-						console.log(error.data);
-						console.log(error.data.errors);
 						let json_data = JSON.parse(error.data);
-						console.log(json_data.errors);
-						console.log(json_data.errors[0]);
-						if(error.statusCode === 403 && (error.data.errors)[0].code === 326){
+						if(error.statusCode === 403 && json_data.errors[0].code === 326){
 							try {
 								let lock = await Lock.findOne({email: twitter.email, screen_name: twitter.screen_name}).exec();
 								if(!lock){
