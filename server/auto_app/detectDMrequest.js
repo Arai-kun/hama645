@@ -5,6 +5,7 @@ let Dm = require('../models/dm');
 let Log = require('../models/log');
 let Special = require('../models/special');
 let Rate = require('../models/rate');
+let Lock = require('../models/lock');
 const { TwitterClient } = require('twitter-api-client');
 const sendgrid = require('@sendgrid/mail');
 require('dotenv').config();
@@ -166,8 +167,8 @@ async function detectDMRequest(){
 											});
 											await sendgrid.send({
 												to: user.email,
-												from: 'noreply@enginestarter.nl',
-												subject: '【通知】DM管理ツール',
+												from: 'noreply@eggraise100.de',
+												subject: '【通知】Twitter ツール',
 												html: `<p>@${twitter.screen_name} にDMリクエストにて問い合わせが来ましたのでご対応よろしくお願いします。</p><p>問い合わせは以下のリンクから開いて対応してください。</p><p>${process.env.SERVER_URL}/home/dm/${twitter.screen_name}/${data['message_create']['sender_id']}</p>`
 											});
 										}
@@ -193,8 +194,8 @@ async function detectDMRequest(){
 												});
 												await sendgrid.send({
 													to: user.email,
-													from: 'noreply@enginestarter.nl',
-													subject: '【特殊通知】DM管理ツール',
+													from: 'noreply@eggraise100.de',
+													subject: '【特殊通知】Twitter ツール',
 													html: `<p>@${twitter.screen_name} に被り案件として通知されました。</p><p>問い合わせは以下のリンクから開いて対応してください。</p><p>${process.env.SERVER_URL}/home/log</p>`
 												});
 											}
@@ -234,6 +235,27 @@ async function detectDMRequest(){
 					}
 				}
 				catch(error){
+					/* Temporary lock may happen */
+					if('statusCode' in error && 'data' in error){
+						if(error.statusCode === 403 && error.data.errors[0].code === 326){
+							try {
+								let lock = await Lock.findOne({email: twitter.email, screen_name: twitter.screen_name}).exec();
+								if(!lock){
+									await sendgrid.send({
+										to: 'koki.alright@gmail.com',
+										from: 'noreply@eggraise100.de',
+										subject: '【Lock通知】Twitter ツール',
+										html: `<p>@${twitter.screen_name} が一時凍結されている恐れがあります。</p><p>解消していただくか、本アプリから削除していただくことを推奨します</p>`
+									});
+									await Lock.create({email: twitter.email, screen_name: twitter.screen_name});
+								}
+							}
+							catch(e){
+								console.log(JSON.stringify(e));
+							}
+						}
+					}
+					
 					console.log(JSON.stringify(error));
 				}
 			}
