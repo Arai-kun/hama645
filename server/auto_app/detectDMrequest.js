@@ -237,6 +237,7 @@ async function detectDMRequest(){
 				catch(error){
 					/* Temporary lock may happen */
 					if(('statusCode' in error) && ('data' in error)){
+						console.log(error.data);
 						if(error.statusCode === 403 && error.data.errors[0].code === 326){
 							try {
 								let lock = await Lock.findOne({email: twitter.email, screen_name: twitter.screen_name}).exec();
@@ -264,6 +265,7 @@ async function detectDMRequest(){
 	}
 	catch(error){
 		console.log('Critical Error!');
+		console.log(error);
 		return;
 	}
 }
