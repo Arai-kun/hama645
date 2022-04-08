@@ -140,7 +140,7 @@ async function autoRetweet() {
                 }
                 retweet.status = 0;
                 retweet.status_now = retweet.status;
-                retweet.save();
+                await retweet.save();
                 break;
               }
             }

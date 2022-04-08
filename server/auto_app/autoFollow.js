@@ -148,12 +148,21 @@ async function autoFollow() {
 
                   }
                   catch (error) {
-                    console.log(JSON.stringify(error));
+                    if(('statusCode' in error) && ('data' in error)){
+                      let json_data = JSON.parse(error.data);
+                      if(error.statusCode === 403 && json_data.errors[0].code === 161){
+                        follow.status = 0;
+                        follow.status_now = follow.status;
+                        await follow.save();
+                        return;
+                      }
+                    }
+                    console.log(`[AF](${follow.screen_name}): ${JSON.stringify(error)}`);
                   }
                 }
                 follow.status = 0;
                 follow.status_now = follow.status;
-                follow.save();
+                await follow.save();
                 break;
               }
               case 2: {
@@ -260,100 +269,21 @@ async function autoFollow() {
 
                   }
                   catch (error) {
-                    console.log('[AF] ' + JSON.stringify(error));
+                    if(('statusCode' in error) && ('data' in error)){
+                      let json_data = JSON.parse(error.data);
+                      if(error.statusCode === 403 && json_data.errors[0].code === 161){
+                        follow.status = 0;
+                        follow.status_now = follow.status;
+                        await follow.save();
+                        return;
+                      }
+                    }
+                    console.log(`[AF](${follow.screen_name}): ${JSON.stringify(error)}`);
                   }
                 }
                 follow.status = 0;
                 follow.status_now = follow.status;
-                follow.save();
-
-                break;
-              }
-              case 3: {
-                /* Both */
-                console.log('Start Both');
-                /* Rate 1 req per 5 sec */
-                let response = await twitterClient.tweets.search({ q: follow.keyword, count: 100 });
-                let ids = response.statuses.map(searched_user => searched_user.user.id_str);
-                let rate = await Rate.findOne({ screen_name: follow.screen_name, kind: 'followersIds' }).exec();
-                if (!rate) {
-                  await Rate.create({
-                    screen_name: follow.screen_name,
-                    latest_request_time: `${Date.now()}`,
-                    kind: 'followersIds'
-                  });
-                }
-                else {
-                  let diff = Date.now() - Number(rate.latest_request_time);
-                  const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-                  if (0 <= diff && diff < (60 * 1000)) {
-                    console.log(`Wait ${(60 * 1000) - diff} ms (followersIds)...`);
-                    await _sleep((60 * 1000) - diff);
-                  }
-                  else if (diff < 0) {
-                    console.log(`Wait ${(60 * 1000)} ms (followersIds)...`);
-                    await _sleep((60 * 1000));
-                  }
-                  else {
-                    // No wait
-                  }
-                  rate.latest_request_time = `${Date.now()}`;
-                  await rate.save();
-                }
-
-                let cursor = -1;
-                do {
-                  /* Rate limit 15 per 15 min (user). Danger more than 5000 followers*/
-                  let response2 = await twitterClient.accountsAndUsers.followersIds({ cursor: cursor, stringify_ids: true });
-                  response2.ids.forEach(id => {
-                    if (!ids.includes(id)) {
-                      ids.push(id);
-                    }
-                  });
-                  cursor = response2.next_cursor;
-                }
-                while (cursor !== 0);
-                ids = ids.filter(id => !twitter.friendIds.includes(id));
-
-                for (let id of ids) {
-                  /* e.g. min:2 max: 15 */
-                  let wait = Math.floor(Math.random() * (follow.range_max - follow.range_min) + follow.range_min);
-                  console.log(`Wait ${wait} min ....`);
-                  const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-                  await _sleep(wait * 60 * 1000);
-
-                  try {
-                    let response3 = await twitterClient.accountsAndUsers.friendshipsCreate({ user_id: id });
-                    twitter.friendIds.push(response3.id_str);
-                    await twitter.save();
-                    console.log(`Success that ${follow.screen_name} follows ${response3.screen_name}`);
-                    let existFollowed = await Followed.findOne({ email: follow.email, screen_name: follow.screen_name, followed_user_id: response3.id_str }).exec();
-                    if (existFollowed) {
-                      existFollowed.timestamp = `${Date.now()}`;
-                      await existFollowed.save();
-                    }
-                    else {
-                      await Followed.create({
-                        email: follow.email,
-                        screen_name: follow.screen_name,
-                        timestamp: `${Date.now()}`,
-                        followed_user_id: response3.id_str
-                      });
-                    }
-                    await Log.create({
-                      email: follow.email,
-                      timestamp: `${Date.now()}`,
-                      screen_name: follow.screen_name,
-                      event: 6,
-                      partner_screen_name: response3.screen_name
-                    });
-
-                  }
-                  catch (error) {
-                    console.log(JSON.stringify(error));
-                  }
-                }
-
+                await follow.save();
 
                 break;
               }
