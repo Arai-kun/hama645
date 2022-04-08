@@ -66,7 +66,7 @@ async function autoRetweet() {
                 for(let retweeted of retweeteds){
                   /* Rate limit 1 request per 1s */
                   let response = await twitterClient.tweets.statusesUserTimeline({user_id: retweeted.user_id, count: 2, trim_user: true, exclude_replies: true, include_rts: false});
-                  console.log(response);
+                  //console.log(response);
                   for(let rt of response){
                     try {
                       let rtdones = await Rtdone.find({email: user.email, screen_name: retweet.screen_name}).exec();
