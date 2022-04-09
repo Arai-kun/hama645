@@ -384,7 +384,7 @@ async function checkFollowed() {
         while (cursor !== 0);
 
         let counter = 0;
-        for (let followed_user_id of expired_followed) {
+        for (let followed_user_id of expired_followed.followed_user_ids) {
           try {
             /* Check whether the followed is included in the latest friendIds? */
             if (twitter.friendIds.includes(followed_user_id)) {
