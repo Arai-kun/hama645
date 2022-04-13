@@ -1,11 +1,13 @@
 const { Worker } = require('worker_threads');
 const worker_detectDMrequest = new Worker('./detectDMrequest.js');
 const worker_autoFollow = new Worker('./autoFollow.js');
-const worker_autoRetweet = new Worker('./autoRetweet.js');
+//const worker_autoRetweet = new Worker('./autoRetweet.js');
+const worker_generateTask = new Worker('./generateTask.js');
+const worker_executeTask = new Worker('./executeTask.js');
 
 let mongoose = require('mongoose');
 let Follow = require('../models/follow');
-let Retweet = require('../models/retweet');
+//let Retweet = require('../models/retweet');
 require('dotenv').config();
 
 mongoose.connect(
@@ -24,7 +26,7 @@ db.once('open', () => {
 process.on('SIGINT', async () => {
     try {
         await Follow.updateMany({}, {$set: {status_now: 0}}).exec();
-        await Retweet.updateMany({}, {$set: {status_now: 0}}).exec();
+        //await Retweet.updateMany({}, {$set: {status_now: 0}}).exec();
         console.log('[MAIN] All status_now reset');
         process.exit(0);
     } 
