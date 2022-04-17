@@ -104,7 +104,7 @@ export class AllDialogComponent implements OnInit, AfterViewInit {
       follow.count_max = this.input_data.count_max;
       follow.status = this.input_data.status;
     });
-    console.log(this.data.follows);
+    //console.log(this.data.follows);
     if(this.data.follows.map(follow => follow.keyword).includes('')){
       this.snackBar.open('キーワードは全て入力してください', '閉じる', {duration: 7000});
       this.spinnerService.detach();
