@@ -185,9 +185,18 @@ async function retweet(task) {
     console.log(`[ET][Error][retweet][${task.email}][${task.screen_name}]: ` + JSON.stringify(error));
     if (('statusCode' in error) && ('data' in error)) {
       const json_data = JSON.parse(error.data);
-      if (error.statusCode === 403 && json_data.errors[0].code === 326) {
+      if (error.statusCode === 403 ) {
         /* Temporary locked */
-        await Retweet.updateOne({ email: task.email, screen_name: task.screen_name }, { $set: { status: 3 } }).exec();
+        if(json_data.errors[0].code === 326){        
+          await Retweet.updateOne({ email: task.email, screen_name: task.screen_name }, { $set: { status: 3 } }).exec();
+        }
+
+        /* Already retweeted */
+        if(json_data.errors[0].code === 327){
+          let retweet = await Retweet.findOne({ email: task.email, screen_name: task.screen_name }).exec();
+          retweet.retweeted_user_ids.push(task.partner);
+          await retweet.save();
+        }
       }
     }
   }
@@ -249,9 +258,18 @@ async function keyword_retweet(task) {
     console.log(`[ET][Error][k_retweet][${task.email}][${task.screen_name}]: ` + JSON.stringify(error));
     if (('statusCode' in error) && ('data' in error)) {
       const json_data = JSON.parse(error.data);
-      if (error.statusCode === 403 && json_data.errors[0].code === 326) {
+      if (error.statusCode === 403 ) {
         /* Temporary locked */
-        await Retweet.updateOne({ email: task.email, screen_name: task.screen_name }, { $set: { status: 3 } }).exec();
+        if(json_data.errors[0].code === 326){        
+          await Retweet.updateOne({ email: task.email, screen_name: task.screen_name }, { $set: { status: 3 } }).exec();
+        }
+
+        /* Already retweeted */
+        if(json_data.errors[0].code === 327){
+          let retweet = await Retweet.findOne({ email: task.email, screen_name: task.screen_name }).exec();
+          retweet.retweeted_user_ids.push(task.partner);
+          await retweet.save();
+        }
       }
     }
   }
