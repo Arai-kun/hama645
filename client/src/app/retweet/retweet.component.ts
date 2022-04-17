@@ -7,7 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { RetweetMultiregisterComponent } from '../retweet-multiregister/retweet-multiregister.component';
 
-export interface statusOption {
+export interface option {
   view: string,
   value: number
 }
@@ -20,10 +20,14 @@ export interface statusOption {
 export class RetweetComponent implements OnInit {
   retweets: retweet[] = [];
   retweeteds: retweeted[] = [];
-  statusOptions: statusOption[] = [
-    {view: '待機', value: 0},
-    {view: 'リツイート', value: 1},
+  modeOptions: option[] = [
+    {view: '通常RT', value: 0},
+    {view: 'キーワードRT', value: 1},
   ];
+  timelineOptions: option[] = [
+    {view: '1つ目', value: 0},
+    {view: '2つ目', value: 1}
+  ]
   input_retweeted: string = '';
 
   constructor(
@@ -53,8 +57,9 @@ export class RetweetComponent implements OnInit {
               range_max: 20,
               count_max: 100,
               status: 0,  // stop,
-              status_now: 0,
-              maxed: false
+              mode: 0,
+              retweeted_timeline: 0,
+              keyword: '',
             });
           }
         });
@@ -109,11 +114,10 @@ export class RetweetComponent implements OnInit {
       this.onRefresh();
     }
     else{
-      retweet.status = 0;
-      this.dbService.add<retweet>('retweet', retweet)
+      this.dbService.get<boolean>('retweet/stop', retweet.screen_name)
       .subscribe(result => {
         if(result){
-          this.snackBar.open('中止しています...', '閉じる', {duration: 5000});
+          this.snackBar.open('中止しました', '閉じる', {duration: 5000});
           this.onRefresh();
         }
         else{
@@ -132,6 +136,10 @@ export class RetweetComponent implements OnInit {
     else{
       if(retweet.range_min > retweet.range_max){
         this.snackBar.open('最小待機時間が最大待機時間を超えることはできません', '閉じる', {duration: 7000});
+        return;
+      }
+      if(retweet.mode === 1 && retweet.keyword === ''){
+        this.snackBar.open('キーワードを入力してください', '閉じる', {duration: 7000});
         return;
       }
       this.dbService.add<retweet>('retweet', retweet)
