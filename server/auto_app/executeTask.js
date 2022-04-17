@@ -46,7 +46,6 @@ async function executeTask() {
     for(let task of tasks) {
       console.log(`[ET] Got task: ${task}`);
       await Task.updateOne({email: task.email, screen_name: task.screen_name, kind: task.kind}, {$set: {ongoing: true}}).exec();
-      console.log(task);
       queue.add(async () => {
         switch (task.kind) {
           case 'follow': {
