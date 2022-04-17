@@ -117,7 +117,7 @@ async function generateTask() {
             const task = await Task.findOne({ email: user.email, screen_name: retweet.screen_name, kind: 'retweet' }).exec();
             if (!task) {
               //const label = `[GT][Retweet][${user.email}][${retweet.screen_name}] Task generate process completed`;
-              console.time();
+              //console.time();
 
               /**
                * TODO: Do not process filtering on Node but on MongoDB
@@ -125,7 +125,7 @@ async function generateTask() {
               /* Check rtdone length today */
               const rtdones = await Rtdone.find({ email: user.email, screen_name: retweet.screen_name }).exec();
               let today = new Date();
-              today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+              today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
               const count = rtdones.filter(rtdone => today.getTime() <= Number(rtdone.timestamp) && Number(rtdone.timestamp) < (today.getTime() + 24 * 60 * 60 * 1000)).length;
 
               switch (retweet.status) {
@@ -172,7 +172,7 @@ async function generateTask() {
                 default:
                   break;
               }
-              console.timeEnd();
+              //console.timeEnd();
             }
           }
         }
