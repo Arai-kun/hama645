@@ -246,7 +246,7 @@ async function keyword_retweet(task) {
         email: task.email,
         timestamp: `${Date.now()}`,
         screen_name: task.screen_name,
-        event: 8,
+        event: 9,
         partner_screen_name: ''
       });
       let retweet = await Retweet.findOne({ email: task.email, screen_name: task.screen_name }).exec();
