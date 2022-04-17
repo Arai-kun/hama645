@@ -153,7 +153,7 @@ async function generateTask() {
                         sub_kind: retweet.mode,
                         execute_time: Date.now() + wait_min * 60 * 1000,
                         keyword: `${retweet.mode === 1 ? retweet.keyword : ''}`,
-                        partner: retweeted_user_id,
+                        partner: retweeted_user_id.user_id,
                         retweeted_timeline: retweet.retweeted_timeline,
                         ongoing: false
                       });

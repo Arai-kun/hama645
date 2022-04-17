@@ -42,11 +42,10 @@ async function main() {
 
 async function executeTask() {
   try {
-    let tasks = await Task.find({ execute_time: { $gte: Date.now() }, ongoing: false }).exec();
+    let tasks = await Task.find({ execute_time: { $lte: Date.now() }, ongoing: false }).exec();
     for(let task of tasks) {
       console.log(`[ET] Got task: ${task}`);
-      task.ongoing = true;
-      await task.save();
+      await Task.updateOne({email: task.email, screen_name: task.screen_name, kind: task.kind}, {$set: {ongoing: true}}).exec();
       queue.add(async () => {
         switch (task.kind) {
           case 'follow': {
@@ -182,6 +181,7 @@ async function retweet(task) {
     await retweet.save();
   }
   catch (error) {
+    console.log(error)
     console.log(`[ET][Error][retweet][${task.email}][${task.screen_name}]: ` + JSON.stringify(error));
     if (('statusCode' in error) && ('data' in error)) {
       const json_data = JSON.parse(error.data);
