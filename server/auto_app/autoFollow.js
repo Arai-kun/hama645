@@ -72,7 +72,12 @@ async function autoFollow() {
               accessToken: twitter.oauth_token,
               accessTokenSecret: twitter.oauth_token_secret
             });
-            follow.status_now = follow.status;
+            if(follow.status === 3){
+              follow.status_now = 0;
+            }
+            else{
+              follow.status_now = follow.status;
+            }
             await follow.save();
             switch (follow.status_now) {
               case 0:
@@ -151,8 +156,8 @@ async function autoFollow() {
                     if(('statusCode' in error) && ('data' in error)){
                       let json_data = JSON.parse(error.data);
                       if(error.statusCode === 403 && json_data.errors[0].code === 161){
-                        follow.status = 0;
-                        follow.status_now = follow.status;
+                        follow.status = 3;
+                        follow.status_now = 0;
                         await follow.save();
                         return;
                       }
@@ -272,8 +277,8 @@ async function autoFollow() {
                     if(('statusCode' in error) && ('data' in error)){
                       let json_data = JSON.parse(error.data);
                       if(error.statusCode === 403 && json_data.errors[0].code === 161){
-                        follow.status = 0;
-                        follow.status_now = follow.status;
+                        follow.status = 3;
+                        follow.status_now = 0;
                         await follow.save();
                         return;
                       }

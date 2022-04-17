@@ -9,6 +9,7 @@ let Follow = require('../models/follow');
 let Followed = require('../models/followed');
 let Retweet = require('../models/retweet');
 let Retweeted = require('../models/retweeted');
+let Task = require('../models/task');
 const { TwitterClient } = require('twitter-api-client');
 
 /* GET db/twitter/:screen_name */
@@ -239,17 +240,35 @@ router.get('/retweets', (req, res, next) => {
 router.post('/retweet', async (req, res, next) => {
   try {
     req.body['email'] = req.user['email'];
+    req.body['status'] = 1;
     let retweet = await Retweet.findOne({email: req.body['email'], screen_name: req.body['screen_name']}).exec();
     if(retweet){
       retweet.range_min = req.body['range_min'];
       retweet.range_max = req.body['range_max'];
       retweet.count_max = req.body['count_max'];
       retweet.status = req.body['status'];
+      retweet.mode = req.body['mode'];
+      retweet.retweeted_timeline = req.body['retweeted_timeline'];
+      retweet.keyword = req.body['keyword'];
       await retweet.save();
     }
     else{
       await Retweet.create(req.body);
     }
+    res.json(true);
+  }
+  catch(error){
+    next(error);
+  }
+});
+
+/* GET db/retweet/stop/:screen_name */
+router.get('/retweet/stop/:screen_name', async (req, res, next) => {
+  try{
+    let retweet = await Retweet.findOne({email: req.user['email'], screen_name: req.params.screen_name}).exec();
+    retweet.status = 0;
+    await retweet.save();
+    await Task.findOneAndDelete({email: retweet.email, screen_name: retweet.screen_name}).exec();
     res.json(true);
   }
   catch(error){
