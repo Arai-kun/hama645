@@ -213,7 +213,7 @@ async function retweet(task) {
 async function keyword_retweet(task) {
   try {
     console.log(`[ET][k_retweet][${task.email}][${task.screen_name}] Task start`);
-    const twitter = await Twitter.findOne({ email: user.email, screen_name: retweet.screen_name }).exec();
+    const twitter = await Twitter.findOne({ email: task.email, screen_name: task.screen_name }).exec();
     const twitterClient = new TwitterClient({
       apiKey: process.env.API_KEY,
       apiSecret: process.env.API_SECRET,
@@ -226,7 +226,7 @@ async function keyword_retweet(task) {
     if (rt.text.search(task.keyword) !== -1) {
       /* Rate limit 5 request per 3 min, that is, more then 1 request per 1 min */
       await twitterClient.tweets.statusesRetweetById({ id: rt.id_str });
-      console.log(`[ET][k_retweet][${task.email}][${task.screen_name}] Success that ${retweet.screen_name} retweets ${rt.id_str}`);
+      console.log(`[ET][k_retweet][${task.email}][${task.screen_name}] Successfully retweet ${rt.id_str}`);
       await Rtdone.create({
         email: task.email,
         screen_name: task.screen_name,
