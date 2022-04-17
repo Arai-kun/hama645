@@ -43,7 +43,7 @@ async function main() {
 async function executeTask() {
   try {
     let tasks = await Task.find({ execute_time: { $gte: Date.now() }, ongoing: false }).exec();
-    tasks.forEach(task => {
+    for(let task of tasks) {
       console.log(`[ET] Got task: ${task}`);
       task.ongoing = true;
       await task.save();
@@ -83,7 +83,7 @@ async function executeTask() {
             break;
         }
       });
-    });
+    }
   }
   catch (error) {
     console.log('[ET][*** Fatal Error ***]: ' + error);

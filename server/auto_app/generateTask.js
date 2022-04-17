@@ -113,7 +113,7 @@ async function generateTask() {
             ]
           }).exec();
           const retweeteds = await Retweeted.find({email: user.email}).exec();
-          retweets.forEach(retweet => {
+          for(let retweet of retweets){
             const task = await Task.findOne({ email: user.email, screen_name: retweet.screen_name, kind: 'retweet' }).exec();
             if (!task) {
               const label = `[GT][Retweet][${user.email}][${retweet.screen_name}] Task generate process completed`;
@@ -174,7 +174,7 @@ async function generateTask() {
               }
               console.timeEnd(label);
             }
-          });
+          }
         }
         catch (error) {
           console.log(`[GT][Error][${user.email}]: ` + JSON.stringify(error));
