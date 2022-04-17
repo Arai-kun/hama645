@@ -130,6 +130,7 @@ async function generateTask() {
 
               switch (retweet.status) {
                 case 1: {
+                  console.log(retweet.retweeted_user_ids);
                   const retweeted_user_ids = retweeteds.filter(retweeted => !(retweet.retweeted_user_ids.include(retweeted.user_id)));
                   if(retweeted_user_ids.length === 0){
                     console.log(`[GT][Retweet][${user.email}][${retweet.screen_name}] All retweeted done`);
