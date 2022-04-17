@@ -116,8 +116,8 @@ async function generateTask() {
           for(let retweet of retweets){
             const task = await Task.findOne({ email: user.email, screen_name: retweet.screen_name, kind: 'retweet' }).exec();
             if (!task) {
-              const label = `[GT][Retweet][${user.email}][${retweet.screen_name}] Task generate process completed`;
-              console.time(label);
+              //const label = `[GT][Retweet][${user.email}][${retweet.screen_name}] Task generate process completed`;
+              console.time();
 
               /**
                * TODO: Do not process filtering on Node but on MongoDB
@@ -172,11 +172,12 @@ async function generateTask() {
                 default:
                   break;
               }
-              console.timeEnd(label);
+              console.timeEnd();
             }
           }
         }
         catch (error) {
+          console.log(error);
           console.log(`[GT][Error][${user.email}]: ` + JSON.stringify(error));
         }
       });
