@@ -119,7 +119,7 @@ app.use('/oauth', oauthRouter);
 app.use('/user', userRouter);
 app.use('/db', dbRouter);
 app.use('/chat', chatRouter);
-app.use('/webhook/v2', webhookRouter);
+app.use('/webhook/v3', webhookRouter);
 
 app.use(express.static(path.join(__dirname, '../client/dist/client')));
 app.use('/*', express.static(path.join(__dirname, '../client/dist/client/index.html')));
